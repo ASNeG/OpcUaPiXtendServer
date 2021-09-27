@@ -44,7 +44,7 @@ include_directories(
 file(
     GLOB 
     OpcUaPiXtendServer_SRC 
-    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/*/*.cpp
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Library/*.cpp
 )
 
 add_library(
@@ -61,6 +61,10 @@ target_link_libraries(
     ${OPCUASTACK_LIBRARY_PUBSUB}
     ${Boost_LIBRARIES}
 )
+
+# FIXME: build pixtendLib library
+# FIXME: build pixtend tool
+# FIXME: Example: https://gitlab.asneg.de/konvekta/opcuadiaggateway/-/blob/work/src/OpcUaDiagGateway/CMakeLists.txt
 
 if (WIN32)
     target_link_libraries(OpcUaPiXtendServer wsock32 ws2_32)
