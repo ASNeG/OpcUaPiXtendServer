@@ -113,14 +113,14 @@ if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_V2L_DUMMY})
     message(STATUS "Modul V2L activate dummy")
 endif ()
 
-if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_AO_DUMMY})
-    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_AO_DUMMY)
-    message(STATUS "Modul AO activate dummy")
+if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_EIOAO_DUMMY})
+    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_EIOAO_DUMMY)
+    message(STATUS "Modul EIOAO activate dummy")
 endif ()
 
-if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_DO_DUMMY})
-    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_DO_DUMMY)
-    message(STATUS "Modul DO activate dummy")
+if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_EIODO_DUMMY})
+    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_EIODO_DUMMY)
+    message(STATUS "Modul EIODO activate dummy")
 endif ()
 
 # -----------------------------------------------------------------------------

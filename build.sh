@@ -13,8 +13,8 @@ CMAKE_GENERATOR_LOCAL=-G"Eclipse CDT4 - Unix Makefiles"
 #
 # export OPCUAPIXTENDSERVER_MODUL_V2S_DUMMY=1
 # export OPCUAPIXTENDSERVER_MODUL_V2L_DUMMY=1
-# export OPCUAPIXTENDSERVER_MODUL_AO_DUMMY=1
-# export OPCUAPIXTENDSERVER_MODUL_DO_DUMMY=1
+# export OPCUAPIXTENDSERVER_MODUL_EIOAO_DUMMY=1
+# export OPCUAPIXTENDSERVER_MODUL_EIODO_DUMMY=1
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
