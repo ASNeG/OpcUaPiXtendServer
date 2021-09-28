@@ -25,7 +25,6 @@ configure_file(
     "${PROJECT_BINARY_DIR}/OpcUaPiXtendServer.service"
 )
 
-
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 #
@@ -52,6 +51,16 @@ add_library(
     ${OpcUaPiXtendServer_SRC}
 )
 
+target_link_libraries(
+    OpcUaPiXtendServer
+    ${pthread}
+    ${OPCUASTACK_LIBRARY_CORE}
+    ${OPCUASTACK_LIBRARY_CLIENT}
+    ${OPCUASTACK_LIBRARY_SERVER}
+    ${OPCUASTACK_LIBRARY_PUBSUB}
+    ${Boost_LIBRARIES}
+)
+
 file(
     GLOB 
     OpcUaPiXtendServer_PiXtendLib_SRC 
@@ -63,16 +72,17 @@ add_library(
     ${OpcUaPiXtendServer_PiXtendLib_SRC}
 )
 
+add_executable( 
+    pixtend
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/pixtend.cpp
+) 
+
 target_link_libraries(
-    OpcUaPiXtendServer
+    pixtend
     PiXtendLib
-    ${pthread}
-    ${OPCUASTACK_LIBRARY_CORE}
-    ${OPCUASTACK_LIBRARY_CLIENT}
-    ${OPCUASTACK_LIBRARY_SERVER}
-    ${OPCUASTACK_LIBRARY_PUBSUB}
     ${Boost_LIBRARIES}
 )
+
 
 # FIXME: build pixtendLib library
 # FIXME: build pixtend tool
@@ -85,6 +95,33 @@ if (WIN32)
         set(CMAKE_SHARED_LIBRARY_PREFIX "")
     endif()
 endif()
+
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+#
+# config moduls by env variables
+#
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_V2S_DUMMY})
+    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_V2S_DUMMY)
+    message(STATUS "Modul V2S activate dummy")
+endif ()
+
+if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_V2L_DUMMY})
+    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_V2L_DUMMY)
+    message(STATUS "Modul V2L activate dummy")
+endif ()
+
+if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_AO_DUMMY})
+    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_AO_DUMMY)
+    message(STATUS "Modul AO activate dummy")
+endif ()
+
+if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_DO_DUMMY})
+    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_DO_DUMMY)
+    message(STATUS "Modul DO activate dummy")
+endif ()
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------

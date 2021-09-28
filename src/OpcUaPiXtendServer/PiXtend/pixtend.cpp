@@ -38,6 +38,9 @@
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2S.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2SDummy.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2SInst.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendV2L.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendV2LDummy.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendV2LInst.h"
 
 using namespace OpcUaPiXtendServer;
 
@@ -47,10 +50,17 @@ int main(int argc, char** argv)
     // initialize configuration modules
 
     std::shared_ptr<PiXtendV2S> pixtendV2SSPtr = nullptr;
-#ifdef OPCUAPIXTENDSERVER_V2S_MODUL
-    pixtendV2SSPtr = std::make_shared<PiXtendV2SInst>();
-#else
+#ifdef OPCUAPIXTENDSERVER_MODUL_V2S_DUMMY
     pixtendV2SSPtr = std::make_shared<PiXtendV2SDummy>();
+#else
+    pixtendV2SSPtr = std::make_shared<PiXtendV2SInst>();
+#endif
+
+    std::shared_ptr<PiXtendV2L> pixtendV2LSPtr = nullptr;
+#ifdef OPCUAPIXTENDSERVER_MODUL_V2L_DUMMY
+    pixtendV2LSPtr = std::make_shared<PiXtendV2LDummy>();
+#else
+    pixtendV2LSPtr = std::make_shared<PiXtendV2LInst>();
 #endif
 
 	// FIXME: adjustments for pixtend tool
