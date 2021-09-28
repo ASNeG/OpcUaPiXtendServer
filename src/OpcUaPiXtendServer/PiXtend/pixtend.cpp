@@ -44,6 +44,9 @@
 #include "OpcUaPiXtendServer/PiXtend/PiXtendEIOAO.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendEIOAODummy.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendEIOAOInst.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendEIODO.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendEIODODummy.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendEIODOInst.h"
 
 using namespace OpcUaPiXtendServer;
 
@@ -71,6 +74,13 @@ int main(int argc, char** argv)
     pixtendEIOAOSPtr = std::make_shared<PiXtendEIOAODummy>();
 #else
     pixtendEIOAOSPtr = std::make_shared<PiXtendEIOAOInst>();
+#endif
+
+    std::shared_ptr<PiXtendEIODO> pixtendEIODOSPtr = nullptr;
+#ifdef OPCUAPIXTENDSERVER_MODUL_V2L_DUMMY
+    pixtendEIODOSPtr = std::make_shared<PiXtendEIODODummy>();
+#else
+    pixtendEIODOSPtr = std::make_shared<PiXtendEIODOInst>();
 #endif
 
 	// FIXME: adjustments for pixtend tool
