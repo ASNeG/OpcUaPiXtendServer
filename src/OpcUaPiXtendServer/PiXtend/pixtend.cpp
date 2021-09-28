@@ -33,14 +33,27 @@
 #include <fstream>
 #include <string>
 #include <iomanip>
-#include "OpcUaDiagGateway/Infineon/HexFile.h"
+#include <memory>
 
-using namespace OpcUaDiagGateway;
+#include "OpcUaPiXtendServer/PiXtend/PiXtendV2S.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendV2SDummy.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendV2SInst.h"
+
+using namespace OpcUaPiXtendServer;
 
 int main(int argc, char** argv)
 {
 
-	FIYXME: adjustments for pixtend tool
+    // initialize configuration modules
+
+    std::shared_ptr<PiXtendV2S> pixtendV2SSPtr = nullptr;
+#ifdef OPCUAPIXTENDSERVER_V2S_MODUL
+    pixtendV2SSPtr = std::make_shared<PiXtendV2SInst>();
+#else
+    pixtendV2SSPtr = std::make_shared<PiXtendV2SDummy>();
+#endif
+
+	// FIXME: adjustments for pixtend tool
 
 #if 0
 

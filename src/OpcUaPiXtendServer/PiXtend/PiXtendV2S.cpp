@@ -21,12 +21,12 @@
 namespace OpcUaPiXtendServer
 {
 
-	PiXtendV2S::PiXtendV2S(void)
-	{
-	}
+    PiXtendV2S::PiXtendV2S(void)
+    {
+    }
 
-	PiXtendV2S::~PiXtendV2S(void)
-	{
-	}
+    PiXtendV2S::~PiXtendV2S(void)
+    {
+    }
 
 }

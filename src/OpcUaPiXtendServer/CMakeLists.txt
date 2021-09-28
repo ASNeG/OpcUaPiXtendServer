@@ -52,8 +52,20 @@ add_library(
     ${OpcUaPiXtendServer_SRC}
 )
 
+file(
+    GLOB 
+    OpcUaPiXtendServer_PiXtendLib_SRC 
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/*.cpp
+)
+
+add_library(
+    PiXtendLib STATIC
+    ${OpcUaPiXtendServer_PiXtendLib_SRC}
+)
+
 target_link_libraries(
     OpcUaPiXtendServer
+    PiXtendLib
     ${pthread}
     ${OPCUASTACK_LIBRARY_CORE}
     ${OPCUASTACK_LIBRARY_CLIENT}

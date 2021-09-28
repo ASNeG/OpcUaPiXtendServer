@@ -21,25 +21,251 @@
 namespace OpcUaPiXtendServer
 {
 
-	PiXtendV2SInst::PiXtendV2SInst(void)
-	{
-	}
+    PiXtendV2SInst::PiXtendV2SInst(void)
+    {
+    }
 
-	PiXtendV2SInst::~PiXtendV2SInst(void)
-	{
-	}
+    PiXtendV2SInst::~PiXtendV2SInst(void)
+    {
+    }
 
-	void
-	PiXtendV2SInst::d0(bool data)
-	{
-		// FIXME: TBD
-	}
+    // Inputs Analog
+
+    double
+    PiXtendV2SInst::ai0(void)
+    {
+        return 0.0;
+    }
+
+    double
+    PiXtendV2SInst::ai1(void)
+    {
+        return 0.0;
+    }
+
+    // Output Analog
+
+    void
+    PiXtendV2SInst::ao0(double data)
+    {
+
+    }
+
+    double
+    PiXtendV2SInst::ao0(void)
+    {
+        return 0.0;
+    }
+
+    void
+    PiXtendV2SInst::ao1(double data)
+    {
+
+    }
+
+    double
+    PiXtendV2SInst::ao1(void)
+    {
+        return 0.0;
+    }
+
+    // Inputs Digital
 
     bool
-	PiXtendV2S::d0(void)
+    PiXtendV2SInst::di0(void)
     {
-    	// FIXME: TBD
-    	return true;
+        return false;
+    }
+
+    bool
+    PiXtendV2SInst::di1(void)
+    {
+        return false;
+    }
+
+    bool
+    PiXtendV2SInst::di2(void)
+    {
+        return false;
+    }
+
+    bool
+    PiXtendV2SInst::di3(void)
+    {
+        return false;
+    }
+
+    bool
+    PiXtendV2SInst::di4(void)
+    {
+        return false;
+    }
+
+    bool
+    PiXtendV2SInst::di5(void)
+    {
+        return false;
+    }
+
+    bool
+    PiXtendV2SInst::di6(void)
+    {
+        return false;
+    }
+
+    bool
+    PiXtendV2SInst::di7(void)
+    {
+        return false;
+    }
+
+    // Output Digital
+
+    void
+    PiXtendV2SInst::do0(bool data)
+    {
+
+    }
+
+    bool
+    PiXtendV2SInst::do0(void)
+    {
+        return false;
+    }
+
+    void
+    PiXtendV2SInst::do1(bool data)
+    {
+
+    }
+
+    bool
+    PiXtendV2SInst::do1(void)
+    {
+        return false;
+    }
+
+    void
+    PiXtendV2SInst::do2(bool data)
+    {
+
+    }
+
+    bool
+    PiXtendV2SInst::do2(void)
+    {
+        return false;
+    }
+
+    void
+    PiXtendV2SInst::do3(bool data)
+    {
+
+    }
+
+    bool
+    PiXtendV2SInst::do3(void)
+    {
+        return false;
+    }
+
+    // Relay
+
+    void
+    PiXtendV2SInst::relay0(bool data)
+    {
+
+    }
+
+    bool
+    PiXtendV2SInst::relay0(void)
+    {
+        return false;
+    }
+
+    void
+    PiXtendV2SInst::relay1(bool data)
+    {
+
+    }
+
+    bool
+    PiXtendV2SInst::relay1(void)
+    {
+        return false;
+    }
+
+    void
+    PiXtendV2SInst::relay2(bool data)
+    {
+
+    }
+
+    bool
+    PiXtendV2SInst::relay2(void)
+    {
+        return false;
+    }
+
+    void
+    PiXtendV2SInst::relay3(bool data)
+    {
+
+    }
+    bool
+    PiXtendV2SInst::relay3(void)
+    {
+        return false;
+    }
+
+    // Input/Output General Purpose
+
+    void
+    PiXtendV2SInst::gpio0(bool data)
+    {
+
+    }
+
+    bool
+    PiXtendV2SInst::gpio0(void)
+    {
+        return false;
+    }
+
+    void
+    PiXtendV2SInst::gpio1(bool data)
+    {
+
+    }
+
+    bool
+    PiXtendV2SInst::gpio1(void)
+    {
+        return false;
+    }
+
+    void
+    PiXtendV2SInst::gpio2(bool data)
+    {
+
+    }
+
+    bool
+    PiXtendV2SInst::gpio2(void)
+    {
+        return false;
+    }
+
+    void
+    PiXtendV2SInst::gpio3(bool data)
+    {
+
+    }
+
+    bool
+    PiXtendV2SInst::gpio3(void)
+    {
+        return false;
     }
 
 }

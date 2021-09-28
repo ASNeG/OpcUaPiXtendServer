@@ -37,6 +37,32 @@ if (CREATE_INFO_FILES)
     return()
 endif ()
 
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+#
+# config moduls by env variables
+#
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+set(OPCUAPIXTENDSERVER_V2S_MODUL ON)
+if (DEFINED ENV{OpcUaPiXtendServer_V2S_Dummy})
+    set(OPCUAPIXTENDSERVER_V2S_MODUL OFF)
+endif ()
+
+set(OPCUAPIXTENDSERVER_V2L_MODUL ON)
+if (DEFINED ENV{OpcUaPiXtendServer_V2L_Dummy})
+    set(OPCUAPIXTENDSERVER_V2L_MODUL OFF)
+endif ()
+
+set(OPCUAPIXTENDSERVER_AO_MODUL ON)
+if (DEFINED ENV{OpcUaPiXtendServer_AO_Dummy})
+    set(OPCUAPIXTENDSERVER_AO_MODUL OFF)
+endif ()
+
+set(OPCUAPIXTENDSERVER_DO_MODUL ON)
+if (DEFINED ENV{OpcUaPiXtendServer_DO_Dummy})
+    set(OPCUAPIXTENDSERVER_DO_MODUL OFF)
+endif ()
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
@@ -60,6 +86,11 @@ message(STATUS "  system processor: ${CMAKE_SYSTEM_PROCESSOR}")
 message(STATUS "  system name: ${CMAKE_SYSTEM_NAME}")
 message(STATUS "  host system: ${CMAKE_HOST_SYSTEM}")
 
+message(STATUS "Config info")
+message(STATUS "  OPCUAPIXTENDSERVER_V2S_MODUL ${OPCUAPIXTENDSERVER_V2S_MODUL}")
+message(STATUS "  OPCUAPIXTENDSERVER_V2L_MODUL ${OPCUAPIXTENDSERVER_V2L_MODUL}")
+message(STATUS "  OPCUAPIXTENDSERVER_AO_MODUL ${OPCUAPIXTENDSERVER_AO_MODUL}")
+message(STATUS "  OPCUAPIXTENDSERVER_DO_MODUL ${OPCUAPIXTENDSERVER_DO_MODUL}")
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------

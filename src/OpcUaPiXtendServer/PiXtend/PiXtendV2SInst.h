@@ -24,18 +24,69 @@
 namespace OpcUaPiXtendServer
 {
 
-	class PiXtendV2SInst
-	: public PiXtendV2S
-	{
-	  public:
-		PiXtendV2SInst(void);
-		~PiXtendV2SInst(void);
+    class PiXtendV2SInst
+    : public PiXtendV2S
+    {
+      public:
+        PiXtendV2SInst(void);
+        ~PiXtendV2SInst(void);
 
-		void d0(bool data) override;
-	    bool d0(void) override;
+        // Inputs Analog
 
-		// FIXME: TBD
-	};
+        virtual double ai0(void) override;
+        virtual double ai1(void) override;
+
+        // Output Analog
+
+        virtual void ao0(double data) override;
+        virtual double ao0(void) override;
+        virtual void ao1(double data) override;
+        virtual double ao1(void) override;
+
+        // Inputs Digital
+
+        virtual bool di0(void) override;
+        virtual bool di1(void) override;
+        virtual bool di2(void) override;
+        virtual bool di3(void) override;
+        virtual bool di4(void) override;
+        virtual bool di5(void) override;
+        virtual bool di6(void) override;
+        virtual bool di7(void) override;
+
+        // Output Digital
+
+        virtual void do0(bool data) override;
+        virtual bool do0(void) override;
+        virtual void do1(bool data) override;
+        virtual bool do1(void) override;
+        virtual void do2(bool data) override;
+        virtual bool do2(void) override;
+        virtual void do3(bool data) override;
+        virtual bool do3(void) override;
+
+        // Relay
+
+        virtual void relay0(bool data) override;
+        virtual bool relay0(void) override;
+        virtual void relay1(bool data) override;
+        virtual bool relay1(void) override;
+        virtual void relay2(bool data) override;
+        virtual bool relay2(void) override;
+        virtual void relay3(bool data) override;
+        virtual bool relay3(void) override;
+
+        // Input/Output General Purpose
+
+        virtual void gpio0(bool data) override;
+        virtual bool gpio0(void) override;
+        virtual void gpio1(bool data) override;
+        virtual bool gpio1(void) override;
+        virtual void gpio2(bool data) override;
+        virtual bool gpio2(void) override;
+        virtual void gpio3(bool data) override;
+        virtual bool gpio3(void) override;
+    };
 
 }
 
