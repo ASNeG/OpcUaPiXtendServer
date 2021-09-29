@@ -37,7 +37,6 @@ if (CREATE_INFO_FILES)
     return()
 endif ()
 
-
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 #
@@ -59,7 +58,6 @@ message(STATUS "  host system processor: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 message(STATUS "  system processor: ${CMAKE_SYSTEM_PROCESSOR}")
 message(STATUS "  system name: ${CMAKE_SYSTEM_NAME}")
 message(STATUS "  host system: ${CMAKE_HOST_SYSTEM}")
-
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
@@ -89,7 +87,6 @@ include(${OPCUASTACK_INSTALL_PREFIX}/usr/share/cmake/OpcUaStack${OPCUASTACK_VERS
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 include(${OPCUASTACK_INSTALL_PREFIX}/usr/share/cmake/OpcUaStack${OPCUASTACK_VERSION_MAJOR}/CMakeOpcUaStack.txt)
-
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
