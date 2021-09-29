@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2020 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2015-2021 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -17,6 +17,7 @@
 
 #include "OpcUaStackCore/Base/os.h"
 #include "OpcUaStackCore/Base/Log.h"
+#include "OpcUaStackCore/Base/ConfigXml.h"
 #include "OpcUaPiXtendServer/Library/Library.h"
 #include "OpcUaStackServer/ServiceSetApplication/ApplicationService.h"
 #include "OpcUaStackServer/ServiceSetApplication/NodeReferenceApplication.h"
@@ -42,6 +43,42 @@ namespace OpcUaPiXtendServer
 	Library::startup(void)
 	{
 		Log(Debug, "Library::startup");
+
+		// get message bus thread pool and strand. Used to run all asynchronous
+		// tasks in the application. The strand is used for synchronization. Only
+		// one task is running in the application at a time.
+		auto messageBusThread = this->applicationThreadPool();
+		auto messageBusStrand = messageBusThread->createStrand();
+
+		// read pixtend configuration file
+		ConfigXml configXml;
+		Config config;
+		if (!configXml.parse(applicationInfo()->configFileName(), &config)) {
+			Log(Error, "parse configuration file error")
+				.parameter("ConfigFileName", applicationInfo()->configFileName())
+				.parameter("Reason", configXml.errorMessage());
+			return false;
+		}
+		boost::optional<Config> piXtendServerConfig = config.getChild("OpcUaPiXtendServer");
+		if (!piXtendServerConfig) {
+			Log(Error, "missing element OpcUaPiXtendServer in server configuration")
+				.parameter("ConfigFileName", applicationInfo()->configFileName());
+			return false;
+		}
+
+		// startup piXtend application
+		auto result = piXtendServer_.startup(
+			messageBusThread,
+			messageBusStrand,
+			&service(),
+			applicationInfo(),
+			*piXtendServerConfig
+		);
+		if (!result) {
+			Log(Error, "init pixtend server error");
+			return false;
+		}
+
 		return true;
 	}
 
@@ -49,6 +86,14 @@ namespace OpcUaPiXtendServer
 	Library::shutdown(void)
 	{
 		Log(Debug, "Library::shutdown");
+
+		// shutdown piXtend application
+		auto result = piXtendServer_.shutdown();
+		if (!result) {
+			Log(Error, "shutdown pixtend server error");
+			return false;
+		}
+
 		return true;
 	}
 
