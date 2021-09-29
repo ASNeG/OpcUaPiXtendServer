@@ -21,60 +21,60 @@
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendEIODO::PiXtendEIODO(void)
+    PiXtendEIODOInst::PiXtendEIODOInst(void)
     {
     }
 
-    PiXtendEIODO::~PiXtendEIODO(void)
+    PiXtendEIODOInst::~PiXtendEIODOInst(void)
     {
     }
 
     // Inputs Digital
 
     bool
-    PiXtendEIODO::di0(void)
+    PiXtendEIODOInst::di0(void)
     {
         return 0.0;
     }
 
     bool
-    PiXtendEIODO::di1(void)
+    PiXtendEIODOInst::di1(void)
     {
         return 0.0;
     }
 
     bool
-    PiXtendEIODO::di2(void)
+    PiXtendEIODOInst::di2(void)
     {
         return 0.0;
     }
 
     bool
-    PiXtendEIODO::di3(void)
+    PiXtendEIODOInst::di3(void)
     {
         return 0.0;
     }
 
     bool
-    PiXtendEIODO::di4(void)
+    PiXtendEIODOInst::di4(void)
     {
         return 0.0;
     }
 
     bool
-    PiXtendEIODO::di5(void)
+    PiXtendEIODOInst::di5(void)
     {
         return 0.0;
     }
 
     bool
-    PiXtendEIODO::di6(void)
+    PiXtendEIODOInst::di6(void)
     {
         return 0.0;
     }
 
     bool
-    PiXtendEIODO::di7(void)
+    PiXtendEIODOInst::di7(void)
     {
         return 0.0;
     }
@@ -83,97 +83,97 @@ namespace OpcUaPiXtendServer
     // Output Digital
 
     void
-    PiXtendEIODO::do0(bool data)
+    PiXtendEIODOInst::do0(bool data)
     {
 
     }
 
     bool
-    PiXtendEIODO::do0(void)
+    PiXtendEIODOInst::do0(void)
     {
         return 0.0;
     }
 
     void
-    PiXtendEIODO::do1(bool data)
+    PiXtendEIODOInst::do1(bool data)
     {
 
     }
 
     bool
-    PiXtendEIODO::do1(void)
+    PiXtendEIODOInst::do1(void)
     {
         return 0.0;
     }
 
     void
-    PiXtendEIODO::do2(bool data)
+    PiXtendEIODOInst::do2(bool data)
     {
 
     }
 
     bool
-    PiXtendEIODO::do2(void)
+    PiXtendEIODOInst::do2(void)
     {
         return 0.0;
     }
 
     void
-    PiXtendEIODO::do3(bool data)
+    PiXtendEIODOInst::do3(bool data)
     {
 
     }
 
     bool
-    PiXtendEIODO::do3(void)
+    PiXtendEIODOInst::do3(void)
     {
         return 0.0;
     }
 
     void
-    PiXtendEIODO::do4(bool data)
+    PiXtendEIODOInst::do4(bool data)
     {
 
     }
 
     bool
-    PiXtendEIODO::do4(void)
+    PiXtendEIODOInst::do4(void)
     {
         return 0.0;
     }
 
     void
-    PiXtendEIODO::do5(bool data)
+    PiXtendEIODOInst::do5(bool data)
     {
 
     }
 
     bool
-    PiXtendEIODO::do5(void)
+    PiXtendEIODOInst::do5(void)
     {
         return 0.0;
     }
 
     void
-    PiXtendEIODO::do6(bool data)
+    PiXtendEIODOInst::do6(bool data)
     {
 
     }
 
     bool
-    PiXtendEIODO::do6(void)
+    PiXtendEIODOInst::do6(void)
     {
         return 0.0;
     }
 
     void
-    PiXtendEIODO::do7(bool data)
+    PiXtendEIODOInst::do7(bool data)
     {
 
     }
 
     bool
-    PiXtendEIODO::do7(void)
+    PiXtendEIODOInst::do7(void)
     {
         return 0.0;
     }
