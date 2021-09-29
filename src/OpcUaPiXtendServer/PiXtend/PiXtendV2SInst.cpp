@@ -22,6 +22,7 @@ namespace OpcUaPiXtendServer
 {
 
     PiXtendV2SInst::PiXtendV2SInst(void)
+    : PiXtendV2S()
     {
     }
 

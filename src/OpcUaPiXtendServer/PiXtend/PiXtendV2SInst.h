@@ -29,7 +29,7 @@ namespace OpcUaPiXtendServer
     {
       public:
         PiXtendV2SInst(void);
-        ~PiXtendV2SInst(void);
+        virtual ~PiXtendV2SInst(void);
 
         // Inputs Analog
 

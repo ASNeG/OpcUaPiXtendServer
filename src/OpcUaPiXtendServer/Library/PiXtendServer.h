@@ -20,6 +20,7 @@
 
 #include "OpcUaStackCore/Utility/IOThread.h"
 #include "OpcUaStackCore/Base/Config.h"
+#include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaStackServer/Application/ApplicationInfo.h"
 
@@ -49,6 +50,12 @@ namespace OpcUaPiXtendServer
 		OpcUaStackServer::ApplicationServiceIf* applicationServiceIf_ = nullptr;
 		OpcUaStackServer::ApplicationInfo* applicationInfo_ = nullptr;
 
+		const std::string namespaceName_ = "http://ASNeG.de/PiXtend/";
+		uint16_t namespaceIndex_ = 0;
+		const OpcUaStackCore::OpcUaNodeId piXtendRootNodeId_ = OpcUaStackCore::OpcUaNodeId("PiXtend", 1);
+
+		bool findNamespace(void);
+		bool createPiXtendRootObject(void);
 	};
 
 }

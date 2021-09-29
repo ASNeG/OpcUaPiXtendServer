@@ -28,11 +28,19 @@
         <Module>
             <Name>DIO-1</Name>
             <Type>DIO</Type>
+            <Address>0x01</Address>
         </Module>
         
         <Module>
           <Name>DIO-2</Name>
           <Type>DIO</Type>
+          <Address>0x01</Address>
+        </Module>
+        
+        <Module>
+          <Name>AIO-1</Name>
+          <Type>AIO</Type>
+          <Address>0x01</Address>
         </Module>
     </Modules>
 

@@ -102,6 +102,7 @@ build_local()
               -DGIT_BRANCH="${GIT_BRANCH}"
         
         set +x
+	RESULT=$?
         if [ ${RESULT} -ne 0 ] ;
         then
             echo "cmake error"

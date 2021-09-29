@@ -17,7 +17,10 @@
 
 #include "OpcUaStackCore/Base/os.h"
 #include "OpcUaStackCore/Base/Log.h"
+#include "OpcUaStackServer/ServiceSetApplication/GetNamespaceInfo.h"
+#include "OpcUaStackServer/ServiceSetApplication/CreateNodeInstance.h"
 #include "OpcUaPiXtendServer/Library/PiXtendServer.h"
+#include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2SServer.h"
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
@@ -58,9 +61,28 @@ namespace OpcUaPiXtendServer
 		applicationServiceIf_ = applicationServiceIf;
 		applicationInfo_ = applicationInfo;
 
-
-		// parse controller configuration
+		// parse pixtend configuration
 		// FIXME: TBD
+
+		// find namespace
+		if (!findNamespace()) {
+			Log(Error, "find namespace error");
+			return false;
+		}
+
+		// create pixtend root object in opc ua information model
+		if (!createPiXtendRootObject()) {
+			Log(Error, "create pixtend folder error");
+			return false;
+		}
+
+		// FIXME: add configured objects
+		// FIXME: The following lines are test code
+		PiXtendV2SServer v2s;
+		v2s.startup(
+			"PiXtendV2S",
+			piXtendRootNodeId_
+		);
 
 		return true;
 	}
@@ -69,6 +91,50 @@ namespace OpcUaPiXtendServer
 	PiXtendServer::shutdown(void)
 	{
 		Log(Debug, "PiXtendServer::shutdown");
+
+		return true;
+	}
+
+	bool
+	PiXtendServer::findNamespace(void)
+	{
+		// create and get namespace list
+		GetNamespaceInfo getNamespaceInfo;
+		getNamespaceInfo.newNamespaceUri(namespaceName_);
+		if (!getNamespaceInfo.query(applicationServiceIf_)) {
+			Log(Error, "create namespace error")
+				.parameter("NamespaceName", namespaceName_);
+			return false;
+		}
+
+		namespaceIndex_ = getNamespaceInfo.getNamespaceIndex(namespaceName_);
+		if (namespaceIndex_ == -1) {
+			Log(Error, "get namesapce index error")
+				.parameter("NamespaceName", namespaceName_);
+			return false;
+		}
+
+		return true;
+	}
+
+	bool
+	PiXtendServer::createPiXtendRootObject(void)
+	{
+		// create pixtend root object
+		CreateNodeInstance createNodeInstance(
+			"PiXtend1",										// name
+			NodeClass::EnumObject,							// node class
+			OpcUaNodeId(OpcUaId_ObjectsFolder),				// parent node id (Objects)
+			piXtendRootNodeId_,								// node id
+			OpcUaLocalizedText("en", "PiXtend"),			// dispplay name
+			OpcUaQualifiedName("PiXtend", 1),				// browse name
+			OpcUaNodeId(OpcUaId_HasComponent),				// reference type id
+			OpcUaNodeId(OpcUaId_BaseObjectType)				// type node id
+		);
+
+		if (!createNodeInstance.query(applicationServiceIf_)) {
+			return false;
+		}
 
 		return true;
 	}
