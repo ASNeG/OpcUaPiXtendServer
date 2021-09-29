@@ -188,7 +188,7 @@ namespace OpcUaPiXtendServer
     double
     PiXtendEIODODummy::getDigitalPin(PinsEIODO pin)
     {
-        FlashDigitalPins::const_iterator data = flashDigitalPins_.find(pin);
+        auto data = flashDigitalPins_.find(pin);
         if (data != flashDigitalPins_.end())
         {
             return data->second;

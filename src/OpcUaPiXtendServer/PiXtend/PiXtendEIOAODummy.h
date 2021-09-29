@@ -82,7 +82,7 @@ namespace OpcUaPiXtendServer
             Pin_AO5
         };
 
-        typedef std::unordered_map<PinsEIOAO, double> FlashAnalogPins;
+        using FlashAnalogPins = std::unordered_map<PinsEIOAO, double>;
         FlashAnalogPins flashAnalogPins_;
 
         void setAnalogPin(PinsEIOAO pin, double data);

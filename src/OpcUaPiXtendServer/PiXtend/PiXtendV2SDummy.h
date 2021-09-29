@@ -123,8 +123,8 @@ namespace OpcUaPiXtendServer
             Pin_GPIO3
         };
 
-        typedef std::unordered_map<PinsV2S, double> FlashAnalogPins;
-        typedef std::unordered_map<PinsV2S, bool> FlashDigitalPins;
+        using FlashAnalogPins = std::unordered_map<PinsV2S, double>;
+        using FlashDigitalPins = std::unordered_map<PinsV2S, bool>;
         FlashAnalogPins flashAnalogPins_;
         FlashDigitalPins flashDigitalPins_;
 

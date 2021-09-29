@@ -88,7 +88,7 @@ namespace OpcUaPiXtendServer
             Pin_DO7,
         };
 
-        typedef std::unordered_map<PinsEIODO, bool> FlashDigitalPins;
+        using FlashDigitalPins = std::unordered_map<PinsEIODO, bool>;
         FlashDigitalPins flashDigitalPins_;
 
         void setDigitalPin(PinsEIODO pin, bool data);

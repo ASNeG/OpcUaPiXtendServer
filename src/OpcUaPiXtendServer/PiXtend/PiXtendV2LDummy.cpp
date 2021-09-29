@@ -448,7 +448,7 @@ namespace OpcUaPiXtendServer
     double
     PiXtendV2LDummy::getAnalogPin(PinsV2L pin)
     {
-        FlashAnalogPins::const_iterator data = flashAnalogPins_.find(pin);
+        auto data = flashAnalogPins_.find(pin);
         if (data != flashAnalogPins_.end())
         {
             return data->second;
@@ -465,7 +465,7 @@ namespace OpcUaPiXtendServer
     double
     PiXtendV2LDummy::getDigitalPin(PinsV2L pin)
     {
-        FlashDigitalPins::const_iterator data = flashDigitalPins_.find(pin);
+        auto data = flashDigitalPins_.find(pin);
         if (data != flashDigitalPins_.end())
         {
             return data->second;

@@ -164,7 +164,7 @@ namespace OpcUaPiXtendServer
     double
     PiXtendEIOAODummy::getAnalogPin(PinsEIOAO pin)
     {
-        FlashAnalogPins::const_iterator data = flashAnalogPins_.find(pin);
+        auto data = flashAnalogPins_.find(pin);
         if (data != flashAnalogPins_.end())
         {
             return data->second;

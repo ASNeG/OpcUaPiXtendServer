@@ -83,11 +83,6 @@ target_link_libraries(
     ${Boost_LIBRARIES}
 )
 
-
-# FIXME: build pixtendLib library
-# FIXME: build pixtend tool
-# FIXME: Example: https://gitlab.asneg.de/konvekta/opcuadiaggateway/-/blob/work/src/OpcUaDiagGateway/CMakeLists.txt
-
 if (WIN32)
     target_link_libraries(OpcUaPiXtendServer wsock32 ws2_32)
 
@@ -106,21 +101,29 @@ endif()
 if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_V2S_DUMMY})
     add_definitions(-DOPCUAPIXTENDSERVER_MODUL_V2S_DUMMY)
     message(STATUS "Modul V2S activate dummy")
+else ()
+    message(STATUS "Modul V2S activate real access")
 endif ()
 
 if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_V2L_DUMMY})
     add_definitions(-DOPCUAPIXTENDSERVER_MODUL_V2L_DUMMY)
     message(STATUS "Modul V2L activate dummy")
+else ()
+    message(STATUS "Modul V2L activate real access")    
 endif ()
 
 if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_EIOAO_DUMMY})
     add_definitions(-DOPCUAPIXTENDSERVER_MODUL_EIOAO_DUMMY)
     message(STATUS "Modul EIOAO activate dummy")
+else ()
+    message(STATUS "Modul EIOAO activate real access")    
 endif ()
 
 if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_EIODO_DUMMY})
     add_definitions(-DOPCUAPIXTENDSERVER_MODUL_EIODO_DUMMY)
     message(STATUS "Modul EIODO activate dummy")
+else ()
+    message(STATUS "Modul EIODO activate real access")    
 endif ()
 
 # -----------------------------------------------------------------------------
@@ -133,6 +136,8 @@ endif ()
 
 file (GLOB CONFIG_FILES ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Config/*.xml)
 install(TARGETS OpcUaPiXtendServer DESTINATION ${INSTALL_PREFIX}/lib)
+install(TARGETS PiXtendLib DESTINATION ${INSTALL_PREFIX}/lib)
+install(TARGETS pixtend DESTINATION ${INSTALL_PREFIX}/bin)
 
 if (WIN32)
     install(FILES ${CONFIG_FILES} DESTINATION ${INSTALL_PREFIX}/../etc/OpcUaStack/OpcUaPiXtendServer) 
