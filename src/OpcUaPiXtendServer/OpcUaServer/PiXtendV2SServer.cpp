@@ -35,8 +35,25 @@ namespace OpcUaPiXtendServer
 		const OpcUaStackCore::OpcUaNodeId& parentNodeId
 	)
     {
+    	// get pixtend v2s access interface
+    	PiXtendModules piXtendModules;
+    	pixtend_ = piXtendModules.getPiXtendV2S();
+
+    	// startup pixtend interface
+    	// pixtend_.startup();
+
     	// FIXME: TBD
 
+    	return true;
+    }
+
+    bool
+	PiXtendV2SServer::shutdown(void)
+    {
+    	// shutdown pixtend interface
+    	// pixtend_.shutdown();
+
+    	// FIXME: TBD
     	return true;
     }
 

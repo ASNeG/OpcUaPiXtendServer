@@ -19,6 +19,7 @@
 #ifndef __OpcUaPiXtendServer_PiXtendV2SInst_h__
 #define __OpcUaPiXtendServer_PiXtendV2SInst_h__
 
+#include <boost/shared_ptr.hpp>
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2S.h"
 
 namespace OpcUaPiXtendServer
@@ -28,6 +29,9 @@ namespace OpcUaPiXtendServer
     : public PiXtendV2S
     {
       public:
+
+    	using SPtr = boost::shared_ptr<PiXtendV2SInst>;
+
         PiXtendV2SInst(void);
         virtual ~PiXtendV2SInst(void);
 

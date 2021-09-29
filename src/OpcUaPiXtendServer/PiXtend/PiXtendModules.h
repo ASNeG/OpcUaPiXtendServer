@@ -57,13 +57,18 @@ namespace OpcUaPiXtendServer
         PiXtendModules(void);
         virtual ~PiXtendModules(void);
 
-        std::shared_ptr<PiXtendV2S> getPiXtendV2S(void);
+
+        // FIXME:
+        // - von Digital/Analog Modul kann es mehrere Instanzen geben!.
+        // - wahrscheinlich braucht jedes Modul noch eine startup und eine shutdown Funktion
+        //
+
+        PiXtendV2S::SPtr getPiXtendV2S(void);
         std::shared_ptr<PiXtendV2L> getPiXtendV2L(void);
-        std::shared_ptr<PiXtendEIOAO> getPiXtendV2EIOAO(void);
-        std::shared_ptr<PiXtendEIODO> getPiXtendV2EIODO(void);
+        std::shared_ptr<PiXtendEIOAO> getPiXtendV2EIOAO(uint32_t modulAddress);
+        std::shared_ptr<PiXtendEIODO> getPiXtendV2EIODO(uint32_t modulAddress);
 
       private:
-        std::shared_ptr<PiXtendV2S> pixtendV2SSPtr_;
         std::shared_ptr<PiXtendV2L> pixtendV2LSPtr_;
         std::shared_ptr<PiXtendEIOAO> pixtendEIOAOSPtr_;
         std::shared_ptr<PiXtendEIODO> pixtendEIODOSPtr_;

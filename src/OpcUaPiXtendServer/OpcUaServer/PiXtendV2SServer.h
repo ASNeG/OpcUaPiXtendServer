@@ -21,13 +21,12 @@
 
 #include <boost/shared_ptr.hpp>
 #include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
-#include "OpcUaPiXtendServer/PiXtend/PiXtendV2SInst.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendModules.h"
 
 namespace OpcUaPiXtendServer
 {
 
     class PiXtendV2SServer
-    : public PiXtendV2SInst
     {
       public:
 
@@ -40,8 +39,10 @@ namespace OpcUaPiXtendServer
             const std::string& instanceName,
 			const OpcUaStackCore::OpcUaNodeId& parentNodeId
 		);
+        bool shutdown(void);
 
       private:
+        PiXtendV2S::SPtr pixtend_ = nullptr;
     };
 
 }
