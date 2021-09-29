@@ -144,8 +144,7 @@
     <Application>
       <Name>OpcUaPiXtendServer</Name>  
       <Library>OpcUaPiXtendServer</Library>
-      <Config></Config>
-      
+      <Config>@CONF_DIR@/OpcUaPiXtendServer.xml</Config>      
       <ApplThreadPool>
         <Name>ThrAppl</Name>
         <NumberThreads>2</NumberThreads>
@@ -158,6 +157,7 @@
   <InformationModel>
     <NodeSetFile>@CONF_DIR@/Opc.Ua.NodeSet2.xml</NodeSetFile>
     <NodeSetFile>@CONF_DIR@/Opc.Ua.NodeSet.ASNeGServer.xml</NodeSetFile>
+    <NodeSetFile>@CONF_DIR@/Opc.Ua.NodeSet.PiXtend.xml</NodeSetFile>
   </InformationModel>
 
 </OpcUaServer>
