@@ -20,6 +20,7 @@
 #define __OpcUaPiXtendServer_PiXtendToolConfig_h__
 
 #include <string>
+#include <unordered_map>
 
 namespace OpcUaPiXtendServer
 {
@@ -64,7 +65,61 @@ namespace OpcUaPiXtendServer
         Pin_GPIO0,Pin_GPIO1,Pin_GPIO2,Pin_GPIO3
     };
 
+    const std::unordered_map<std::string, Pins> mapString2Pin = {
+            {"ai0", Pins::Pin_AI0},
+            {"ai1", Pins::Pin_AI1},
+            {"ai2", Pins::Pin_AI2},
+            {"ai3", Pins::Pin_AI3},
+            {"ai4", Pins::Pin_AI4},
+            {"ai5", Pins::Pin_AI5},
 
+            {"ao0", Pins::Pin_AO0},
+            {"ao1", Pins::Pin_AO1},
+            {"ao2", Pins::Pin_AO2},
+            {"ao3", Pins::Pin_AO3},
+            {"ao4", Pins::Pin_AO4},
+            {"ao5", Pins::Pin_AO5},
+
+            {"di0", Pins::Pin_DI0},
+            {"di1", Pins::Pin_DI1},
+            {"di2", Pins::Pin_DI2},
+            {"di3", Pins::Pin_DI3},
+            {"di4", Pins::Pin_DI4},
+            {"di5", Pins::Pin_DI5},
+            {"di6", Pins::Pin_DI6},
+            {"di7", Pins::Pin_DI7},
+            {"di8", Pins::Pin_DI8},
+            {"di9", Pins::Pin_DI9},
+            {"di10", Pins::Pin_DI10},
+            {"di11", Pins::Pin_DI11},
+            {"di12", Pins::Pin_DI12},
+            {"di13", Pins::Pin_DI13},
+            {"di14", Pins::Pin_DI14},
+            {"di15", Pins::Pin_DI15},
+
+            {"do0", Pins::Pin_DO0},
+            {"do1", Pins::Pin_DO1},
+            {"do2", Pins::Pin_DO2},
+            {"do3", Pins::Pin_DO3},
+            {"do4", Pins::Pin_DO4},
+            {"do5", Pins::Pin_DO5},
+            {"do6", Pins::Pin_DO6},
+            {"do7", Pins::Pin_DO7},
+            {"do8", Pins::Pin_DO8},
+            {"do9", Pins::Pin_DO9},
+            {"do10", Pins::Pin_DO10},
+            {"do11", Pins::Pin_DO11},
+
+            {"relay0", Pins::Pin_Relay0},
+            {"relay1", Pins::Pin_Relay1},
+            {"relay2", Pins::Pin_Relay2},
+            {"relay3", Pins::Pin_Relay3},
+
+            {"gpio0", Pins::Pin_GPIO0},
+            {"gpio1", Pins::Pin_GPIO1},
+            {"gpio2", Pins::Pin_GPIO2},
+            {"gpio3", Pins::Pin_GPIO3}
+    };
 
     class PiXtendToolConfig
     {
@@ -74,6 +129,9 @@ namespace OpcUaPiXtendServer
 
         static bool mapInputPin(std::string& strPin, Pins& pin);
         static bool mapDValue(std::string& strDValue, bool dValue);
+
+      private:
+
     };
 
 }

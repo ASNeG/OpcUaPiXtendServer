@@ -54,7 +54,7 @@ add_library(
 file(
     GLOB 
     OpcUaPiXtendServer_PiXtendTool_SRC 
-    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Tools/*.cpp
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Tools/PiXtendTool*.cpp
 )
 
 add_library(
