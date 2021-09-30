@@ -36,11 +36,10 @@ namespace OpcUaPiXtendServer
 	)
     {
     	// get pixtend v2s access interface
-    	PiXtendModules piXtendModules;
-    	pixtend_ = piXtendModules.getPiXtendV2S();
+    	pixtend_ = PiXtendModulesFactory::createPiXtendV2S();
 
     	// startup pixtend interface
-    	// pixtend_.startup();
+    	pixtend_->startup();
 
     	// FIXME: TBD
 
@@ -51,9 +50,10 @@ namespace OpcUaPiXtendServer
 	PiXtendV2SServer::shutdown(void)
     {
     	// shutdown pixtend interface
-    	// pixtend_.shutdown();
+    	pixtend_->shutdown();
 
     	// FIXME: TBD
+
     	return true;
     }
 

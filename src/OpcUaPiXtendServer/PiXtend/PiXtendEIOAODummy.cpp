@@ -22,11 +22,26 @@ namespace OpcUaPiXtendServer
 {
 
     PiXtendEIOAODummy::PiXtendEIOAODummy(void)
+    : PiXtendEIOAO()
     {
     }
 
     PiXtendEIOAODummy::~PiXtendEIOAODummy(void)
     {
+    }
+
+    // Configuration
+
+    bool
+    PiXtendEIOAODummy::startup(uint32_t moduleAddress)
+    {
+        return true;
+    }
+
+    bool
+    PiXtendEIOAODummy::shutdown(void)
+    {
+        return true;
     }
 
     // Inputs Analog

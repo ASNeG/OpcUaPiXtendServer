@@ -30,6 +30,20 @@ namespace OpcUaPiXtendServer
     {
     }
 
+    // Configuration
+
+    bool
+    PiXtendV2SInst::startup(void)
+    {
+        return true;
+    }
+
+    bool
+    PiXtendV2SInst::shutdown(void)
+    {
+        return true;
+    }
+
     // Inputs Analog
 
     double

@@ -16,36 +16,47 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#ifndef __OpcUaPiXtendServer_PiXtendV2SServer_h__
-#define __OpcUaPiXtendServer_PiXtendV2SServer_h__
-
-#include <boost/shared_ptr.hpp>
-
-#include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
-#include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
+#include "OpcUaPiXtendServer/OpcUaServer/PiXtendEIOAOServer.h"
 
 namespace OpcUaPiXtendServer
 {
 
-    class PiXtendV2SServer
+    PiXtendEIOAOServer::PiXtendEIOAOServer(void)
     {
-      public:
+    }
 
-    	using SPtr = boost::shared_ptr<PiXtendV2SServer>;
+    PiXtendEIOAOServer::~PiXtendEIOAOServer(void)
+    {
+    }
 
-        PiXtendV2SServer(void);
-        ~PiXtendV2SServer(void);
+    bool
+	PiXtendEIOAOServer::startup(
+		const std::string& instanceName,
+		const OpcUaStackCore::OpcUaNodeId& parentNodeId
+	)
+    {
+        uint32_t moduleAddress = 0;
 
-        bool startup(
-            const std::string& instanceName,
-			const OpcUaStackCore::OpcUaNodeId& parentNodeId
-		);
-        bool shutdown(void);
+    	// get pixtend v2s access interface
+    	pixtend_ = PiXtendModulesFactory::createPiXtendEIOAO();
 
-      private:
-        PiXtendV2S::SPtr pixtend_ = nullptr;
-    };
+    	// startup pixtend interface
+    	pixtend_->startup(moduleAddress);
+
+    	// FIXME: TBD
+
+    	return true;
+    }
+
+    bool
+	PiXtendEIOAOServer::shutdown(void)
+    {
+    	// shutdown pixtend interface
+    	pixtend_->shutdown();
+
+    	// FIXME: TBD
+
+    	return true;
+    }
 
 }
-
-#endif

@@ -22,11 +22,26 @@ namespace OpcUaPiXtendServer
 {
 
     PiXtendV2LInst::PiXtendV2LInst(void)
+    : PiXtendV2L()
     {
     }
 
     PiXtendV2LInst::~PiXtendV2LInst(void)
     {
+    }
+
+    // Configuration
+
+    bool
+    PiXtendV2LInst::startup(void)
+    {
+        return true;
+    }
+
+    bool
+    PiXtendV2LInst::shutdown(void)
+    {
+        return true;
     }
 
     // Inputs Analog

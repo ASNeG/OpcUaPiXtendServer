@@ -16,8 +16,8 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#ifndef __OpcUaPiXtendServer_PiXtendV2SServer_h__
-#define __OpcUaPiXtendServer_PiXtendV2SServer_h__
+#ifndef __OpcUaPiXtendServer_PiXtendEIOAOServer_h__
+#define __OpcUaPiXtendServer_PiXtendEIOAOServer_h__
 
 #include <boost/shared_ptr.hpp>
 
@@ -27,14 +27,14 @@
 namespace OpcUaPiXtendServer
 {
 
-    class PiXtendV2SServer
+    class PiXtendEIOAOServer
     {
       public:
 
-    	using SPtr = boost::shared_ptr<PiXtendV2SServer>;
+    	using SPtr = boost::shared_ptr<PiXtendEIOAOServer>;
 
-        PiXtendV2SServer(void);
-        ~PiXtendV2SServer(void);
+        PiXtendEIOAOServer(void);
+        ~PiXtendEIOAOServer(void);
 
         bool startup(
             const std::string& instanceName,
@@ -43,7 +43,7 @@ namespace OpcUaPiXtendServer
         bool shutdown(void);
 
       private:
-        PiXtendV2S::SPtr pixtend_ = nullptr;
+        PiXtendEIOAO::SPtr pixtend_ = nullptr;
     };
 
 }
