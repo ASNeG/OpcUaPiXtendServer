@@ -142,11 +142,11 @@ namespace OpcUaPiXtendServer
 			obj
 		);
 		if (!createObjectInstance.query(applicationServiceIf_)) {
-			Log(Error, "create can object response error (query)");
+			Log(Error, "create PiXtendV2S object response error (query)");
 			return false;
 		}
 		if (createObjectInstance.resultCode() != Success) {
-			Log(Error, "create can object response error (result code)")
+			Log(Error, "create PiXtendV2S object response error (result code)")
 			    .parameter("ResultCode", createObjectInstance.resultCode());
 			return false;
 		}
