@@ -78,9 +78,12 @@ namespace OpcUaPiXtendServer
 
 		// FIXME: add configured objects
 		// FIXME: The following lines are test code
-		PiXtendV2SServer v2s;
-		v2s.startup(
+		PiXtendV2SServer::SPtr v2s = boost::make_shared<PiXtendV2SServer>();
+		v2s->startup(
+			applicationServiceIf_,
 			"PiXtendV2S",
+			namespaceName_,
+			namespaceIndex_,
 			piXtendRootNodeId_
 		);
 
