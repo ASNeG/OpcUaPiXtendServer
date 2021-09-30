@@ -16,12 +16,12 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#ifndef __OpcUaPiXtendServer_PiXtendModules_h__
-#define __OpcUaPiXtendServer_PiXtendModules_h__
+#ifndef __OpcUaPiXtendServer_PiXtendModulesFactory_h__
+#define __OpcUaPiXtendServer_PiXtendModulesFactory_h__
 
+#include <boost/shared_ptr.hpp>
 #include <string>
 #include <functional>
-#include <memory>
 
 #ifdef OPCUAPIXTENDSERVER_MODUL_V2S_DUMMY
     #include "OpcUaPiXtendServer/PiXtend/PiXtendV2SDummy.h"
@@ -51,27 +51,18 @@
 namespace OpcUaPiXtendServer
 {
 
-    class PiXtendModules
+    class PiXtendModulesFactory
     {
       public:
-        PiXtendModules(void);
-        virtual ~PiXtendModules(void);
+        using SPtr = boost::shared_ptr<PiXtendModulesFactory>;
 
+        PiXtendModulesFactory(void);
+        virtual ~PiXtendModulesFactory(void);
 
-        // FIXME:
-        // - von Digital/Analog Modul kann es mehrere Instanzen geben!.
-        // - wahrscheinlich braucht jedes Modul noch eine startup und eine shutdown Funktion
-        //
-
-        PiXtendV2S::SPtr getPiXtendV2S(void);
-        std::shared_ptr<PiXtendV2L> getPiXtendV2L(void);
-        std::shared_ptr<PiXtendEIOAO> getPiXtendV2EIOAO(uint32_t modulAddress);
-        std::shared_ptr<PiXtendEIODO> getPiXtendV2EIODO(uint32_t modulAddress);
-
-      private:
-        std::shared_ptr<PiXtendV2L> pixtendV2LSPtr_;
-        std::shared_ptr<PiXtendEIOAO> pixtendEIOAOSPtr_;
-        std::shared_ptr<PiXtendEIODO> pixtendEIODOSPtr_;
+        static PiXtendV2S::SPtr createPiXtendV2S(void);
+        static PiXtendV2L::SPtr createPiXtendV2L(void);
+        static PiXtendEIOAO::SPtr createPiXtendEIOAO(void);
+        static PiXtendEIODO::SPtr createPiXtendEIODO(void);
     };
 
 }

@@ -20,7 +20,7 @@
 #define __OpcUaPiXtendServer_PiXtendV2LDummy_h__
 
 #include <unordered_map>
-
+#include <boost/shared_ptr.hpp>
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2L.h"
 
 namespace OpcUaPiXtendServer
@@ -30,8 +30,15 @@ namespace OpcUaPiXtendServer
     : public PiXtendV2L
     {
       public:
+        using SPtr = boost::shared_ptr<PiXtendV2LDummy>;
+
         PiXtendV2LDummy(void);
-        ~PiXtendV2LDummy(void);
+        virtual ~PiXtendV2LDummy(void);
+
+        // Configuration
+
+        virtual bool startup(void) override;
+        virtual bool shutdown(void) override;
 
         // Inputs Analog
 

@@ -20,7 +20,7 @@
 #define __OpcUaPiXtendServer_PiXtendEIODODummy_h__
 
 #include <unordered_map>
-
+#include <boost/shared_ptr.hpp>
 #include "OpcUaPiXtendServer/PiXtend/PiXtendEIODO.h"
 
 namespace OpcUaPiXtendServer
@@ -30,8 +30,15 @@ namespace OpcUaPiXtendServer
     : public PiXtendEIODO
     {
       public:
+        using SPtr = boost::shared_ptr<PiXtendEIODODummy>;
+
         PiXtendEIODODummy(void);
-        ~PiXtendEIODODummy(void);
+        virtual ~PiXtendEIODODummy(void);
+
+        // Configuration
+
+        virtual bool startup(uint32_t moduleAddress) override;
+        virtual bool shutdown(void) override;
 
         // Inputs Digital
 

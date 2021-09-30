@@ -19,8 +19,9 @@
 #ifndef __OpcUaPiXtendServer_PiXtendEIODO_h__
 #define __OpcUaPiXtendServer_PiXtendEIODO_h__
 
-#include <string>
+#include <boost/shared_ptr.hpp>
 #include <functional>
+#include <stdint.h>
 
 namespace OpcUaPiXtendServer
 {
@@ -28,8 +29,15 @@ namespace OpcUaPiXtendServer
     class PiXtendEIODO
     {
       public:
+        using SPtr = boost::shared_ptr<PiXtendEIODO>;
+
         PiXtendEIODO(void);
         virtual ~PiXtendEIODO(void);
+
+        // Configuration
+
+        virtual bool startup(uint32_t moduleAddress) = 0;
+        virtual bool shutdown(void) = 0;
 
         // Inputs Digital
 

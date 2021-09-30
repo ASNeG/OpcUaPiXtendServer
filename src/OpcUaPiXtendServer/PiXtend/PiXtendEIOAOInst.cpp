@@ -22,11 +22,26 @@ namespace OpcUaPiXtendServer
 {
 
     PiXtendEIOAOInst::PiXtendEIOAOInst(void)
+    : PiXtendEIOAO()
     {
     }
 
     PiXtendEIOAOInst::~PiXtendEIOAOInst(void)
     {
+    }
+
+    // Configuration
+
+    bool
+    PiXtendEIOAOInst::startup(uint32_t moduleAddress)
+    {
+        return true;
+    }
+
+    bool
+    PiXtendEIOAOInst::shutdown(void)
+    {
+        return true;
     }
 
     // Inputs Analog
