@@ -53,6 +53,17 @@ add_library(
 
 file(
     GLOB 
+    OpcUaPiXtendServer_PiXtendTool_SRC 
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Tools/PiXtendTool*.cpp
+)
+
+add_library(
+    PiXtendTool STATIC
+    ${OpcUaPiXtendServer_PiXtendTool_SRC}
+)
+
+file(
+    GLOB 
     OpcUaPiXtendServer_SRC 
     ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Library/*.cpp
     ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/OpcUaServer/*.cpp
@@ -81,6 +92,7 @@ add_executable(
 
 target_link_libraries(
     pixtend
+    PiXtendTool
     PiXtendAccess
     ${Boost_LIBRARIES}
 ) 
