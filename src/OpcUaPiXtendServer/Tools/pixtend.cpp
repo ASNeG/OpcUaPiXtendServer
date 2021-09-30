@@ -17,7 +17,7 @@
    Autor: Samuel Huebl (Samuel@huebl-sgh.de)
 
    Usage:
-   pixtend <Module> <Pin> <Operation>
+   pixtend <Module> <Pin> <Operation> <Optional>
 
        Module:      [V2L | V2S | DO | AO]
        Pin:         D0, ...
@@ -26,6 +26,8 @@
        D-Value:     on | off
        A-Value:     double
 
+       Optional:    [MA]
+       MA:          ModuleAddress for eIO Digtial/Analog One
  */
 
 #include <boost/program_options.hpp>
@@ -42,7 +44,17 @@
 #include "OpcUaPiXtendServer/Tools/PiXtendToolModuleEIOAO.h"
 #include "OpcUaPiXtendServer/Tools/PiXtendToolModuleEIODO.h"
 
+
 using namespace OpcUaPiXtendServer;
+
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+//
+// Functions: tracing
+//
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
 
 void traceResultRead(const std::string& pin, std::string msg)
 {
@@ -59,18 +71,66 @@ void traceStatus(std::string msg)
     std::cout << "STATUS " << msg << std::endl;
 }
 
-void readPin(std::string& pin, double aValue)
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+//
+// Functions: read pin
+//
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+
+void handleReadResult(std::string& pin, double aValue)
 {
     traceResultRead(pin, std::to_string(aValue));
 }
 
-void readPin(std::string& pin, bool dValue)
+void handleReadResult(std::string& pin, bool dValue)
 {
     traceResultRead(pin, std::to_string(dValue));
 }
 
-bool handleModule(PiXtendToolModule::SPtr moduleSPtr,
-        std::string& strPin, std::string& operation,
+bool handlePinRead(PiXtendToolModule::SPtr moduleSPtr,
+        std::string& strPin, Pins pin)
+{
+    if (moduleSPtr == nullptr)
+    {
+        traceStatus("module is empty!");
+        return false;
+    }
+
+    PiXtendToolReadStruct result;
+    if (!moduleSPtr->readPin(pin, result))
+    {
+        traceStatus("unknown pin!");
+        return false;
+    }
+
+    if (result.aValue.first)
+    {
+        handleReadResult(strPin, result.aValue.second);
+    }
+    else if (result.dValue.first)
+    {
+        handleReadResult(strPin, result.dValue.second);
+    }
+    else
+    {
+        traceStatus("cannot read/find pin!");
+        return false;
+    }
+    return true;
+}
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+//
+// Functions: write pin
+//
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+
+bool handlePinWrite(PiXtendToolModule::SPtr moduleSPtr,
+        std::string& strPin, Pins pin,
         DValue& dValue, AValue& aValue)
 {
     if (moduleSPtr == nullptr)
@@ -79,6 +139,44 @@ bool handleModule(PiXtendToolModule::SPtr moduleSPtr,
         return false;
     }
 
+    if (dValue.first)
+    {
+        if (!moduleSPtr->writeDigitalPin(pin, dValue))
+        {
+            traceStatus("unknown pin for dValue!");
+            return false;
+        }
+    }
+    else if (aValue.first)
+    {
+        if (!moduleSPtr->writeAnalogPin(pin, aValue))
+        {
+            traceStatus("unknown pin for aValue!");
+            return false;
+        }
+    }
+    else
+    {
+        traceStatus("undefined dValue/aValue");
+        return false;
+    }
+
+    traceResultWrite(strPin, "successfully");
+    return true;
+}
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+//
+// Functions: module and operation handling
+//
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+
+bool handleModuleOperation(PiXtendToolModule::SPtr moduleSPtr,
+        std::string& strPin, std::string& operation,
+        DValue& dValue, AValue& aValue)
+{
     Pins pin;
     if (!PiXtendToolConfig::mapInputPin(strPin, pin))
     {
@@ -88,59 +186,69 @@ bool handleModule(PiXtendToolModule::SPtr moduleSPtr,
 
     if (operation == operationRead)
     {
-        PiXtendToolReadStruct result;
-        if (!moduleSPtr->readPin(pin, result))
-        {
-            traceStatus("unknown pin!");
-            return false;
-        }
-
-        if (result.aValue.first)
-        {
-            readPin(strPin, result.aValue.second);
-        }
-        else if (result.dValue.first)
-        {
-            readPin(strPin, result.dValue.second);
-        }
-        else
-        {
-            traceStatus("cannot read/find pin!");
-            return false;
-        }
-        return true;
+        return handlePinRead(moduleSPtr, strPin, pin);
     }
     else if (operation == operationWrite)
     {
-        if (dValue.first)
+        return handlePinWrite(moduleSPtr, strPin, pin, dValue, aValue);
+    }
+    else
+    {
+        traceStatus("undefined operation");
+        return false;
+    }
+}
+
+bool handleModule(std::string& module, ModuleAddress& moduleAddress,
+        std::string& strPin, std::string& operation,
+        DValue& dValue, AValue& aValue)
+{
+    PiXtendToolModule::SPtr moduleSPtr = nullptr;
+
+    if (module == piXtendModule_V2S)
+    {
+        moduleSPtr = boost::make_shared<PiXtendToolModuleV2S>();
+    }
+    else if (module == piXtendModule_V2L)
+    {
+        moduleSPtr = boost::make_shared<PiXtendToolModuleV2L>();
+    }
+    else if (module == piXtendModule_EIOAO)
+    {
+        if (!moduleAddress.first)
         {
-            if (!moduleSPtr->writeDigitalPin(pin, dValue))
-            {
-                traceStatus("unknown pin for dValue!");
-                return false;
-            }
-        }
-        else if (aValue.first)
-        {
-            if (!moduleSPtr->writeAnalogPin(pin, aValue))
-            {
-                traceStatus("unknown pin for aValue!");
-                return false;
-            }
-        }
-        else
-        {
-            traceStatus("undefined dValue/aValue");
+            traceStatus("module is an eIO module and requires a moduleAddress!");
             return false;
         }
 
-        traceResultWrite(strPin, "successfully");
-        return true;
+        moduleSPtr = boost::make_shared<PiXtendToolModuleEIOAO>(moduleAddress);
+    }
+    else if (module == piXtendModule_EIODO)
+    {
+        if (!moduleAddress.first)
+        {
+            traceStatus("module is an eIO module and requires a moduleAddress!");
+            return false;
+        }
+
+        moduleSPtr = boost::make_shared<PiXtendToolModuleEIODO>(moduleAddress);
+    }
+    else
+    {
+        traceStatus("undefined module");
+        return false;
     }
 
-    traceStatus("undefined operation");
-    return false;
+    return handleModuleOperation(moduleSPtr, strPin, operation, dValue, aValue);
 }
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+//
+// Function: main
+//
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
 
 int main(int argc, char** argv)
 {
@@ -152,13 +260,15 @@ int main(int argc, char** argv)
         ("pin,p", boost::program_options::value<std::string>()->required(), "name of the pin [D01 | ... | A01 | ...]")
         ("operation,o", boost::program_options::value<std::string>()->required(), "[read | write [D-Value | A-Value]]")
         ("d-value,d", boost::program_options::value<std::string>(), "D-Value [on | off]")
-        ("a-value,a", boost::program_options::value<double>(), "A-Value [double]");
+        ("a-value,a", boost::program_options::value<double>(), "A-Value [double]")
+        ("moduleAddress,i", boost::program_options::value<uint32_t>(), "ModuleAddress for eIO modules [uInteger]");
 
     std::string module {""};
     std::string pin {""};
     std::string operation {""};
-    AValue aValue;
-    DValue dValue;
+    AValue aValue; // optional
+    DValue dValue; // optional
+    ModuleAddress moduleAddress; // optional
 
     // parse commend line options
     boost::program_options::variables_map vm;
@@ -211,6 +321,11 @@ int main(int argc, char** argv)
             }
         }
 
+        if (vm.count("moduleAddress"))
+        {
+            moduleAddress = { true, vm["moduleAddress"].as<uint32_t>() };
+        }
+
         boost::program_options::notify(vm);
     }
     catch (std::exception& e)
@@ -219,31 +334,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    PiXtendToolModule::SPtr moduleSPtr = nullptr;
-    if (module == piXtendModule_V2S)
-    {
-        moduleSPtr = boost::make_shared<PiXtendToolModuleV2S>();
-    }
-    else if (module == piXtendModule_V2L)
-    {
-        moduleSPtr = boost::make_shared<PiXtendToolModuleV2L>();
-    }
-    else if (module == piXtendModule_EIOAO)
-    {
-        moduleSPtr = boost::make_shared<PiXtendToolModuleEIOAO>();
-    }
-    else if (module == piXtendModule_EIODO)
-    {
-        moduleSPtr = boost::make_shared<PiXtendToolModuleEIODO>();
-    }
-    else
-    {
-        traceStatus("undefined module");
-        std::cout << desc << std::endl;
-        return 1;
-    }
-
-    if (!handleModule(moduleSPtr, pin, operation, dValue, aValue))
+    if (!handleModule(module, moduleAddress, pin, operation, dValue, aValue))
     {
         std::cout << desc << std::endl;
         return 1;

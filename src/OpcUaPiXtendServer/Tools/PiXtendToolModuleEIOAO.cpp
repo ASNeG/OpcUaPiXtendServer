@@ -20,14 +20,14 @@
 
 namespace OpcUaPiXtendServer
 {
-    PiXtendToolModuleEIOAO::PiXtendToolModuleEIOAO(void)
+    PiXtendToolModuleEIOAO::PiXtendToolModuleEIOAO(ModuleAddress moduleAddress)
     : PiXtendToolModule()
     {
         pixtendSPtr_ = PiXtendModulesFactory::createPiXtendEIOAO();
 
-        if (pixtendSPtr_ != nullptr)
+        if (pixtendSPtr_ != nullptr && moduleAddress.first)
         {
-            pixtendSPtr_->startup(0); // FIXME: handle moduleAddress
+            pixtendSPtr_->startup(moduleAddress.second);
         }
     }
 

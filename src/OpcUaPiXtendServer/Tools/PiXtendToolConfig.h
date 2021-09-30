@@ -26,6 +26,7 @@ namespace OpcUaPiXtendServer
 
     using DValue = std::pair<bool /*exists*/, bool /*value*/>;
     using AValue = std::pair<bool /*exists*/, double /*value*/>;
+    using ModuleAddress = std::pair<bool /*exists*/, uint32_t /*value*/>;
 
     struct PiXtendToolReadStruct
     {

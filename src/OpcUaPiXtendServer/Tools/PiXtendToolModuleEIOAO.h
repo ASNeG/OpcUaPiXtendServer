@@ -31,7 +31,7 @@ namespace OpcUaPiXtendServer
       public:
         using SPtr = boost::shared_ptr<PiXtendToolModuleEIOAO>;
 
-        PiXtendToolModuleEIOAO(void);
+        PiXtendToolModuleEIOAO(ModuleAddress moduleAddress);
         virtual ~PiXtendToolModuleEIOAO(void);
 
         virtual bool readPin(Pins pin, PiXtendToolReadStruct& result) override;
