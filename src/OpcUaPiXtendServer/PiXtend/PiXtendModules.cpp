@@ -16,6 +16,7 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
+#include <boost/make_shared.hpp>
 #include "OpcUaPiXtendServer/PiXtend/PiXtendModules.h"
 
 namespace OpcUaPiXtendServer
@@ -23,11 +24,7 @@ namespace OpcUaPiXtendServer
 
     PiXtendModules::PiXtendModules(void)
     {
-#ifdef OPCUAPIXTENDSERVER_MODUL_V2S_DUMMY
-        pixtendV2SSPtr_ = std::make_shared<PiXtendV2SDummy>();
-#else
-        pixtendV2SSPtr_ = std::make_shared<PiXtendV2SInst>();
-#endif
+
 
 #ifdef OPCUAPIXTENDSERVER_MODUL_V2L_DUMMY
         pixtendV2LSPtr_ = std::make_shared<PiXtendV2LDummy>();
@@ -52,10 +49,14 @@ namespace OpcUaPiXtendServer
     {
     }
 
-    std::shared_ptr<PiXtendV2S>
+    PiXtendV2S::SPtr
     PiXtendModules::getPiXtendV2S(void)
     {
-        return pixtendV2SSPtr_;
+#ifdef OPCUAPIXTENDSERVER_MODUL_V2S_DUMMY
+        return boost::make_shared<PiXtendV2SDummy>();
+#else
+        return boost::make_shared<PiXtendV2SInst>();
+#endif
     }
 
     std::shared_ptr<PiXtendV2L>
@@ -65,13 +66,13 @@ namespace OpcUaPiXtendServer
     }
 
     std::shared_ptr<PiXtendEIOAO>
-    PiXtendModules::getPiXtendV2EIOAO(void)
+    PiXtendModules::getPiXtendV2EIOAO(uint32_t modulAddress)
     {
         return pixtendEIOAOSPtr_;
     }
 
     std::shared_ptr<PiXtendEIODO>
-    PiXtendModules::getPiXtendV2EIODO(void)
+    PiXtendModules::getPiXtendV2EIODO(uint32_t modulAddress)
     {
         return pixtendEIODOSPtr_;
     }

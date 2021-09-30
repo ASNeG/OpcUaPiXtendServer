@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8.9)
 project	(OpcUaPiXtendServer)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 
 # ----------------------------------------------------------------------------

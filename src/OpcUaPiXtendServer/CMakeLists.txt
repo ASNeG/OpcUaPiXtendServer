@@ -42,8 +42,20 @@ include_directories(
 
 file(
     GLOB 
+    OpcUaPiXtendServer_PiXtendAccess_SRC 
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/*.cpp
+)
+
+add_library(
+    PiXtendAccess STATIC
+    ${OpcUaPiXtendServer_PiXtendAccess_SRC}
+)
+
+file(
+    GLOB 
     OpcUaPiXtendServer_SRC 
     ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Library/*.cpp
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/OpcUaServer/*.cpp
 )
 
 add_library(
@@ -54,6 +66,7 @@ add_library(
 target_link_libraries(
     OpcUaPiXtendServer
     ${pthread}
+    PiXtendAccess
     ${OPCUASTACK_LIBRARY_CORE}
     ${OPCUASTACK_LIBRARY_CLIENT}
     ${OPCUASTACK_LIBRARY_SERVER}
@@ -61,27 +74,16 @@ target_link_libraries(
     ${Boost_LIBRARIES}
 )
 
-file(
-    GLOB 
-    OpcUaPiXtendServer_PiXtendLib_SRC 
-    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/*.cpp
-)
-
-add_library(
-    PiXtendLib STATIC
-    ${OpcUaPiXtendServer_PiXtendLib_SRC}
-)
-
 add_executable( 
     pixtend
-    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/pixtend.cpp
-) 
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Tools/pixtend.cpp
+)
 
 target_link_libraries(
     pixtend
-    PiXtendLib
+    PiXtendAccess
     ${Boost_LIBRARIES}
-)
+) 
 
 if (WIN32)
     target_link_libraries(OpcUaPiXtendServer wsock32 ws2_32)
@@ -136,7 +138,6 @@ endif ()
 
 file (GLOB CONFIG_FILES ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Config/*.xml)
 install(TARGETS OpcUaPiXtendServer DESTINATION ${INSTALL_PREFIX}/lib)
-install(TARGETS PiXtendLib DESTINATION ${INSTALL_PREFIX}/lib)
 install(TARGETS pixtend DESTINATION ${INSTALL_PREFIX}/bin)
 
 if (WIN32)
