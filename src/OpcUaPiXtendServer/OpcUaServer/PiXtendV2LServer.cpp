@@ -169,10 +169,10 @@ namespace OpcUaPiXtendServer
     PiXtendV2LServer::createObjectInstance(void)
     {
         //
-        // create v2s object instance in opc ua information model
+        // create V2L object instance in opc ua information model
         //
         objectTypeNamespaceName(namespaceName_);
-        objectTypeNodeId(OpcUaNodeId(1002, namespaceIndex_));
+        objectTypeNodeId(OpcUaNodeId(1003, namespaceIndex_));
         Object::SPtr obj = shared_from_this();
         CreateObjectInstance createObjectInstance(
             namespaceName_,                                 // namespace name of the object instance
@@ -182,11 +182,11 @@ namespace OpcUaPiXtendServer
             obj
         );
         if (!createObjectInstance.query(applicationServiceIf_)) {
-            Log(Error, "create PiXtendV2S object response error (query)");
+            Log(Error, "create PiXtendV2L object response error (query)");
             return false;
         }
         if (createObjectInstance.resultCode() != Success) {
-            Log(Error, "create PiXtendV2S object response error (result code)")
+            Log(Error, "create PiXtendV2L object response error (result code)")
                 .parameter("ResultCode", createObjectInstance.resultCode());
             return false;
         }
