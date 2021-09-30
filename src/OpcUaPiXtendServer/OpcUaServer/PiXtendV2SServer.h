@@ -30,8 +30,8 @@ namespace OpcUaPiXtendServer
 {
 
     class PiXtendV2SServer
-    : public OpcUaStackServer::ObjectBase,
-	  public boost::enable_shared_from_this<PiXtendV2SServer>
+    : public OpcUaStackServer::ObjectBase
+	, public boost::enable_shared_from_this<PiXtendV2SServer>
     {
       public:
 

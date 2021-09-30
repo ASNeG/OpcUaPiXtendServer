@@ -20,14 +20,18 @@
 #define __OpcUaPiXtendServer_PiXtendEIOAOServer_h__
 
 #include <boost/shared_ptr.hpp>
-
-#include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
+#include <boost/enable_shared_from_this.hpp>
 #include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
+#include "OpcUaStackServer/Application/ApplicationIf.h"
+#include "OpcUaStackServer/StandardObjectType/ObjectBase.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
 
 namespace OpcUaPiXtendServer
 {
 
     class PiXtendEIOAOServer
+    : public OpcUaStackServer::ObjectBase
+    , public boost::enable_shared_from_this<PiXtendEIOAOServer>
     {
       public:
 
@@ -37,13 +41,24 @@ namespace OpcUaPiXtendServer
         ~PiXtendEIOAOServer(void);
 
         bool startup(
+            OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
             const std::string& instanceName,
-			const OpcUaStackCore::OpcUaNodeId& parentNodeId
-		);
+            const std::string& namespaceName,
+            uint16_t namespaceIndex,
+            const OpcUaStackCore::OpcUaNodeId& parentNodeId,
+            uint32_t moduleAddress
+        );
         bool shutdown(void);
 
       private:
+        OpcUaStackServer::ApplicationServiceIf* applicationServiceIf_ = nullptr;
+        std::string namespaceName_ = "";
+        uint16_t namespaceIndex_ = 0;
         PiXtendEIOAO::SPtr pixtend_ = nullptr;
+        std::string instanceName_ = "";
+        OpcUaStackCore::OpcUaNodeId parentNodeId_;
+
+        bool createObjectInstance(void);
     };
 
 }
