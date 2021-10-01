@@ -24,6 +24,7 @@
 
 #define V2S_DO_RF(PIN) BASE_DO_RF(PiXtendV2S, PIN)
 #define V2S_DO_WF(PIN) BASE_DO_WF(PiXtendV2S, PIN)
+#define V2S_DI_RF(PIN) BASE_DI_RF(PiXtendV2S, PIN)
 
 namespace OpcUaPiXtendServer
 {

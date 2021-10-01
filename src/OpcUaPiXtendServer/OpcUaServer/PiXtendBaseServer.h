@@ -28,6 +28,7 @@
 
 #define BASE_DO_RF(CLASS, PIN) boost::bind(static_cast<bool (CLASS::*)(void)>(&CLASS::PIN) , pixtend_.get())
 #define BASE_DO_WF(CLASS, PIN) boost::bind(static_cast<void (CLASS::*)(bool)>(&CLASS::PIN) , pixtend_.get(), _1)
+#define BASE_DI_RF(CLASS, PIN) boost::bind(static_cast<bool (CLASS::*)(void)>(&CLASS::PIN) , pixtend_.get())
 
 namespace OpcUaPiXtendServer
 {
@@ -39,6 +40,13 @@ namespace OpcUaPiXtendServer
        	std::string nodeName_;
 		NodeContextDigitalIO::ReadFunc readFunc_;
 		NodeContextDigitalIO::WriteFunc writeFunc_;
+	};
+	class DIConfig {
+	  public:
+		using Vec = std::vector<DIConfig>;
+
+       	std::string nodeName_;
+		NodeContextDigitalIO::ReadFunc readFunc_;
 	};
 
     class PiXtendBaseServer
@@ -74,6 +82,7 @@ namespace OpcUaPiXtendServer
         OpcUaStackCore::OpcUaNodeId parentNodeId_;
 
         DOConfig::Vec dOConfigVec_;
+        DIConfig::Vec dIConfigVec_;
 
         virtual bool handleStartup(void) = 0;
         virtual bool handleShutdown(void) = 0;
@@ -81,13 +90,19 @@ namespace OpcUaPiXtendServer
         bool createObjectInstance(void);
 
         bool createNodeContext(
-        	const DOConfig::Vec& d0configVec
+        	const DOConfig::Vec& dOconfigVec,
+			const DIConfig::Vec& dIconfigVec
 		);
         bool createNodeContextDigitalIO(
         	OpcUaStackServer::ServerVariable::SPtr& serverVariable,
         	const std::string& nodeName,
 			NodeContextDigitalIO::ReadFunc readFunc,
 			NodeContextDigitalIO::WriteFunc writeFunc
+		);
+        bool createNodeContextDigitalIO(
+        	OpcUaStackServer::ServerVariable::SPtr& serverVariable,
+        	const std::string& nodeName,
+			NodeContextDigitalIO::ReadFunc readFunc
 		);
 
       private:

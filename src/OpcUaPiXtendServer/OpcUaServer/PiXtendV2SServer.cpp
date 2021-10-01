@@ -29,24 +29,6 @@ namespace OpcUaPiXtendServer
     {
     	ServerVariable::SPtr serverVariable;
 
-    	// register digital input variables
-    	serverVariable = boost::make_shared<ServerVariable>("DI_DI0_Variable");
-    	serverVariables().registerServerVariable(serverVariable);
-		serverVariable = boost::make_shared<ServerVariable>("DI_DI1_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-		serverVariable = boost::make_shared<ServerVariable>("DI_DI2_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-		serverVariable = boost::make_shared<ServerVariable>("DI_DI3_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-		serverVariable = boost::make_shared<ServerVariable>("DI_DI4_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-		serverVariable = boost::make_shared<ServerVariable>("DI_DI5_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-		serverVariable = boost::make_shared<ServerVariable>("DI_DI6_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-		serverVariable = boost::make_shared<ServerVariable>("DI_DI7_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-
 		// register analog input variables
 		serverVariable = boost::make_shared<ServerVariable>("AI_AI0_Variable");
 		serverVariables().registerServerVariable(serverVariable);
@@ -83,6 +65,18 @@ namespace OpcUaPiXtendServer
             {"RELAY_RELAY1_Variable", V2S_DO_RF(relay1), V2S_DO_WF(relay1)},
             {"RELAY_RELAY2_Variable", V2S_DO_RF(relay2), V2S_DO_WF(relay2)},
             {"RELAY_RELAY3_Variable", V2S_DO_RF(relay3), V2S_DO_WF(relay3)}
+        };
+
+        // set digital input configuration
+        dIConfigVec_ = {
+            {"DI_DI0_Variable", V2S_DI_RF(di0)},
+            {"DI_DI1_Variable", V2S_DI_RF(di1)},
+            {"DI_DI2_Variable", V2S_DI_RF(di2)},
+            {"DI_DI3_Variable", V2S_DI_RF(di3)},
+	        {"DI_DI4_Variable", V2S_DI_RF(di4)},
+	        {"DI_DI5_Variable", V2S_DI_RF(di5)},
+	        {"DI_DI6_Variable", V2S_DI_RF(di6)},
+	        {"DI_DI7_Variable", V2S_DI_RF(di7)}
         };
 
     	return true;
