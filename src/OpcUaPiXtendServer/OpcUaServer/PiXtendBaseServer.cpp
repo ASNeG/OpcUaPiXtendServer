@@ -59,6 +59,9 @@ namespace OpcUaPiXtendServer
     		return false;
     	}
 
+    	// create node context
+    	createNodeContext(dOConfigVec_);
+
     	// create object instance in information model
     	if (!createObjectInstance()) {
     		return false;
@@ -79,30 +82,32 @@ namespace OpcUaPiXtendServer
     }
 
     bool PiXtendBaseServer::createNodeContext(
-    	const DOConfig::Vec& d0configVec
+    	const DOConfig::Vec& dOconfigVec
 	)
     {
-    	for (auto d0Config : d0configVec) {
-    		auto rc = createNodeContext(
-    			d0Config.nodeName_,
-				d0Config.readFunc_,
-				d0Config.writeFunc_
+    	for (auto dOConfig : dOconfigVec) {
+        	// create server variable and register server variable
+           	auto serverVariable = boost::make_shared<ServerVariable>(dOConfig.nodeName_);
+        	serverVariables().registerServerVariable(serverVariable);
+
+    		auto rc = createNodeContextDigitalIO(
+    			serverVariable,
+				dOConfig.nodeName_,
+				dOConfig.readFunc_,
+				dOConfig.writeFunc_
     		);
     	}
     	return true;
     }
 
     bool
-	PiXtendBaseServer::createNodeContext(
+	PiXtendBaseServer::createNodeContextDigitalIO(
+	    ServerVariable::SPtr& serverVariable,
      	const std::string& nodeName,
 		NodeContextDigitalIO::ReadFunc readFunc,
 		NodeContextDigitalIO::WriteFunc writeFunc
 	)
     {
-    	// create server variable and register server variable
-       	auto serverVariable = boost::make_shared<ServerVariable>(nodeName);
-    	serverVariables().registerServerVariable(serverVariable);
-
     	// create node context
     	auto nodeContext = boost::make_shared<NodeContextDigitalIO>();
     	nodeContext->setReadFunc(readFunc);

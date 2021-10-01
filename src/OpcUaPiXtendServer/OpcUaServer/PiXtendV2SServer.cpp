@@ -21,8 +21,6 @@
 using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
 
-
-
 namespace OpcUaPiXtendServer
 {
 
@@ -72,26 +70,20 @@ namespace OpcUaPiXtendServer
     	// get pixtend v2s access interface
     	pixtend_ = PiXtendModulesFactory::createPiXtendV2S();
 
-    	// create node context for digital output pins
-    	createNodeContext({
-    		{"DO_DO0_Variable", V2S_DO_RF(do0), V2S_DO_WF(do0)},
-    		{"DO_DO1_Variable", V2S_DO_RF(do1), V2S_DO_WF(do1)},
-    		{"DO_DO2_Variable", V2S_DO_RF(do2), V2S_DO_WF(do2)},
-    		{"DO_DO3_Variable", V2S_DO_RF(do3), V2S_DO_WF(do3)},
-			{"RELAY_RELAY0_Variable", V2S_DO_RF(relay0), V2S_DO_WF(relay0)},
-			{"RELAY_RELAY1_Variable", V2S_DO_RF(relay1), V2S_DO_WF(relay1)},
-			{"RELAY_RELAY2_Variable", V2S_DO_RF(relay2), V2S_DO_WF(relay2)},
-			{"RELAY_RELAY3_Variable", V2S_DO_RF(relay3), V2S_DO_WF(relay3)}
-    	});
+       	// startup pixtend interface
+        pixtend_->startup();
 
-    	// startup pixtend interface
-    	pixtend_->startup();
-
-    	// create object instance in information model
-    	if (!createObjectInstance()) {
-    		return false;
-    	}
-
+        // set digital output configuration
+        dOConfigVec_ = {
+            {"DO_DO0_Variable", V2S_DO_RF(do0), V2S_DO_WF(do0)},
+            {"DO_DO1_Variable", V2S_DO_RF(do1), V2S_DO_WF(do1)},
+            {"DO_DO2_Variable", V2S_DO_RF(do2), V2S_DO_WF(do2)},
+            {"DO_DO3_Variable", V2S_DO_RF(do3), V2S_DO_WF(do3)},
+            {"RELAY_RELAY0_Variable", V2S_DO_RF(relay0), V2S_DO_WF(relay0)},
+            {"RELAY_RELAY1_Variable", V2S_DO_RF(relay1), V2S_DO_WF(relay1)},
+            {"RELAY_RELAY2_Variable", V2S_DO_RF(relay2), V2S_DO_WF(relay2)},
+            {"RELAY_RELAY3_Variable", V2S_DO_RF(relay3), V2S_DO_WF(relay3)}
+        };
 
     	return true;
     }

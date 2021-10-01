@@ -36,7 +36,7 @@ namespace OpcUaPiXtendServer
 	  public:
 		using Vec = std::vector<DOConfig>;
 
-       	const std::string& nodeName_;
+       	std::string nodeName_;
 		NodeContextDigitalIO::ReadFunc readFunc_;
 		NodeContextDigitalIO::WriteFunc writeFunc_;
 	};
@@ -73,6 +73,8 @@ namespace OpcUaPiXtendServer
         std::string instanceName_ = "";
         OpcUaStackCore::OpcUaNodeId parentNodeId_;
 
+        DOConfig::Vec dOConfigVec_;
+
         virtual bool handleStartup(void) = 0;
         virtual bool handleShutdown(void) = 0;
 
@@ -81,7 +83,8 @@ namespace OpcUaPiXtendServer
         bool createNodeContext(
         	const DOConfig::Vec& d0configVec
 		);
-        bool createNodeContext(
+        bool createNodeContextDigitalIO(
+        	OpcUaStackServer::ServerVariable::SPtr& serverVariable,
         	const std::string& nodeName,
 			NodeContextDigitalIO::ReadFunc readFunc,
 			NodeContextDigitalIO::WriteFunc writeFunc
