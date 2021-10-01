@@ -21,6 +21,9 @@
 #include "OpcUaStackServer/ServiceSetApplication/CreateNodeInstance.h"
 #include "OpcUaPiXtendServer/Library/PiXtendServer.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2SServer.h"
+#include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2LServer.h"
+#include "OpcUaPiXtendServer/OpcUaServer/PiXtendEIODOServer.h"
+#include "OpcUaPiXtendServer/OpcUaServer/PiXtendEIOAOServer.h"
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
@@ -78,13 +81,60 @@ namespace OpcUaPiXtendServer
 
 		// FIXME: add configured objects
 		// FIXME: The following lines are test code
-		PiXtendV2SServer::SPtr v2s = boost::make_shared<PiXtendV2SServer>();
+		auto v2s = boost::make_shared<PiXtendV2SServer>();
 		v2s->startup(
 			applicationServiceIf_,
 			"PiXtendV2S",
 			namespaceName_,
 			namespaceIndex_,
 			piXtendRootNodeId_
+		);
+
+		auto v2l = boost::make_shared<PiXtendV2LServer>();
+		v2l->startup(
+			applicationServiceIf_,
+			"PiXtendV2L",
+			namespaceName_,
+			namespaceIndex_,
+			piXtendRootNodeId_
+		);
+
+		auto eioDO1 = boost::make_shared<PiXtendEIODOServer>();
+		eioDO1->startup(
+			applicationServiceIf_,
+			"DigitalOne-1",
+			namespaceName_,
+			namespaceIndex_,
+			piXtendRootNodeId_,
+			0x11
+		);
+		auto eioDO2 = boost::make_shared<PiXtendEIODOServer>();
+		eioDO2->startup(
+			applicationServiceIf_,
+			"DigitalOne-2",
+			namespaceName_,
+			namespaceIndex_,
+			piXtendRootNodeId_,
+			0x12
+		);
+
+		auto eioAO1 = boost::make_shared<PiXtendEIOAOServer>();
+		eioAO1->startup(
+			applicationServiceIf_,
+			"AnalogOne-1",
+			namespaceName_,
+			namespaceIndex_,
+			piXtendRootNodeId_,
+			0x13
+		);
+		auto eioAO2 = boost::make_shared<PiXtendEIOAOServer>();
+		eioAO2->startup(
+			applicationServiceIf_,
+			"AnalogOne-2",
+			namespaceName_,
+			namespaceIndex_,
+			piXtendRootNodeId_,
+			0x14
 		);
 
 		return true;
@@ -94,6 +144,8 @@ namespace OpcUaPiXtendServer
 	PiXtendServer::shutdown(void)
 	{
 		Log(Debug, "PiXtendServer::shutdown");
+
+		// FIXME: TBD
 
 		return true;
 	}
