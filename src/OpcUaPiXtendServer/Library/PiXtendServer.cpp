@@ -19,19 +19,15 @@
 #include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaStackServer/ServiceSetApplication/GetNamespaceInfo.h"
 #include "OpcUaStackServer/ServiceSetApplication/CreateNodeInstance.h"
+
 #include "OpcUaPiXtendServer/Library/PiXtendServer.h"
-#include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2SServer.h"
-#include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2LServer.h"
-#include "OpcUaPiXtendServer/OpcUaServer/PiXtendEIODOServer.h"
-#include "OpcUaPiXtendServer/OpcUaServer/PiXtendEIOAOServer.h"
+
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
 
 namespace OpcUaPiXtendServer
 {
-
-
 
 	// ------------------------------------------------------------------------
 	// ------------------------------------------------------------------------
@@ -65,77 +61,72 @@ namespace OpcUaPiXtendServer
 		applicationInfo_ = applicationInfo;
 
 		// parse pixtend configuration
-		// FIXME: TBD
+        // parse controller configuration
+        PiXtendServerControllerCfg controllerCfg;
+        if (!controllerCfg.parse(&config))
+        {
+            Log(Error, "parse controller configuration error")
+                .parameter("File", config.configFileName());
+            return false;
+        }
 
 		// find namespace
-		if (!findNamespace()) {
+        if (!findNamespace())
+        {
 			Log(Error, "find namespace error");
 			return false;
 		}
 
 		// create pixtend root object in opc ua information model
-		if (!createPiXtendRootObject()) {
+        if (!createPiXtendRootObject())
+        {
 			Log(Error, "create pixtend folder error");
 			return false;
 		}
 
-		// FIXME: add configured objects
-		// FIXME: The following lines are test code
-		auto v2s = boost::make_shared<PiXtendV2SServer>();
-		v2s->startup(
-			applicationServiceIf_,
-			"PiXtendV2S",
-			namespaceName_,
-			namespaceIndex_,
-			piXtendRootNodeId_
-		);
-
-		auto v2l = boost::make_shared<PiXtendV2LServer>();
-		v2l->startup(
-			applicationServiceIf_,
-			"PiXtendV2L",
-			namespaceName_,
-			namespaceIndex_,
-			piXtendRootNodeId_
-		);
-
-		auto eioDO1 = boost::make_shared<PiXtendEIODOServer>();
-		eioDO1->startup(
-			applicationServiceIf_,
-			"DigitalOne-1",
-			namespaceName_,
-			namespaceIndex_,
-			piXtendRootNodeId_,
-			0x11
-		);
-		auto eioDO2 = boost::make_shared<PiXtendEIODOServer>();
-		eioDO2->startup(
-			applicationServiceIf_,
-			"DigitalOne-2",
-			namespaceName_,
-			namespaceIndex_,
-			piXtendRootNodeId_,
-			0x12
-		);
-
-		auto eioAO1 = boost::make_shared<PiXtendEIOAOServer>();
-		eioAO1->startup(
-			applicationServiceIf_,
-			"AnalogOne-1",
-			namespaceName_,
-			namespaceIndex_,
-			piXtendRootNodeId_,
-			0x13
-		);
-		auto eioAO2 = boost::make_shared<PiXtendEIOAOServer>();
-		eioAO2->startup(
-			applicationServiceIf_,
-			"AnalogOne-2",
-			namespaceName_,
-			namespaceIndex_,
-			piXtendRootNodeId_,
-			0x14
-		);
+        // add configured objects
+        auto modules = controllerCfg.configModules();
+        for (auto module: modules)
+        {
+            if (module.moduleType() == ServerModule::V2S)
+            {
+                if (!createSeverModuleV2S(module.moduleName()))
+                {
+                    Log(Error, "cannot create v2s module");
+                    return false;
+                }
+            }
+            else if (module.moduleType() == ServerModule::V2L)
+            {
+                if (!createServerModuleV2L(module.moduleName()))
+                {
+                    Log(Error, "cannot create v2l module");
+                    return false;
+                }
+            }
+            else if (module.moduleType() == ServerModule::AO)
+            {
+                if (!createServerModuleEIOAO(module.moduleName(), module.moduleAddress()))
+                {
+                    Log(Error, "cannot create ao module");
+                    return false;
+                }
+            }
+            else if (module.moduleType() == ServerModule::DO)
+            {
+                if (!createServerModuleEIODO(module.moduleName(), module.moduleAddress()))
+                {
+                    Log(Error, "cannot create do module");
+                    return false;
+                }
+            }
+            else
+            {
+                Log(Error, "found undefined type in control configuration!")
+                        .parameter("Name", module.moduleName());
+                return false;
+            }
+        }
 
 		return true;
 	}
@@ -162,7 +153,7 @@ namespace OpcUaPiXtendServer
 			return false;
 		}
 
-		namespaceIndex_ = getNamespaceInfo.getNamespaceIndex(namespaceName_);
+        namespaceIndex_ = getNamespaceInfo.getNamespaceIndex(namespaceName_); // FIXME: cast from int32 to uint16!!
 		if (namespaceIndex_ == -1) {
 			Log(Error, "get namesapce index error")
 				.parameter("NamespaceName", namespaceName_);
@@ -194,4 +185,87 @@ namespace OpcUaPiXtendServer
 		return true;
 	}
 
+    bool
+    PiXtendServer::createSeverModuleV2S(std::string name)
+    {
+        if (piXtendV2SServer_ != nullptr)
+        {
+            Log(Error, "pixtend module v2s already exists!")
+                .parameter("Name", name);
+            return false;
+        }
+
+        piXtendV2SServer_ = boost::make_shared<PiXtendV2SServer>();
+        return piXtendV2SServer_->startup(
+            applicationServiceIf_,
+            name,
+            namespaceName_,
+            namespaceIndex_,
+            piXtendRootNodeId_
+        );
+    }
+
+    bool
+    PiXtendServer::createServerModuleV2L(std::string name)
+    {
+        if (piXtendV2LServer_ != nullptr)
+        {
+            Log(Error, "pixtend module v2l already exists!")
+                .parameter("Name", name);
+            return false;
+        }
+
+        piXtendV2LServer_ = boost::make_shared<PiXtendV2LServer>();
+        return piXtendV2LServer_->startup(
+            applicationServiceIf_,
+            name,
+            namespaceName_,
+            namespaceIndex_,
+            piXtendRootNodeId_
+        );
+    }
+
+    bool
+    PiXtendServer::createServerModuleEIOAO(std::string name, uint32_t address)
+    {
+        if (piXtendEIOAOServerMap_.find(address) != piXtendEIOAOServerMap_.end())
+        {
+            Log(Error, "pixtend module eIO AO already exists!")
+                .parameter("Name", name)
+                .parameter("Address", address);
+            return false;
+        }
+
+        piXtendEIOAOServerMap_[address] = boost::make_shared<PiXtendEIOAOServer>();
+        return piXtendEIOAOServerMap_[address]->startup(
+            applicationServiceIf_,
+            name,
+            namespaceName_,
+            namespaceIndex_,
+            piXtendRootNodeId_,
+            address
+        );
+    }
+
+    bool
+    PiXtendServer::createServerModuleEIODO(std::string name, uint32_t address)
+    {
+        if (piXtendEIODOServerMap_.find(address) != piXtendEIODOServerMap_.end())
+        {
+            Log(Error, "pixtend module eIO DO already exists!")
+                .parameter("Name", name)
+                .parameter("Address", address);
+            return false;
+        }
+
+        piXtendEIODOServerMap_[address] = boost::make_shared<PiXtendEIODOServer>();
+        return piXtendEIODOServerMap_[address]->startup(
+            applicationServiceIf_,
+            name,
+            namespaceName_,
+            namespaceIndex_,
+            piXtendRootNodeId_,
+            address
+        );
+    }
 }

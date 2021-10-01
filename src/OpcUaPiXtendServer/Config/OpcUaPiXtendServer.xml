@@ -22,24 +22,24 @@
     <Modules>
         <Module>
             <Name>PiXtendV2S</Name>
-            <Type>PiXtendV2S</Type>
+            <Type>V2S</Type>
         </Module>
         
         <Module>
             <Name>DIO-1</Name>
-            <Type>DIO</Type>
+            <Type>DO</Type>
             <Address>0x01</Address>
         </Module>
         
         <Module>
           <Name>DIO-2</Name>
-          <Type>DIO</Type>
-          <Address>0x01</Address>
+          <Type>DO</Type>
+          <Address>0x02</Address>
         </Module>
         
         <Module>
           <Name>AIO-1</Name>
-          <Type>AIO</Type>
+          <Type>AO</Type>
           <Address>0x01</Address>
         </Module>
     </Modules>
