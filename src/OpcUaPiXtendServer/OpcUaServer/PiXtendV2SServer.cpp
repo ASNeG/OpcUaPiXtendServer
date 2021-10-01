@@ -16,23 +16,24 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#include "OpcUaStackCore/BuildInTypes/OpcUaIdentifier.h"
-#include "OpcUaStackServer/ServiceSetApplication/CreateObjectInstance.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2SServer.h"
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
 
+
+
 namespace OpcUaPiXtendServer
 {
 
     PiXtendV2SServer::PiXtendV2SServer(void)
+    : PiXtendBaseServer("PiXtendV2S", 1002)
     {
     	ServerVariable::SPtr serverVariable;
 
     	// register digital input variables
     	serverVariable = boost::make_shared<ServerVariable>("DI_DI0_Variable");
-		serverVariables().registerServerVariable(serverVariable);
+    	serverVariables().registerServerVariable(serverVariable);
 		serverVariable = boost::make_shared<ServerVariable>("DI_DI1_Variable");
 		serverVariables().registerServerVariable(serverVariable);
 		serverVariable = boost::make_shared<ServerVariable>("DI_DI2_Variable");
@@ -46,26 +47,6 @@ namespace OpcUaPiXtendServer
 		serverVariable = boost::make_shared<ServerVariable>("DI_DI6_Variable");
 		serverVariables().registerServerVariable(serverVariable);
 		serverVariable = boost::make_shared<ServerVariable>("DI_DI7_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-
-		// register digital output variables
-		serverVariable = boost::make_shared<ServerVariable>("DO_DO0_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-		serverVariable = boost::make_shared<ServerVariable>("DO_DO1_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-		serverVariable = boost::make_shared<ServerVariable>("DO_DO2_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-		serverVariable = boost::make_shared<ServerVariable>("DO_DO3_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-
-		// register relay variables
-		serverVariable = boost::make_shared<ServerVariable>("RELAY_RELAY0_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-		serverVariable = boost::make_shared<ServerVariable>("RELAY_RELAY1_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-		serverVariable = boost::make_shared<ServerVariable>("RELAY_RELAY2_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-		serverVariable = boost::make_shared<ServerVariable>("RELAY_RELAY3_Variable");
 		serverVariables().registerServerVariable(serverVariable);
 
 		// register analog input variables
@@ -86,22 +67,22 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-	PiXtendV2SServer::startup(
-		OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
-		const std::string& instanceName,
-		const std::string& namespaceName,
-		uint16_t namespaceIndex,
-		const OpcUaStackCore::OpcUaNodeId& parentNodeId
-	)
+	PiXtendV2SServer::handleStartup(void)
     {
-    	applicationServiceIf_ = applicationServiceIf;
-    	instanceName_ = instanceName;
-    	namespaceName_ = namespaceName;
-    	namespaceIndex_ = namespaceIndex;
-    	parentNodeId_ = parentNodeId;
-
     	// get pixtend v2s access interface
     	pixtend_ = PiXtendModulesFactory::createPiXtendV2S();
+
+    	// create node context for digital output pins
+    	createNodeContext({
+    		{"DO_DO0_Variable", V2S_DO_RF(do0), V2S_DO_WF(do0)},
+    		{"DO_DO1_Variable", V2S_DO_RF(do1), V2S_DO_WF(do1)},
+    		{"DO_DO2_Variable", V2S_DO_RF(do2), V2S_DO_WF(do2)},
+    		{"DO_DO3_Variable", V2S_DO_RF(do3), V2S_DO_WF(do3)},
+			{"RELAY_RELAY0_Variable", V2S_DO_RF(relay0), V2S_DO_WF(relay0)},
+			{"RELAY_RELAY1_Variable", V2S_DO_RF(relay1), V2S_DO_WF(relay1)},
+			{"RELAY_RELAY2_Variable", V2S_DO_RF(relay2), V2S_DO_WF(relay2)},
+			{"RELAY_RELAY3_Variable", V2S_DO_RF(relay3), V2S_DO_WF(relay3)}
+    	});
 
     	// startup pixtend interface
     	pixtend_->startup();
@@ -111,47 +92,17 @@ namespace OpcUaPiXtendServer
     		return false;
     	}
 
+
     	return true;
     }
 
     bool
-	PiXtendV2SServer::shutdown(void)
+	PiXtendV2SServer::handleShutdown(void)
     {
     	// shutdown pixtend interface
     	pixtend_->shutdown();
-
-    	// FIXME: TBD
-
-    	return true;
-    }
-
-    bool
-	PiXtendV2SServer::createObjectInstance(void)
-    {
-   		//
-		// create v2s object instance in opc ua information model
-		//
-		objectTypeNamespaceName(namespaceName_);
-		objectTypeNodeId(OpcUaNodeId(1002, namespaceIndex_));
-		Object::SPtr obj = shared_from_this();
-		CreateObjectInstance createObjectInstance(
-			namespaceName_,									// namespace name of the object instance
-			OpcUaLocalizedText("", instanceName_),			// display name of the object instance
-			parentNodeId_,									// parent node of the object instance
-			OpcUaNodeId(OpcUaId_Organizes),					// reference type between object and variable instance
-			obj
-		);
-		if (!createObjectInstance.query(applicationServiceIf_)) {
-			Log(Error, "create PiXtendV2S object response error (query)");
-			return false;
-		}
-		if (createObjectInstance.resultCode() != Success) {
-			Log(Error, "create PiXtendV2S object response error (result code)")
-			    .parameter("ResultCode", createObjectInstance.resultCode());
-			return false;
-		}
+    	pixtend_.reset();
 
     	return true;
     }
-
 }

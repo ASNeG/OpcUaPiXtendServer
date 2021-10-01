@@ -19,19 +19,17 @@
 #ifndef __OpcUaPiXtendServer_PiXtendV2SServer_h__
 #define __OpcUaPiXtendServer_PiXtendV2SServer_h__
 
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
-#include "OpcUaStackServer/Application/ApplicationIf.h"
-#include "OpcUaStackServer/StandardObjectType/ObjectBase.h"
+#include "OpcUaPiXtendServer/OpcUaServer/PiXtendBaseServer.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
+
+#define V2S_DO_RF(PIN) BASE_DO_RF(PiXtendV2S, PIN)
+#define V2S_DO_WF(PIN) BASE_DO_WF(PiXtendV2S, PIN)
 
 namespace OpcUaPiXtendServer
 {
 
     class PiXtendV2SServer
-    : public OpcUaStackServer::ObjectBase
-	, public boost::enable_shared_from_this<PiXtendV2SServer>
+    : public PiXtendBaseServer
     {
       public:
 
@@ -40,24 +38,11 @@ namespace OpcUaPiXtendServer
         PiXtendV2SServer(void);
         ~PiXtendV2SServer(void);
 
-        bool startup(
-        	OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
-            const std::string& instanceName,
-			const std::string& namespaceName,
-			uint16_t namespaceIndex,
-			const OpcUaStackCore::OpcUaNodeId& parentNodeId
-		);
-        bool shutdown(void);
+        virtual bool handleStartup(void) override;
+        virtual bool handleShutdown(void) override;
 
       private:
-        OpcUaStackServer::ApplicationServiceIf* applicationServiceIf_ = nullptr;
-        std::string namespaceName_ = "";
-        uint16_t namespaceIndex_ = 0;
         PiXtendV2S::SPtr pixtend_ = nullptr;
-        std::string instanceName_ = "";
-        OpcUaStackCore::OpcUaNodeId parentNodeId_;
-
-        bool createObjectInstance(void);
     };
 
 }
