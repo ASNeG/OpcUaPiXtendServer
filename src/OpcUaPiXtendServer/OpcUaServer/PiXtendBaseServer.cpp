@@ -185,9 +185,6 @@ namespace OpcUaPiXtendServer
 		NodeContextDigitalIO::ReadFunc readFunc
 	)
     {
-    	// FIXME: test functions
-    	readFunc();
-
     	// create node context
     	auto nodeContext = boost::make_shared<NodeContextDigitalIO>();
     	nodeContext->setReadFunc(readFunc);
@@ -206,10 +203,6 @@ namespace OpcUaPiXtendServer
     		auto applicationContext = variable->applicationContext();
     		if (applicationContext.get() == nullptr) continue;
     		auto nodeContext = boost::static_pointer_cast<NodeContext>(applicationContext);
-
-    	   	// FIXME: test functions
-    		auto xx = boost::static_pointer_cast<NodeContextDigitalIO>(applicationContext);
-    	    xx->getReadFunc()();
 
     		switch (nodeContext->contextType())
     		{
