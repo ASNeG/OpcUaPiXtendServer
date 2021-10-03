@@ -27,98 +27,8 @@ namespace OpcUaPiXtendServer
 {
 
     PiXtendV2LServer::PiXtendV2LServer(void)
+    : PiXtendBaseServer("PiXtendV2L", 1002)
     {
-        ServerVariable::SPtr serverVariable;
-
-        // register digital input variables
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI0_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI1_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI2_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI3_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI4_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI5_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI6_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI7_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI8_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI9_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI10_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI11_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI12_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI13_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI14_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI15_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-
-        // register digital output variables
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO0_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO1_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO2_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO3_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO4_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO5_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO6_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO7_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO8_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO9_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO10_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO11_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-
-        // register relay variables
-        serverVariable = boost::make_shared<ServerVariable>("RELAY_RELAY0_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("RELAY_RELAY1_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("RELAY_RELAY2_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("RELAY_RELAY3_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-
-        // register analog input variables
-        serverVariable = boost::make_shared<ServerVariable>("AI_AI0_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AI_AI1_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AI_AI2_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AI_AI3_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AI_AI4_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AI_AI5_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-
-        // register analog output variables
-        serverVariable = boost::make_shared<ServerVariable>("AO_AO0_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AO_AO1_Variable");
-        serverVariables().registerServerVariable(serverVariable);
     }
 
     PiXtendV2LServer::~PiXtendV2LServer(void)
@@ -126,72 +36,81 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-    PiXtendV2LServer::startup(
-        OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
-        const std::string& instanceName,
-        const std::string& namespaceName,
-        uint16_t namespaceIndex,
-        const OpcUaStackCore::OpcUaNodeId& parentNodeId
-    )
+	PiXtendV2LServer::handleStartup(void)
     {
-        applicationServiceIf_ = applicationServiceIf;
-        instanceName_ = instanceName;
-        namespaceName_ = namespaceName;
-        namespaceIndex_ = namespaceIndex;
-        parentNodeId_ = parentNodeId;
+    	// get pixtend v2l access interface
+    	pixtend_ = PiXtendModulesFactory::createPiXtendV2L();
 
-        // get pixtend v2l access interface
-        pixtend_ = PiXtendModulesFactory::createPiXtendV2L();
-
-        // startup pixtend interface
+       	// startup pixtend interface
         pixtend_->startup();
 
-        // create object instance in information model
-        if (!createObjectInstance()) {
-            return false;
-        }
+        // set digital output configuration
+        dOConfigVec_ = {
+            {"DO_DO0_Variable", V2L_DO_RF(do0), V2L_DO_WF(do0)},
+            {"DO_DO1_Variable", V2L_DO_RF(do1), V2L_DO_WF(do1)},
+            {"DO_DO2_Variable", V2L_DO_RF(do2), V2L_DO_WF(do2)},
+            {"DO_DO3_Variable", V2L_DO_RF(do3), V2L_DO_WF(do3)},
+			{"DO_DO4_Variable", V2L_DO_RF(do4), V2L_DO_WF(do4)},
+			{"DO_DO5_Variable", V2L_DO_RF(do5), V2L_DO_WF(do5)},
+			{"DO_DO6_Variable", V2L_DO_RF(do6), V2L_DO_WF(do6)},
+			{"DO_DO7_Variable", V2L_DO_RF(do7), V2L_DO_WF(do7)},
+			{"DO_DO8_Variable", V2L_DO_RF(do8), V2L_DO_WF(do8)},
+			{"DO_DO9_Variable", V2L_DO_RF(do9), V2L_DO_WF(do9)},
+			{"DO_DO10_Variable", V2L_DO_RF(do10), V2L_DO_WF(do10)},
+			{"DO_DO11_Variable", V2L_DO_RF(do11), V2L_DO_WF(do11)},
+            {"RELAY_RELAY0_Variable", V2L_DO_RF(relay0), V2L_DO_WF(relay0)},
+            {"RELAY_RELAY1_Variable", V2L_DO_RF(relay1), V2L_DO_WF(relay1)},
+            {"RELAY_RELAY2_Variable", V2L_DO_RF(relay2), V2L_DO_WF(relay2)},
+            {"RELAY_RELAY3_Variable", V2L_DO_RF(relay3), V2L_DO_WF(relay3)}
+        };
 
-        return true;
-    }
+        // set digital input configuration
+        dIConfigVec_ = {
+            {"DI_DI0_Variable", V2L_DI_RF(di0)},
+            {"DI_DI1_Variable", V2L_DI_RF(di1)},
+            {"DI_DI2_Variable", V2L_DI_RF(di2)},
+            {"DI_DI3_Variable", V2L_DI_RF(di3)},
+	        {"DI_DI4_Variable", V2L_DI_RF(di4)},
+	        {"DI_DI5_Variable", V2L_DI_RF(di5)},
+	        {"DI_DI6_Variable", V2L_DI_RF(di6)},
+	        {"DI_DI7_Variable", V2L_DI_RF(di7)},
+            {"DI_DI8_Variable", V2L_DI_RF(di8)},
+			{"DI_DI9_Variable", V2L_DI_RF(di9)},
+			{"DI_DI10_Variable", V2L_DI_RF(di10)},
+			{"DI_DI11_Variable", V2L_DI_RF(di11)},
+			{"DI_DI12_Variable", V2L_DI_RF(di12)},
+			{"DI_DI13_Variable", V2L_DI_RF(di13)},
+			{"DI_DI14_Variable", V2L_DI_RF(di14)},
+			{"DI_DI15_Variable", V2L_DI_RF(di15)}
+        };
 
-    bool
-	PiXtendV2LServer::shutdown(void)
-    {
-    	// shutdown pixtend interface
-    	pixtend_->shutdown();
+        // set analog output configuration
+        aOConfigVec_ = {
+            {"AO_AO0_Variable", V2L_AO_RF(ao0), V2L_AO_WF(ao0)},
+            {"AO_AO1_Variable", V2L_AO_RF(ao1), V2L_AO_WF(ao1)}
+        };
 
-    	// FIXME: TBD
+        // set analog input configuration
+        aIConfigVec_ = {
+            {"AI_AI0_Variable", V2L_AI_RF(ai0)},
+            {"AI_AI1_Variable", V2L_AI_RF(ai1)},
+            {"AI_AI2_Variable", V2L_AI_RF(ai2)},
+			{"AI_AI3_Variable", V2L_AI_RF(ai3)},
+			{"AI_AI4_Variable", V2L_AI_RF(ai4)},
+			{"AI_AI5_Variable", V2L_AI_RF(ai5)}
+        };
 
     	return true;
     }
 
     bool
-    PiXtendV2LServer::createObjectInstance(void)
+	PiXtendV2LServer::handleShutdown(void)
     {
-        //
-        // create V2L object instance in opc ua information model
-        //
-        objectTypeNamespaceName(namespaceName_);
-        objectTypeNodeId(OpcUaNodeId(1003, namespaceIndex_));
-        Object::SPtr obj = shared_from_this();
-        CreateObjectInstance createObjectInstance(
-            namespaceName_,                                 // namespace name of the object instance
-            OpcUaLocalizedText("", instanceName_),          // display name of the object instance
-            parentNodeId_,                                  // parent node of the object instance
-            OpcUaNodeId(OpcUaId_Organizes),                 // reference type between object and variable instance
-            obj
-        );
-        if (!createObjectInstance.query(applicationServiceIf_)) {
-            Log(Error, "create PiXtendV2L object response error (query)");
-            return false;
-        }
-        if (createObjectInstance.resultCode() != Success) {
-            Log(Error, "create PiXtendV2L object response error (result code)")
-                .parameter("ResultCode", createObjectInstance.resultCode());
-            return false;
-        }
+    	// shutdown pixtend interface
+    	pixtend_->shutdown();
+    	pixtend_.reset();
 
-        return true;
+    	return true;
     }
 
 }

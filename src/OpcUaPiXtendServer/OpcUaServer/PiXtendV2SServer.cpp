@@ -18,9 +18,6 @@
 
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2SServer.h"
 
-using namespace OpcUaStackCore;
-using namespace OpcUaStackServer;
-
 namespace OpcUaPiXtendServer
 {
 
