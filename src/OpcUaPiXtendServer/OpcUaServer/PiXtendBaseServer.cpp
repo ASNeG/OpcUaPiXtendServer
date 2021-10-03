@@ -65,7 +65,9 @@ namespace OpcUaPiXtendServer
     	// create node context
     	createNodeContext(
     		dOConfigVec_,
-			dIConfigVec_
+			dIConfigVec_,
+			aOConfigVec_,
+			aIConfigVec_
 		);
 
     	// create object instance in information model
@@ -125,7 +127,9 @@ namespace OpcUaPiXtendServer
 
     bool PiXtendBaseServer::createNodeContext(
     	const DOConfig::Vec& dOconfigVec,
-		const DIConfig::Vec& dIconfigVec
+		const DIConfig::Vec& dIconfigVec,
+		const AOConfig::Vec& aOconfigVec,
+		const AIConfig::Vec& aIconfigVec
 	)
     {
     	for (auto dOConfig : dOconfigVec) {
@@ -164,10 +168,6 @@ namespace OpcUaPiXtendServer
 		NodeContextDigitalIO::WriteFunc writeFunc
 	)
     {
-    	// FIXME: test functions
-    	readFunc();
-    	writeFunc(true);
-
     	// create node context
     	auto nodeContext = boost::make_shared<NodeContextDigitalIO>();
     	nodeContext->setReadFunc(readFunc);

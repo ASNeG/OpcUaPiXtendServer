@@ -27,19 +27,6 @@ namespace OpcUaPiXtendServer
     PiXtendV2SServer::PiXtendV2SServer(void)
     : PiXtendBaseServer("PiXtendV2S", 1002)
     {
-    	ServerVariable::SPtr serverVariable;
-
-		// register analog input variables
-		serverVariable = boost::make_shared<ServerVariable>("AI_AI0_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-		serverVariable = boost::make_shared<ServerVariable>("AI_AI1_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-
-		// register analog output variables
-		serverVariable = boost::make_shared<ServerVariable>("AO_AO0_Variable");
-		serverVariables().registerServerVariable(serverVariable);
-		serverVariable = boost::make_shared<ServerVariable>("AO_AO1_Variable");
-		serverVariables().registerServerVariable(serverVariable);
     }
 
     PiXtendV2SServer::~PiXtendV2SServer(void)
@@ -77,6 +64,18 @@ namespace OpcUaPiXtendServer
 	        {"DI_DI5_Variable", V2S_DI_RF(di5)},
 	        {"DI_DI6_Variable", V2S_DI_RF(di6)},
 	        {"DI_DI7_Variable", V2S_DI_RF(di7)}
+        };
+
+        // set analog output configuration
+        aOConfigVec_ = {
+            {"AO_AO0_Variable", V2S_AO_RF(ao0), V2S_AO_WF(ao0)},
+            {"AO_AO1_Variable", V2S_AO_RF(ao1), V2S_AO_WF(ao1)}
+        };
+
+        // set analog input configuration
+        aIConfigVec_ = {
+            {"AI_AI0_Variable", V2S_AI_RF(ai0)},
+            {"AI_AI1_Variable", V2S_AI_RF(ai1)}
         };
 
     	return true;

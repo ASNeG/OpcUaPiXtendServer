@@ -25,10 +25,14 @@
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaStackServer/StandardObjectType/ObjectBase.h"
 #include "OpcUaPiXtendServer/OpcUaServer/NodeContextDigitalIO.h"
+#include "OpcUaPiXtendServer/OpcUaServer/NodeContextAnalogIO.h"
 
 #define BASE_DO_RF(CLASS, PIN) boost::bind(static_cast<bool (CLASS::*)(void)>(&CLASS::PIN) , pixtend_.get())
 #define BASE_DO_WF(CLASS, PIN) boost::bind(static_cast<void (CLASS::*)(bool)>(&CLASS::PIN) , pixtend_.get(), _1)
 #define BASE_DI_RF(CLASS, PIN) boost::bind(static_cast<bool (CLASS::*)(void)>(&CLASS::PIN) , pixtend_.get())
+#define BASE_AO_RF(CLASS, PIN) boost::bind(static_cast<double (CLASS::*)(void)>(&CLASS::PIN) , pixtend_.get())
+#define BASE_AO_WF(CLASS, PIN) boost::bind(static_cast<void (CLASS::*)(double)>(&CLASS::PIN) , pixtend_.get(), _1)
+#define BASE_AI_RF(CLASS, PIN) boost::bind(static_cast<double (CLASS::*)(void)>(&CLASS::PIN) , pixtend_.get())
 
 namespace OpcUaPiXtendServer
 {
@@ -47,6 +51,21 @@ namespace OpcUaPiXtendServer
 
        	std::string nodeName_;
 		NodeContextDigitalIO::ReadFunc readFunc_;
+	};
+	class AOConfig {
+	  public:
+		using Vec = std::vector<AOConfig>;
+
+       	std::string nodeName_;
+		NodeContextAnalogIO::ReadFunc readFunc_;
+		NodeContextAnalogIO::WriteFunc writeFunc_;
+	};
+	class AIConfig {
+	  public:
+		using Vec = std::vector<AIConfig>;
+
+       	std::string nodeName_;
+		NodeContextAnalogIO::ReadFunc readFunc_;
 	};
 
     class PiXtendBaseServer
@@ -83,6 +102,8 @@ namespace OpcUaPiXtendServer
 
         DOConfig::Vec dOConfigVec_;
         DIConfig::Vec dIConfigVec_;
+        AOConfig::Vec aOConfigVec_;
+        AIConfig::Vec aIConfigVec_;
 
         virtual bool handleStartup(void) = 0;
         virtual bool handleShutdown(void) = 0;
@@ -92,7 +113,9 @@ namespace OpcUaPiXtendServer
 
         bool createNodeContext(
         	const DOConfig::Vec& dOconfigVec,
-			const DIConfig::Vec& dIconfigVec
+			const DIConfig::Vec& dIconfigVec,
+        	const AOConfig::Vec& aOconfigVec,
+			const AIConfig::Vec& aIconfigVec
 		);
         bool createNodeContextDigitalIO(
         	OpcUaStackServer::ServerVariable::SPtr& serverVariable,
