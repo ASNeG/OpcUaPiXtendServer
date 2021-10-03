@@ -37,7 +37,7 @@ namespace OpcUaPiXtendServer
     	using SPtr = boost::shared_ptr<PiXtendV2SServer>;
 
         PiXtendV2SServer(void);
-        ~PiXtendV2SServer(void);
+        virtual ~PiXtendV2SServer(void);
 
         virtual bool handleStartup(void) override;
         virtual bool handleShutdown(void) override;

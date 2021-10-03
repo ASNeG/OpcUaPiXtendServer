@@ -87,6 +87,7 @@ namespace OpcUaPiXtendServer
         virtual bool handleStartup(void) = 0;
         virtual bool handleShutdown(void) = 0;
 
+      private:
         bool createObjectInstance(void);
 
         bool createNodeContext(
@@ -105,7 +106,10 @@ namespace OpcUaPiXtendServer
 			NodeContextDigitalIO::ReadFunc readFunc
 		);
 
-      private:
+        bool registerServiceFunctions(void);
+
+        void readDigitalValue(ApplicationReadContext* applicationReadContext);
+        void writeDigitalValue(ApplicationWriteContext* applicationWriteContext);
     };
 
 }

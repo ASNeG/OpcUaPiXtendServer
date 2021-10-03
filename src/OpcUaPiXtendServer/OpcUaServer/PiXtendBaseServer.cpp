@@ -18,7 +18,10 @@
 
 #include "OpcUaStackCore/BuildInTypes/OpcUaIdentifier.h"
 #include "OpcUaStackServer/ServiceSetApplication/CreateObjectInstance.h"
+#include "OpcUaStackServer/ServiceSetApplication/ForwardNodeSync.h"
+#include "OpcUaStackServer/ServiceSetApplication/RegisterForwardNode.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendBaseServer.h"
+#include "OpcUaPiXtendServer/OpcUaServer/NodeContextDigitalIO.h"
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
@@ -70,6 +73,11 @@ namespace OpcUaPiXtendServer
     		return false;
     	}
 
+    	// register opc ua service functions
+    	if (!registerServiceFunctions()) {
+    		return false;
+    	}
+
     	return true;
     }
 
@@ -80,6 +88,37 @@ namespace OpcUaPiXtendServer
     	if (!handleShutdown()) {
     		return false;
     	}
+
+    	return true;
+    }
+
+    bool
+	PiXtendBaseServer::createObjectInstance(void)
+    {
+   		//
+		// create v2s object instance in opc ua information model
+		//
+		objectTypeNamespaceName(namespaceName_);
+		objectTypeNodeId(OpcUaNodeId(typeNodeId_, namespaceIndex_));
+		Object::SPtr obj = shared_from_this();
+		CreateObjectInstance createObjectInstance(
+			namespaceName_,									// namespace name of the object instance
+			OpcUaLocalizedText("", instanceName_),			// display name of the object instance
+			parentNodeId_,									// parent node of the object instance
+			OpcUaNodeId(OpcUaId_Organizes),					// reference type between object and variable instance
+			obj
+		);
+		if (!createObjectInstance.query(applicationServiceIf_)) {
+			Log(Error, "create object response error (query)")
+				.parameter("TypeName", typeName_);
+			return false;
+		}
+		if (createObjectInstance.resultCode() != Success) {
+			Log(Error, "create PiXtendV2S object response error (result code)")
+			    .parameter("ResultCode", createObjectInstance.resultCode())
+				.parameter("TypeName", typeName_);
+			return false;
+		}
 
     	return true;
     }
@@ -125,6 +164,10 @@ namespace OpcUaPiXtendServer
 		NodeContextDigitalIO::WriteFunc writeFunc
 	)
     {
+    	// FIXME: test functions
+    	readFunc();
+    	writeFunc(true);
+
     	// create node context
     	auto nodeContext = boost::make_shared<NodeContextDigitalIO>();
     	nodeContext->setReadFunc(readFunc);
@@ -142,6 +185,9 @@ namespace OpcUaPiXtendServer
 		NodeContextDigitalIO::ReadFunc readFunc
 	)
     {
+    	// FIXME: test functions
+    	readFunc();
+
     	// create node context
     	auto nodeContext = boost::make_shared<NodeContextDigitalIO>();
     	nodeContext->setReadFunc(readFunc);
@@ -151,37 +197,97 @@ namespace OpcUaPiXtendServer
     	return true;
     }
 
-
     bool
-	PiXtendBaseServer::createObjectInstance(void)
+	PiXtendBaseServer::registerServiceFunctions(void)
     {
-   		//
-		// create v2s object instance in opc ua information model
-		//
-		objectTypeNamespaceName(namespaceName_);
-		objectTypeNodeId(OpcUaNodeId(typeNodeId_, namespaceIndex_));
-		Object::SPtr obj = shared_from_this();
-		CreateObjectInstance createObjectInstance(
-			namespaceName_,									// namespace name of the object instance
-			OpcUaLocalizedText("", instanceName_),			// display name of the object instance
-			parentNodeId_,									// parent node of the object instance
-			OpcUaNodeId(OpcUaId_Organizes),					// reference type between object and variable instance
-			obj
-		);
-		if (!createObjectInstance.query(applicationServiceIf_)) {
-			Log(Error, "create object response error (query)")
-				.parameter("TypeName", typeName_);
-			return false;
-		}
-		if (createObjectInstance.resultCode() != Success) {
-			Log(Error, "create PiXtendV2S object response error (result code)")
-			    .parameter("ResultCode", createObjectInstance.resultCode())
-				.parameter("TypeName", typeName_);
-			return false;
-		}
+    	// get nodeids from digital and analog variables
+    	for (auto serverVariable : serverVariables().serverVariableMap()) {
+    		auto variable = serverVariable.second;
+    		auto applicationContext = variable->applicationContext();
+    		if (applicationContext.get() == nullptr) continue;
+    		auto nodeContext = boost::static_pointer_cast<NodeContext>(applicationContext);
+
+    	   	// FIXME: test functions
+    		auto xx = boost::static_pointer_cast<NodeContextDigitalIO>(applicationContext);
+    	    xx->getReadFunc()();
+
+    		switch (nodeContext->contextType())
+    		{
+    			case ContextType::DigitalIO:
+    			{
+    			   	// register service functions for digital variable
+    			    RegisterForwardNode registerForwardNode(variable->nodeId());
+    			    registerForwardNode.addApplicationContext(applicationContext);
+    			    registerForwardNode.setReadCallback(boost::bind(&PiXtendBaseServer::readDigitalValue, this, _1));
+    			    registerForwardNode.setWriteCallback(boost::bind(&PiXtendBaseServer::writeDigitalValue, this, _1));
+    			    if (!registerForwardNode.query(applicationServiceIf_, true)) {
+    			    	Log(Error, "register forward node response error");
+    			    	return false;
+    			    }
+    				break;
+    			}
+    			case ContextType::AnalogIO:
+    			{
+
+    				break;
+    			}
+    		}
+    	}
 
     	return true;
     }
 
+    void
+	PiXtendBaseServer::readDigitalValue(
+    	ApplicationReadContext* applicationReadContext
+	)
+    {
+    	auto applicationContext = applicationReadContext->applicationContext_;
+    	if (!applicationContext) {
+    		applicationReadContext->statusCode_ = BadUnexpectedError;
+    		return;
+    	}
+    	auto nodeContext = boost::static_pointer_cast<NodeContextDigitalIO>(applicationContext);
+
+    	// check if read function exist
+    	if (!nodeContext->existReadFunc()) {
+    		applicationReadContext->statusCode_ = BadUserAccessDenied;
+    		return;
+    	}
+
+    	// read pixtend variable
+    	auto value = nodeContext->getReadFunc()();
+
+    	// write pixtend variabe to opc ua node
+    	OpcUaDataValue dataValue((OpcUaBoolean)value);
+    	dataValue.copyTo(applicationReadContext->dataValue_);
+    	applicationReadContext->statusCode_ = Success;
+    }
+
+    void
+	PiXtendBaseServer::writeDigitalValue(
+		ApplicationWriteContext* applicationWriteContext
+	)
+    {
+       	auto applicationContext = applicationWriteContext->applicationContext_;
+        auto nodeContext = boost::static_pointer_cast<NodeContextDigitalIO>(applicationContext);
+
+        // check if write function exist
+        if (!nodeContext->existWriteFunc()) {
+        	applicationWriteContext->statusCode_ = BadUserAccessDenied;
+        	return;
+        }
+
+        // check type of opc ua variable
+        OpcUaBoolean value;
+        if (!applicationWriteContext->dataValue_.getValue(value)) {
+        	applicationWriteContext->statusCode_ = BadTypeMismatch;
+        	return;
+        }
+
+        // set pixtend variable
+        nodeContext->getWriteFunc()((bool)value);
+        applicationWriteContext->statusCode_ = Success;
+    }
 
 }
