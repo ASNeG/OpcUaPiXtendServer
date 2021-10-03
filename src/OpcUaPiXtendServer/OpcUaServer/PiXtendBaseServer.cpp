@@ -84,7 +84,7 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-	PiXtendBaseServer::handleShutdown(void)
+	PiXtendBaseServer::shutdown(void)
     {
     	// shutdown pixtend interface
     	if (!handleShutdown()) {

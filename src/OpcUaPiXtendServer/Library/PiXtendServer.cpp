@@ -136,7 +136,33 @@ namespace OpcUaPiXtendServer
 	{
 		Log(Debug, "PiXtendServer::shutdown");
 
-		// FIXME: TBD
+		// shutdown V2S server
+		if (piXtendV2SServer_.get() != nullptr) {
+			piXtendV2SServer_->shutdown();
+			piXtendV2SServer_.reset();
+		}
+
+		// shutdown V2L server
+		if (piXtendV2LServer_.get() != nullptr) {
+			piXtendV2LServer_->shutdown();
+			piXtendV2LServer_.reset();
+		}
+
+		// shutdown EIOAO server
+		for (auto element : piXtendEIOAOServerMap_) {
+			auto eIOAO = element.second;
+			eIOAO->shutdown();
+			eIOAO.reset();
+		}
+		piXtendEIOAOServerMap_.clear();
+
+		// shutdown EIODO server
+		for (auto element : piXtendEIODOServerMap_) {
+			auto eIODO = element.second;
+			eIODO->shutdown();
+			eIODO.reset();
+		}
+		piXtendEIODOServerMap_.clear();
 
 		return true;
 	}
