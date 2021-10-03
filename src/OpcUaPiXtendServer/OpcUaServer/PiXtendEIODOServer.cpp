@@ -16,56 +16,15 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#include "OpcUaStackCore/BuildInTypes/OpcUaIdentifier.h"
-#include "OpcUaStackServer/ServiceSetApplication/CreateObjectInstance.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendEIODOServer.h"
-
-using namespace OpcUaStackCore;
-using namespace OpcUaStackServer;
 
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendEIODOServer::PiXtendEIODOServer(void)
+    PiXtendEIODOServer::PiXtendEIODOServer(uint32_t moduleAddress)
+    : PiXtendBaseServer("PiXtendEIODO", 1004)
+    , moduleAddress_(moduleAddress)
     {
-        ServerVariable::SPtr serverVariable;
-
-        // register digital input variables
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI0_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI1_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI2_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI3_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI4_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI5_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI6_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DI_DI7_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-
-        // register digital output variables
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO0_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO1_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO2_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO3_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO4_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO5_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO6_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("DO_DO7_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-
     }
 
     PiXtendEIODOServer::~PiXtendEIODOServer(void)
@@ -73,73 +32,48 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-	PiXtendEIODOServer::startup(
-	    OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
-	    const std::string& instanceName,
-	    const std::string& namespaceName,
-	    uint16_t namespaceIndex,
-	    const OpcUaStackCore::OpcUaNodeId& parentNodeId,
-	    uint32_t moduleAddress
-	)
+	PiXtendEIODOServer::handleStartup(void)
     {
-        applicationServiceIf_ = applicationServiceIf;
-        instanceName_ = instanceName;
-        namespaceName_ = namespaceName;
-        namespaceIndex_ = namespaceIndex;
-        parentNodeId_ = parentNodeId;
-
-    	// get pixtend eIO DO access interface
+    	// get pixtend v2s access interface
     	pixtend_ = PiXtendModulesFactory::createPiXtendEIODO();
 
-    	// startup pixtend interface
-    	pixtend_->startup(moduleAddress);
+       	// startup pixtend interface
+        pixtend_->startup(moduleAddress_);
 
-        // create object instance in information model
-        if (!createObjectInstance()) {
-            return false;
-        }
+        // set digital output configuration
+        dOConfigVec_ = {
+            {"DO_DO0_Variable", EIODO_DO_RF(do0), EIODO_DO_WF(do0)},
+            {"DO_DO1_Variable", EIODO_DO_RF(do1), EIODO_DO_WF(do1)},
+            {"DO_DO2_Variable", EIODO_DO_RF(do2), EIODO_DO_WF(do2)},
+            {"DO_DO3_Variable", EIODO_DO_RF(do3), EIODO_DO_WF(do3)},
+			{"DO_DO4_Variable", EIODO_DO_RF(do4), EIODO_DO_WF(do4)},
+			{"DO_DO5_Variable", EIODO_DO_RF(do5), EIODO_DO_WF(do5)},
+			{"DO_DO6_Variable", EIODO_DO_RF(do6), EIODO_DO_WF(do6)},
+			{"DO_DO7_Variable", EIODO_DO_RF(do7), EIODO_DO_WF(do7)}
+        };
+
+        // set digital input configuration
+        dIConfigVec_ = {
+            {"DI_DI0_Variable", EIODO_DI_RF(di0)},
+            {"DI_DI1_Variable", EIODO_DI_RF(di1)},
+            {"DI_DI2_Variable", EIODO_DI_RF(di2)},
+            {"DI_DI3_Variable", EIODO_DI_RF(di3)},
+	        {"DI_DI4_Variable", EIODO_DI_RF(di4)},
+	        {"DI_DI5_Variable", EIODO_DI_RF(di5)},
+	        {"DI_DI6_Variable", EIODO_DI_RF(di6)},
+	        {"DI_DI7_Variable", EIODO_DI_RF(di7)}
+        };
 
     	return true;
     }
 
     bool
-	PiXtendEIODOServer::shutdown(void)
+	PiXtendEIODOServer::handleShutdown(void)
     {
     	// shutdown pixtend interface
     	pixtend_->shutdown();
-
-    	// FIXME: TBD
+    	pixtend_.reset();
 
     	return true;
     }
-
-    bool
-    PiXtendEIODOServer::createObjectInstance(void)
-    {
-        //
-        // create EIODO object instance in opc ua information model
-        //
-        objectTypeNamespaceName(namespaceName_);
-        objectTypeNodeId(OpcUaNodeId(1004, namespaceIndex_));
-        Object::SPtr obj = shared_from_this();
-        CreateObjectInstance createObjectInstance(
-            namespaceName_,                                 // namespace name of the object instance
-            OpcUaLocalizedText("", instanceName_),          // display name of the object instance
-            parentNodeId_,                                  // parent node of the object instance
-            OpcUaNodeId(OpcUaId_Organizes),                 // reference type between object and variable instance
-            obj
-        );
-        if (!createObjectInstance.query(applicationServiceIf_)) {
-            Log(Error, "create PiXtendEIODO object response error (query)");
-            return false;
-        }
-        if (createObjectInstance.resultCode() != Success) {
-            Log(Error, "create PiXtendEIODO object response error (result code)")
-                .parameter("ResultCode", createObjectInstance.resultCode());
-            return false;
-        }
-
-        return true;
-    }
-
 }

@@ -258,14 +258,13 @@ namespace OpcUaPiXtendServer
             return false;
         }
 
-        piXtendEIODOServerMap_[address] = boost::make_shared<PiXtendEIODOServer>();
+        piXtendEIODOServerMap_[address] = boost::make_shared<PiXtendEIODOServer>(address);
         return piXtendEIODOServerMap_[address]->startup(
             applicationServiceIf_,
             name,
             namespaceName_,
             namespaceIndex_,
-            piXtendRootNodeId_,
-            address
+            piXtendRootNodeId_
         );
     }
 }
