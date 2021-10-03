@@ -16,51 +16,15 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#include "OpcUaStackCore/BuildInTypes/OpcUaIdentifier.h"
-#include "OpcUaStackServer/ServiceSetApplication/CreateObjectInstance.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendEIOAOServer.h"
-
-using namespace OpcUaStackCore;
-using namespace OpcUaStackServer;
 
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendEIOAOServer::PiXtendEIOAOServer(void)
+    PiXtendEIOAOServer::PiXtendEIOAOServer(uint32_t moduleAddress)
+    : PiXtendBaseServer("PiXtendEIOAO", 1005)
+    , moduleAddress_(moduleAddress)
     {
-        ServerVariable::SPtr serverVariable;
-
-        // register analog input variables
-        serverVariable = boost::make_shared<ServerVariable>("AI_AI0_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AI_AI1_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AI_AI2_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AI_AI3_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AI_AI4_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AI_AI5_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AI_AI6_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AI_AI7_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-
-        // register analog output variables
-        serverVariable = boost::make_shared<ServerVariable>("AO_AO0_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AO_AO1_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AO_AO2_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AO_AO3_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AO_AO4_Variable");
-        serverVariables().registerServerVariable(serverVariable);
-        serverVariable = boost::make_shared<ServerVariable>("AO_AO5_Variable");
-        serverVariables().registerServerVariable(serverVariable);
     }
 
     PiXtendEIOAOServer::~PiXtendEIOAOServer(void)
@@ -68,73 +32,46 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-	PiXtendEIOAOServer::startup(
-	    OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
-	    const std::string& instanceName,
-	    const std::string& namespaceName,
-	    uint16_t namespaceIndex,
-	    const OpcUaStackCore::OpcUaNodeId& parentNodeId,
-	    uint32_t moduleAddress
-	)
+	PiXtendEIOAOServer::handleStartup(void)
     {
-        applicationServiceIf_ = applicationServiceIf;
-        instanceName_ = instanceName;
-        namespaceName_ = namespaceName;
-        namespaceIndex_ = namespaceIndex;
-        parentNodeId_ = parentNodeId;
-
-    	// get pixtend eIO AO access interface
+    	// get pixtend v2s access interface
     	pixtend_ = PiXtendModulesFactory::createPiXtendEIOAO();
 
-    	// startup pixtend interface
-    	pixtend_->startup(moduleAddress);
+       	// startup pixtend interface
+        pixtend_->startup(moduleAddress_);
 
-        // create object instance in information model
-        if (!createObjectInstance()) {
-            return false;
-        }
+        // set analog output configuration
+        aOConfigVec_ = {
+            {"AO_AO0_Variable", EIOAO_AO_RF(ao0), EIOAO_AO_WF(ao0)},
+            {"AO_AO1_Variable", EIOAO_AO_RF(ao1), EIOAO_AO_WF(ao1)},
+			{"AO_AO2_Variable", EIOAO_AO_RF(ao2), EIOAO_AO_WF(ao2)},
+			{"AO_AO3_Variable", EIOAO_AO_RF(ao3), EIOAO_AO_WF(ao3)},
+			{"AO_AO4_Variable", EIOAO_AO_RF(ao4), EIOAO_AO_WF(ao4)},
+			{"AO_AO5_Variable", EIOAO_AO_RF(ao5), EIOAO_AO_WF(ao5)}
+        };
 
-        return true;
-    }
-
-    bool
-	PiXtendEIOAOServer::shutdown(void)
-    {
-    	// shutdown pixtend interface
-    	pixtend_->shutdown();
-
-    	// FIXME: TBD
-
+        // set analog input configuration
+        aIConfigVec_ = {
+            {"AI_AI0_Variable", EIOAO_AI_RF(ai0)},
+            {"AI_AI1_Variable", EIOAO_AI_RF(ai1)},
+			{"AI_AI2_Variable", EIOAO_AI_RF(ai2)},
+			{"AI_AI3_Variable", EIOAO_AI_RF(ai3)},
+			{"AI_AI4_Variable", EIOAO_AI_RF(ai4)},
+			{"AI_AI5_Variable", EIOAO_AI_RF(ai5)},
+			{"AI_AI6_Variable", EIOAO_AI_RF(ai6)},
+			{"AI_AI7_Variable", EIOAO_AI_RF(ai7)}
+        };
     	return true;
     }
 
     bool
-    PiXtendEIOAOServer::createObjectInstance(void)
+	PiXtendEIOAOServer::handleShutdown(void)
     {
-        //
-        // create EIOAO object instance in opc ua information model
-        //
-        objectTypeNamespaceName(namespaceName_);
-        objectTypeNodeId(OpcUaNodeId(1005, namespaceIndex_));
-        Object::SPtr obj = shared_from_this();
-        CreateObjectInstance createObjectInstance(
-            namespaceName_,                                 // namespace name of the object instance
-            OpcUaLocalizedText("", instanceName_),          // display name of the object instance
-            parentNodeId_,                                  // parent node of the object instance
-            OpcUaNodeId(OpcUaId_Organizes),                 // reference type between object and variable instance
-            obj
-        );
-        if (!createObjectInstance.query(applicationServiceIf_)) {
-            Log(Error, "create PiXtendEIOAO object response error (query)");
-            return false;
-        }
-        if (createObjectInstance.resultCode() != Success) {
-            Log(Error, "create PiXtendEIOAO object response error (result code)")
-                .parameter("ResultCode", createObjectInstance.resultCode());
-            return false;
-        }
+    	// shutdown pixtend interface
+    	pixtend_->shutdown();
+    	pixtend_.reset();
 
-        return true;
+    	return true;
     }
 
 }

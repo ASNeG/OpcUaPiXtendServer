@@ -25,9 +25,6 @@
 #define EIODO_DO_RF(PIN) BASE_DO_RF(PiXtendEIODO, PIN)
 #define EIODO_DO_WF(PIN) BASE_DO_WF(PiXtendEIODO, PIN)
 #define EIODO_DI_RF(PIN) BASE_DI_RF(PiXtendEIODO, PIN)
-#define EIODO_AO_RF(PIN) BASE_AO_RF(PiXtendEIODO, PIN)
-#define EIODO_AO_WF(PIN) BASE_AO_WF(PiXtendEIODO, PIN)
-#define EIODO_AI_RF(PIN) BASE_AI_RF(PiXtendEIODO, PIN)
 
 namespace OpcUaPiXtendServer
 {

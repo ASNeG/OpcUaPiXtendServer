@@ -19,46 +19,32 @@
 #ifndef __OpcUaPiXtendServer_PiXtendEIOAOServer_h__
 #define __OpcUaPiXtendServer_PiXtendEIOAOServer_h__
 
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
-#include "OpcUaStackServer/Application/ApplicationIf.h"
-#include "OpcUaStackServer/StandardObjectType/ObjectBase.h"
+#include "OpcUaPiXtendServer/OpcUaServer/PiXtendBaseServer.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
+
+#define EIOAO_AO_RF(PIN) BASE_AO_RF(PiXtendEIOAO, PIN)
+#define EIOAO_AO_WF(PIN) BASE_AO_WF(PiXtendEIOAO, PIN)
+#define EIOAO_AI_RF(PIN) BASE_AI_RF(PiXtendEIOAO, PIN)
 
 namespace OpcUaPiXtendServer
 {
 
     class PiXtendEIOAOServer
-    : public OpcUaStackServer::ObjectBase
-    , public boost::enable_shared_from_this<PiXtendEIOAOServer>
+    : public PiXtendBaseServer
     {
       public:
 
-    	using SPtr = boost::shared_ptr<PiXtendEIOAOServer>;
+        using SPtr = boost::shared_ptr<PiXtendEIOAOServer>;
 
-        PiXtendEIOAOServer(void);
-        ~PiXtendEIOAOServer(void);
+    	PiXtendEIOAOServer(uint32_t moduleAddress);
+    	~PiXtendEIOAOServer(void);
 
-        bool startup(
-            OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
-            const std::string& instanceName,
-            const std::string& namespaceName,
-            uint16_t namespaceIndex,
-            const OpcUaStackCore::OpcUaNodeId& parentNodeId,
-            uint32_t moduleAddress
-        );
-        bool shutdown(void);
+    	virtual bool handleStartup(void) override;
+    	virtual bool handleShutdown(void) override;
 
       private:
-        OpcUaStackServer::ApplicationServiceIf* applicationServiceIf_ = nullptr;
-        std::string namespaceName_ = "";
-        uint16_t namespaceIndex_ = 0;
-        PiXtendEIOAO::SPtr pixtend_ = nullptr;
-        std::string instanceName_ = "";
-        OpcUaStackCore::OpcUaNodeId parentNodeId_;
-
-        bool createObjectInstance(void);
+    	PiXtendEIOAO::SPtr pixtend_ = nullptr;
+    	uint32_t moduleAddress_ = 0;
     };
 
 }
