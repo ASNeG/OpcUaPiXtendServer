@@ -142,10 +142,19 @@ namespace OpcUaPiXtendServer
 
         bool registerServiceFunctions(void);
 
+        // opc ua service function read and write
         void readDigitalValue(ApplicationReadContext* applicationReadContext);
         void writeDigitalValue(ApplicationWriteContext* applicationWriteContext);
         void readAnalogValue(ApplicationReadContext* applicationReadContext);
         void writeAnalogValue(ApplicationWriteContext* applicationWriteContext);
+
+        // opc ua service function monitor item start and monitor item stop
+		void receiveMonotoredItemStart(
+			OpcUaStackCore::ApplicationMonitoredItemStartContext* monitoredItemStartContext
+		);
+		void receiveMonitoredItemStop(
+			OpcUaStackCore::ApplicationMonitoredItemStopContext* monitoredItemStopContext
+		);
     };
 
 }

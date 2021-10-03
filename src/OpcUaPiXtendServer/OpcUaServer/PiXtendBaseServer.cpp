@@ -272,6 +272,8 @@ namespace OpcUaPiXtendServer
     			    registerForwardNode.addApplicationContext(applicationContext);
     			    registerForwardNode.setReadCallback(boost::bind(&PiXtendBaseServer::readDigitalValue, this, _1));
     			    registerForwardNode.setWriteCallback(boost::bind(&PiXtendBaseServer::writeDigitalValue, this, _1));
+    				registerForwardNode.setMonitoredItemStartCallback(boost::bind(&PiXtendBaseServer::receiveMonotoredItemStart, this, _1));
+    				registerForwardNode.setMonitoredItemStopCallback(boost::bind(&PiXtendBaseServer::receiveMonitoredItemStop, this, _1));
     			    if (!registerForwardNode.query(applicationServiceIf_, true)) {
     			    	Log(Error, "register forward node response error");
     			    	return false;
@@ -285,6 +287,8 @@ namespace OpcUaPiXtendServer
         			registerForwardNode.addApplicationContext(applicationContext);
         			registerForwardNode.setReadCallback(boost::bind(&PiXtendBaseServer::readAnalogValue, this, _1));
         			registerForwardNode.setWriteCallback(boost::bind(&PiXtendBaseServer::writeAnalogValue, this, _1));
+    				registerForwardNode.setMonitoredItemStartCallback(boost::bind(&PiXtendBaseServer::receiveMonotoredItemStart, this, _1));
+    				registerForwardNode.setMonitoredItemStopCallback(boost::bind(&PiXtendBaseServer::receiveMonitoredItemStop, this, _1));
         			if (!registerForwardNode.query(applicationServiceIf_, true)) {
         			    Log(Error, "register forward node response error");
         			    return false;
@@ -382,25 +386,41 @@ namespace OpcUaPiXtendServer
  		ApplicationWriteContext* applicationWriteContext
  	)
     {
-         auto applicationContext = applicationWriteContext->applicationContext_;
-         auto nodeContext = boost::static_pointer_cast<NodeContextAnalogIO>(applicationContext);
+        auto applicationContext = applicationWriteContext->applicationContext_;
+        auto nodeContext = boost::static_pointer_cast<NodeContextAnalogIO>(applicationContext);
 
-         // check if write function exist
-         if (!nodeContext->existWriteFunc()) {
+        // check if write function exist
+        if (!nodeContext->existWriteFunc()) {
          	applicationWriteContext->statusCode_ = BadUserAccessDenied;
          	return;
-         }
+        }
 
-         // check type of opc ua variable
-         double value;
-         if (!applicationWriteContext->dataValue_.getValue(value)) {
+        // check type of opc ua variable
+        double value;
+        if (!applicationWriteContext->dataValue_.getValue(value)) {
          	applicationWriteContext->statusCode_ = BadTypeMismatch;
          	return;
-         }
+        }
 
          // set pixtend variable
-         nodeContext->getWriteFunc()(value);
-         applicationWriteContext->statusCode_ = Success;
-     }
+        nodeContext->getWriteFunc()(value);
+        applicationWriteContext->statusCode_ = Success;
+    }
+
+	void
+	PiXtendBaseServer::receiveMonotoredItemStart(
+		OpcUaStackCore::ApplicationMonitoredItemStartContext* monitoredItemStartContext
+	)
+	{
+		// FIXME: todo
+	}
+
+	void
+	PiXtendBaseServer::receiveMonitoredItemStop(
+		OpcUaStackCore::ApplicationMonitoredItemStopContext* monitoredItemStopContext
+	)
+	{
+		// FIXME: todo
+	}
 
 }
