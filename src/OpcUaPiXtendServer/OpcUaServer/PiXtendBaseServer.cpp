@@ -157,6 +157,31 @@ namespace OpcUaPiXtendServer
     		);
     	}
 
+    	for (auto aOConfig : aOconfigVec) {
+        	// create server variable and register server variable
+           	auto serverVariable = boost::make_shared<ServerVariable>(aOConfig.nodeName_);
+        	serverVariables().registerServerVariable(serverVariable);
+
+    		auto rc = createNodeContextAnalogIO(
+    			serverVariable,
+				aOConfig.nodeName_,
+				aOConfig.readFunc_,
+				aOConfig.writeFunc_
+    		);
+    	}
+
+    	for (auto aIConfig : aIconfigVec) {
+        	// create server variable and register server variable
+           	auto serverVariable = boost::make_shared<ServerVariable>(aIConfig.nodeName_);
+        	serverVariables().registerServerVariable(serverVariable);
+
+    		auto rc = createNodeContextAnalogIO(
+    			serverVariable,
+				aIConfig.nodeName_,
+				aIConfig.readFunc_
+    		);
+    	}
+
     	return true;
     }
 
@@ -195,6 +220,40 @@ namespace OpcUaPiXtendServer
     }
 
     bool
+	PiXtendBaseServer::createNodeContextAnalogIO(
+	    ServerVariable::SPtr& serverVariable,
+     	const std::string& nodeName,
+		NodeContextAnalogIO::ReadFunc readFunc,
+		NodeContextAnalogIO::WriteFunc writeFunc
+	)
+    {
+    	// create node context
+    	auto nodeContext = boost::make_shared<NodeContextAnalogIO>();
+    	nodeContext->setReadFunc(readFunc);
+    	nodeContext->setWriteFunc(writeFunc);
+    	BaseClass::SPtr context = nodeContext;
+    	serverVariable->applicationContext(context);
+
+    	return true;
+    }
+
+    bool
+ 	PiXtendBaseServer::createNodeContextAnalogIO(
+ 	    ServerVariable::SPtr& serverVariable,
+      	const std::string& nodeName,
+ 		NodeContextAnalogIO::ReadFunc readFunc
+ 	)
+     {
+     	// create node context
+     	auto nodeContext = boost::make_shared<NodeContextAnalogIO>();
+     	nodeContext->setReadFunc(readFunc);
+     	BaseClass::SPtr context = nodeContext;
+     	serverVariable->applicationContext(context);
+
+     	return true;
+     }
+
+    bool
 	PiXtendBaseServer::registerServiceFunctions(void)
     {
     	// get nodeids from digital and analog variables
@@ -221,7 +280,15 @@ namespace OpcUaPiXtendServer
     			}
     			case ContextType::AnalogIO:
     			{
-
+       			   	// register service functions for analog variable
+        			RegisterForwardNode registerForwardNode(variable->nodeId());
+        			registerForwardNode.addApplicationContext(applicationContext);
+        			registerForwardNode.setReadCallback(boost::bind(&PiXtendBaseServer::readAnalogValue, this, _1));
+        			registerForwardNode.setWriteCallback(boost::bind(&PiXtendBaseServer::writeAnalogValue, this, _1));
+        			if (!registerForwardNode.query(applicationServiceIf_, true)) {
+        			    Log(Error, "register forward node response error");
+        			    return false;
+        			}
     				break;
     			}
     		}
@@ -282,5 +349,58 @@ namespace OpcUaPiXtendServer
         nodeContext->getWriteFunc()((bool)value);
         applicationWriteContext->statusCode_ = Success;
     }
+
+    void
+	PiXtendBaseServer::readAnalogValue(
+    	ApplicationReadContext* applicationReadContext
+	)
+    {
+    	auto applicationContext = applicationReadContext->applicationContext_;
+    	if (!applicationContext) {
+    		applicationReadContext->statusCode_ = BadUnexpectedError;
+    		return;
+    	}
+    	auto nodeContext = boost::static_pointer_cast<NodeContextAnalogIO>(applicationContext);
+
+    	// check if read function exist
+    	if (!nodeContext->existReadFunc()) {
+    		applicationReadContext->statusCode_ = BadUserAccessDenied;
+    		return;
+    	}
+
+    	// read pixtend variable
+    	auto value = nodeContext->getReadFunc()();
+
+    	// write pixtend variabe to opc ua node
+    	OpcUaDataValue dataValue(value);
+    	dataValue.copyTo(applicationReadContext->dataValue_);
+    	applicationReadContext->statusCode_ = Success;
+    }
+
+    void
+ 	PiXtendBaseServer::writeAnalogValue(
+ 		ApplicationWriteContext* applicationWriteContext
+ 	)
+    {
+         auto applicationContext = applicationWriteContext->applicationContext_;
+         auto nodeContext = boost::static_pointer_cast<NodeContextAnalogIO>(applicationContext);
+
+         // check if write function exist
+         if (!nodeContext->existWriteFunc()) {
+         	applicationWriteContext->statusCode_ = BadUserAccessDenied;
+         	return;
+         }
+
+         // check type of opc ua variable
+         double value;
+         if (!applicationWriteContext->dataValue_.getValue(value)) {
+         	applicationWriteContext->statusCode_ = BadTypeMismatch;
+         	return;
+         }
+
+         // set pixtend variable
+         nodeContext->getWriteFunc()(value);
+         applicationWriteContext->statusCode_ = Success;
+     }
 
 }

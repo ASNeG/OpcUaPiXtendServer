@@ -128,11 +128,24 @@ namespace OpcUaPiXtendServer
         	const std::string& nodeName,
 			NodeContextDigitalIO::ReadFunc readFunc
 		);
+        bool createNodeContextAnalogIO(
+        	OpcUaStackServer::ServerVariable::SPtr& serverVariable,
+        	const std::string& nodeName,
+			NodeContextAnalogIO::ReadFunc readFunc,
+			NodeContextAnalogIO::WriteFunc writeFunc
+		);
+        bool createNodeContextAnalogIO(
+        	OpcUaStackServer::ServerVariable::SPtr& serverVariable,
+        	const std::string& nodeName,
+			NodeContextAnalogIO::ReadFunc readFunc
+		);
 
         bool registerServiceFunctions(void);
 
         void readDigitalValue(ApplicationReadContext* applicationReadContext);
         void writeDigitalValue(ApplicationWriteContext* applicationWriteContext);
+        void readAnalogValue(ApplicationReadContext* applicationReadContext);
+        void writeAnalogValue(ApplicationWriteContext* applicationWriteContext);
     };
 
 }
