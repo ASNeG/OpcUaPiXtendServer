@@ -83,6 +83,8 @@ namespace OpcUaPiXtendServer
         virtual ~PiXtendBaseServer(void);
 
         bool startup(
+        	OpcUaStackCore::IOThread::SPtr& ioThread,
+        	boost::shared_ptr<boost::asio::io_service::strand>& strand,
         	OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
             const std::string& instanceName,
 			const std::string& namespaceName,
@@ -109,6 +111,9 @@ namespace OpcUaPiXtendServer
         virtual bool handleShutdown(void) = 0;
 
       private:
+        OpcUaStackCore::IOThread::SPtr ioThread_;
+        boost::shared_ptr<boost::asio::io_service::strand> strand_;
+
         bool createObjectInstance(void);
 
         bool createNodeContext(

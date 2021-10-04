@@ -223,6 +223,8 @@ namespace OpcUaPiXtendServer
 
         piXtendV2SServer_ = boost::make_shared<PiXtendV2SServer>();
         return piXtendV2SServer_->startup(
+        	ioThread_,
+			strand_,
             applicationServiceIf_,
             name,
             namespaceName_,
@@ -243,6 +245,8 @@ namespace OpcUaPiXtendServer
 
         piXtendV2LServer_ = boost::make_shared<PiXtendV2LServer>();
         return piXtendV2LServer_->startup(
+        	ioThread_,
+        	strand_,
             applicationServiceIf_,
             name,
             namespaceName_,
@@ -264,6 +268,8 @@ namespace OpcUaPiXtendServer
 
         piXtendEIOAOServerMap_[address] = boost::make_shared<PiXtendEIOAOServer>(address);
         return piXtendEIOAOServerMap_[address]->startup(
+        	ioThread_,
+        	strand_,
             applicationServiceIf_,
             name,
             namespaceName_,
@@ -285,6 +291,8 @@ namespace OpcUaPiXtendServer
 
         piXtendEIODOServerMap_[address] = boost::make_shared<PiXtendEIODOServer>(address);
         return piXtendEIODOServerMap_[address]->startup(
+        	ioThread_,
+        	strand_,
             applicationServiceIf_,
             name,
             namespaceName_,

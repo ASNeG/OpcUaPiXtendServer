@@ -44,6 +44,8 @@ namespace OpcUaPiXtendServer
 
     bool
 	PiXtendBaseServer::startup(
+        OpcUaStackCore::IOThread::SPtr& ioThread,
+        boost::shared_ptr<boost::asio::io_service::strand>& strand,
 		OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
 		const std::string& instanceName,
 		const std::string& namespaceName,
@@ -51,6 +53,8 @@ namespace OpcUaPiXtendServer
 		const OpcUaStackCore::OpcUaNodeId& parentNodeId
 	)
     {
+    	ioThread_ = ioThread;
+    	strand_ = strand;
     	applicationServiceIf_ = applicationServiceIf;
     	instanceName_ = instanceName;
     	namespaceName_ = namespaceName;
