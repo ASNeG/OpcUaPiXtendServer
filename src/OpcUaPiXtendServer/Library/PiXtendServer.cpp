@@ -136,7 +136,33 @@ namespace OpcUaPiXtendServer
 	{
 		Log(Debug, "PiXtendServer::shutdown");
 
-		// FIXME: TBD
+		// shutdown V2S server
+		if (piXtendV2SServer_.get() != nullptr) {
+			piXtendV2SServer_->shutdown();
+			piXtendV2SServer_.reset();
+		}
+
+		// shutdown V2L server
+		if (piXtendV2LServer_.get() != nullptr) {
+			piXtendV2LServer_->shutdown();
+			piXtendV2LServer_.reset();
+		}
+
+		// shutdown EIOAO server
+		for (auto element : piXtendEIOAOServerMap_) {
+			auto eIOAO = element.second;
+			eIOAO->shutdown();
+			eIOAO.reset();
+		}
+		piXtendEIOAOServerMap_.clear();
+
+		// shutdown EIODO server
+		for (auto element : piXtendEIODOServerMap_) {
+			auto eIODO = element.second;
+			eIODO->shutdown();
+			eIODO.reset();
+		}
+		piXtendEIODOServerMap_.clear();
 
 		return true;
 	}
@@ -236,14 +262,13 @@ namespace OpcUaPiXtendServer
             return false;
         }
 
-        piXtendEIOAOServerMap_[address] = boost::make_shared<PiXtendEIOAOServer>();
+        piXtendEIOAOServerMap_[address] = boost::make_shared<PiXtendEIOAOServer>(address);
         return piXtendEIOAOServerMap_[address]->startup(
             applicationServiceIf_,
             name,
             namespaceName_,
             namespaceIndex_,
-            piXtendRootNodeId_,
-            address
+            piXtendRootNodeId_
         );
     }
 
@@ -258,14 +283,13 @@ namespace OpcUaPiXtendServer
             return false;
         }
 
-        piXtendEIODOServerMap_[address] = boost::make_shared<PiXtendEIODOServer>();
+        piXtendEIODOServerMap_[address] = boost::make_shared<PiXtendEIODOServer>(address);
         return piXtendEIODOServerMap_[address]->startup(
             applicationServiceIf_,
             name,
             namespaceName_,
             namespaceIndex_,
-            piXtendRootNodeId_,
-            address
+            piXtendRootNodeId_
         );
     }
 }

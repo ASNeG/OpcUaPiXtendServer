@@ -16,35 +16,36 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#ifndef __OpcUaPiXtendServer_PiXtendEIOAOServer_h__
-#define __OpcUaPiXtendServer_PiXtendEIOAOServer_h__
+#ifndef __OpcUaPiXtendServer_NodeContext_h__
+#define __OpcUaPiXtendServer_NodeContext_h__
 
-#include "OpcUaPiXtendServer/OpcUaServer/PiXtendBaseServer.h"
-#include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
-
-#define EIOAO_AO_RF(PIN) BASE_AO_RF(PiXtendEIOAO, PIN)
-#define EIOAO_AO_WF(PIN) BASE_AO_WF(PiXtendEIOAO, PIN)
-#define EIOAO_AI_RF(PIN) BASE_AI_RF(PiXtendEIOAO, PIN)
+#include <boost/shared_ptr.hpp>
+#include "OpcUaStackCore/Base/BaseClass.h"
 
 namespace OpcUaPiXtendServer
 {
 
-    class PiXtendEIOAOServer
-    : public PiXtendBaseServer
+	enum class ContextType
+	{
+		None,
+		DigitalIO,
+		AnalogIO
+	};
+
+    class NodeContext
+	: public OpcUaStackCore::BaseClass
     {
       public:
 
-        using SPtr = boost::shared_ptr<PiXtendEIOAOServer>;
+    	using SPtr = boost::shared_ptr<NodeContext>;
 
-    	PiXtendEIOAOServer(uint32_t moduleAddress);
-    	~PiXtendEIOAOServer(void);
+        NodeContext(ContextType contextType);
+        virtual ~NodeContext(void);
 
-    	virtual bool handleStartup(void) override;
-    	virtual bool handleShutdown(void) override;
+        ContextType contextType(void);
 
       private:
-    	PiXtendEIOAO::SPtr pixtend_ = nullptr;
-    	uint32_t moduleAddress_ = 0;
+        ContextType contextType_ = ContextType::None;
     };
 
 }

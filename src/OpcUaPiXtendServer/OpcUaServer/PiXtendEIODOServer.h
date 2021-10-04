@@ -19,46 +19,32 @@
 #ifndef __OpcUaPiXtendServer_PiXtendEIODOServer_h__
 #define __OpcUaPiXtendServer_PiXtendEIODOServer_h__
 
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
-#include "OpcUaStackServer/Application/ApplicationIf.h"
-#include "OpcUaStackServer/StandardObjectType/ObjectBase.h"
+#include "OpcUaPiXtendServer/OpcUaServer/PiXtendBaseServer.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
+
+#define EIODO_DO_RF(PIN) BASE_DO_RF(PiXtendEIODO, PIN)
+#define EIODO_DO_WF(PIN) BASE_DO_WF(PiXtendEIODO, PIN)
+#define EIODO_DI_RF(PIN) BASE_DI_RF(PiXtendEIODO, PIN)
 
 namespace OpcUaPiXtendServer
 {
 
     class PiXtendEIODOServer
-    : public OpcUaStackServer::ObjectBase
-    , public boost::enable_shared_from_this<PiXtendEIODOServer>
+    : public PiXtendBaseServer
     {
       public:
 
     	using SPtr = boost::shared_ptr<PiXtendEIODOServer>;
 
-        PiXtendEIODOServer(void);
+        PiXtendEIODOServer(uint32_t moduleAddress);
         ~PiXtendEIODOServer(void);
 
-        bool startup(
-            OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
-            const std::string& instanceName,
-            const std::string& namespaceName,
-            uint16_t namespaceIndex,
-            const OpcUaStackCore::OpcUaNodeId& parentNodeId,
-            uint32_t moduleAddress
-        );
-        bool shutdown(void);
+        virtual bool handleStartup(void) override;
+        virtual bool handleShutdown(void) override;
 
       private:
-        OpcUaStackServer::ApplicationServiceIf* applicationServiceIf_ = nullptr;
-        std::string namespaceName_ = "";
-        uint16_t namespaceIndex_ = 0;
         PiXtendEIODO::SPtr pixtend_ = nullptr;
-        std::string instanceName_ = "";
-        OpcUaStackCore::OpcUaNodeId parentNodeId_;
-
-        bool createObjectInstance(void);
+        uint32_t moduleAddress_ = 0;
     };
 
 }
