@@ -61,6 +61,7 @@ namespace OpcUaPiXtendServer
     bool
 	PiXtendEIOAOServer::handleShutdown(void)
     {
+    	return true;
     }
 
 }

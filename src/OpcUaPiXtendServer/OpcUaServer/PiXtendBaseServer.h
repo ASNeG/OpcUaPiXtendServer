@@ -24,43 +24,10 @@
 #include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaStackServer/StandardObjectType/ObjectBase.h"
-#include "OpcUaPiXtendServer/OpcUaServer/NodeContextDigitalIO.h"
-#include "OpcUaPiXtendServer/OpcUaServer/NodeContextAnalogIO.h"
 #include "OpcUaPiXtendServer/PiXtend/ContextIndex.h"
 
 namespace OpcUaPiXtendServer
 {
-
-	class DOConfig {
-	  public:
-		using Vec = std::vector<DOConfig>;
-
-       	std::string nodeName_;
-		NodeContextDigitalIO::ReadFunc readFunc_;
-		NodeContextDigitalIO::WriteFunc writeFunc_;
-	};
-	class DIConfig {
-	  public:
-		using Vec = std::vector<DIConfig>;
-
-       	std::string nodeName_;
-		NodeContextDigitalIO::ReadFunc readFunc_;
-	};
-	class AOConfig {
-	  public:
-		using Vec = std::vector<AOConfig>;
-
-       	std::string nodeName_;
-		NodeContextAnalogIO::ReadFunc readFunc_;
-		NodeContextAnalogIO::WriteFunc writeFunc_;
-	};
-	class AIConfig {
-	  public:
-		using Vec = std::vector<AIConfig>;
-
-       	std::string nodeName_;
-		NodeContextAnalogIO::ReadFunc readFunc_;
-	};
 
 	class NodePinConfig {
 	  public:
@@ -106,10 +73,6 @@ namespace OpcUaPiXtendServer
         OpcUaStackCore::OpcUaNodeId parentNodeId_;
         ContextIndex::SPtr contextIndex_;
 
-        DOConfig::Vec dOConfigVec_;
-        DIConfig::Vec dIConfigVec_;
-        AOConfig::Vec aOConfigVec_;
-        AIConfig::Vec aIConfigVec_;
         NodePinConfig::Vec nodePinConfigVec_;
 
         virtual bool handleStartup(void) = 0;
