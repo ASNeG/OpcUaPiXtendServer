@@ -146,7 +146,7 @@ namespace OpcUaPiXtendServer
         	}
 
         	// create node context
-        	auto nodeContext = boost::make_shared<NodeContext>(ContextType::AnalogIO);
+        	auto nodeContext = boost::make_shared<NodeContext>();
         	nodeContext->serverVariable(serverVariable);
         	nodeContext->hardwareContext(hardwareContext);
         	BaseClass::SPtr context = nodeContext;

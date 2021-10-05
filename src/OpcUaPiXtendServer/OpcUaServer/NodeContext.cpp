@@ -23,19 +23,12 @@ using namespace OpcUaStackServer;
 namespace OpcUaPiXtendServer
 {
 
-    NodeContext::NodeContext(ContextType contextType)
-    : contextType_(contextType)
+    NodeContext::NodeContext(void)
     {
     }
 
     NodeContext::~NodeContext(void)
     {
-    }
-
-    ContextType
-	NodeContext::contextType(void)
-    {
-    	return contextType_;
     }
 
     void

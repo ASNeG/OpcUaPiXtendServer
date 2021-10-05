@@ -70,6 +70,8 @@ namespace OpcUaPiXtendServer
         PiXtendBase(const std::string& instanceName);
         virtual ~PiXtendBase(void);
 
+        void loop(void);
+
         void contextIndex(ContextIndex::SPtr& contextIndex);
         ContextIndex::SPtr contextIndex(void);
         std::string instanceName(void);

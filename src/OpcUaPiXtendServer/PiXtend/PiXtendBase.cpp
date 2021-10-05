@@ -34,6 +34,11 @@ namespace OpcUaPiXtendServer
     }
 
     void
+	PiXtendBase::loop(void)
+    {
+    }
+
+    void
 	PiXtendBase::contextIndex(ContextIndex::SPtr& contextIndex)
     {
     	contextIndex_ = contextIndex;
