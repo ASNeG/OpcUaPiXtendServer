@@ -24,8 +24,8 @@ using namespace OpcUaStackCore;
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendBase::PiXtendBase(const std::string& name)
-    : name_(name)
+    PiXtendBase::PiXtendBase(const std::string& instanceName)
+    : instanceName_(instanceName)
     {
     }
 
@@ -41,9 +41,9 @@ namespace OpcUaPiXtendServer
     }
 
     std::string
-	PiXtendBase::name(void)
+	PiXtendBase::instanceName(void)
     {
-    	return name_;
+    	return instanceName_;
     }
 
     ContextIndex::SPtr
@@ -75,7 +75,7 @@ namespace OpcUaPiXtendServer
 	PiXtendBase::registerContext(const CfgElementVec& cfgElementVec)
     {
     	for (auto cfgElement : cfgElementVec) {
-    		auto name = name_ + "." + cfgElement.first;
+    		auto name = instanceName_ + "." + cfgElement.first;
     		auto rc = registerContext(name, cfgElement.second);
     		if (!rc) return false;
     	}

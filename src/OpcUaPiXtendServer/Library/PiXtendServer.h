@@ -26,6 +26,7 @@
 #include "OpcUaStackServer/Application/ApplicationInfo.h"
 
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2S.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendV2L.h"
 
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2SServer.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2LServer.h"
@@ -76,6 +77,7 @@ namespace OpcUaPiXtendServer
         bool createServerModuleEIODO(std::string name, uint32_t address);
 
         PiXtendV2S::SPtr piXtendV2S_ {nullptr};
+        PiXtendV2L::SPtr piXtendV2L_ {nullptr};
 
         PiXtendV2SServer::SPtr piXtendV2SServer_ {nullptr};
         PiXtendV2LServer::SPtr piXtendV2LServer_ {nullptr};

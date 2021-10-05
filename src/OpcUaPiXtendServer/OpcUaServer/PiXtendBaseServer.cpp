@@ -283,7 +283,10 @@ namespace OpcUaPiXtendServer
     				registerForwardNode.setMonitoredItemStartCallback(boost::bind(&PiXtendBaseServer::receiveMonotoredItemStart, this, _1));
     				registerForwardNode.setMonitoredItemStopCallback(boost::bind(&PiXtendBaseServer::receiveMonitoredItemStop, this, _1));
     			    if (!registerForwardNode.query(applicationServiceIf_, true)) {
-    			    	Log(Error, "register forward node response error");
+    			    	Log(Error, "register forward node response error")
+    			    		.parameter("NodeId", variable->nodeId())
+							.parameter("NodeName", serverVariable.first)
+							.parameter("ModulName", instanceName_);
     			    	return false;
     			    }
     				break;
@@ -298,7 +301,10 @@ namespace OpcUaPiXtendServer
     				registerForwardNode.setMonitoredItemStartCallback(boost::bind(&PiXtendBaseServer::receiveMonotoredItemStart, this, _1));
     				registerForwardNode.setMonitoredItemStopCallback(boost::bind(&PiXtendBaseServer::receiveMonitoredItemStop, this, _1));
         			if (!registerForwardNode.query(applicationServiceIf_, true)) {
-        			    Log(Error, "register forward node response error");
+        			    Log(Error, "register forward node response error")
+							.parameter("NodeId", variable->nodeId())
+							.parameter("NameName", serverVariable.first)
+							.parameter("ModulName", instanceName_);
         			    return false;
         			}
     				break;

@@ -32,22 +32,22 @@ namespace OpcUaPiXtendServer
     }
 
     PiXtendV2S::SPtr
-    PiXtendModulesFactory::createPiXtendV2S(const std::string& name)
+    PiXtendModulesFactory::createPiXtendV2S(const std::string& instanceName)
     {
 #ifdef OPCUAPIXTENDSERVER_MODUL_V2S_DUMMY
-        return boost::make_shared<PiXtendV2SDummy>(name);
+        return boost::make_shared<PiXtendV2SDummy>(instanceName);
 #else
-        return boost::make_shared<PiXtendV2SInst>(name);
+        return boost::make_shared<PiXtendV2SInst>(instanceName);
 #endif
     }
 
     PiXtendV2L::SPtr
-    PiXtendModulesFactory::createPiXtendV2L(void)
+    PiXtendModulesFactory::createPiXtendV2L(const std::string& instanceName)
     {
 #ifdef OPCUAPIXTENDSERVER_MODUL_V2L_DUMMY
-        return boost::make_shared<PiXtendV2LDummy>();
+        return boost::make_shared<PiXtendV2LDummy>(instanceName);
 #else
-        return boost::make_shared<PiXtendV2LInst>();
+        return boost::make_shared<PiXtendV2LInst>(instanceName);
 #endif
     }
 

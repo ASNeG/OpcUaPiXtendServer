@@ -211,7 +211,7 @@ bool handleModule(std::string& module, ModuleAddress& moduleAddress,
     }
     else if (module == piXtendModule_V2L)
     {
-        moduleSPtr = boost::make_shared<PiXtendToolModuleV2L>();
+        moduleSPtr = boost::make_shared<PiXtendToolModuleV2L>(module);
     }
     else if (module == piXtendModule_EIOAO)
     {

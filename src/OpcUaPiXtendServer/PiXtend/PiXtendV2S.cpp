@@ -26,8 +26,8 @@
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendV2S::PiXtendV2S(const std::string& name)
-    : PiXtendBase(name)
+    PiXtendV2S::PiXtendV2S(const std::string& instanceName)
+    : PiXtendBase(instanceName)
     {
     }
 

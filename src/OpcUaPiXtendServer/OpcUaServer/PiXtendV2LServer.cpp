@@ -27,7 +27,7 @@ namespace OpcUaPiXtendServer
 {
 
     PiXtendV2LServer::PiXtendV2LServer(void)
-    : PiXtendBaseServer("PiXtendV2L", 1002)
+    : PiXtendBaseServer("PiXtendV2L", 1003)
     {
     }
 
@@ -39,7 +39,7 @@ namespace OpcUaPiXtendServer
 	PiXtendV2LServer::handleStartup(void)
     {
     	// get pixtend v2l access interface
-    	pixtend_ = PiXtendModulesFactory::createPiXtendV2L();
+    	pixtend_ = PiXtendModulesFactory::createPiXtendV2L(instanceName_);
 
        	// startup pixtend interface
         pixtend_->startup();

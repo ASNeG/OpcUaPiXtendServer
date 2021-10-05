@@ -21,8 +21,8 @@
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendV2LInst::PiXtendV2LInst(void)
-    : PiXtendV2L()
+    PiXtendV2LInst::PiXtendV2LInst(const std::string& instanceName)
+    : PiXtendV2L(instanceName)
     {
     }
 

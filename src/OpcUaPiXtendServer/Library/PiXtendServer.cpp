@@ -153,7 +153,21 @@ namespace OpcUaPiXtendServer
 	    			}
 	    			break;
 	    		}
-	    		// FIXME: TBD
+	    		case ServerModule::V2L:
+	    		{
+	    			piXtendV2L_ = PiXtendModulesFactory::createPiXtendV2L(module.moduleName());
+	    			piXtendV2L_->contextIndex(contextIndex_);
+	    			if (!piXtendV2L_->startup()) {
+	    				Log(Error, "startup pixtend V2l error");
+	    				return false;
+	    			}
+	    			break;
+	    		}
+	    		case ServerModule::DO:
+	    		case ServerModule::AO:
+	    		{
+	    			break;
+	    		}
 	    	    default:
 	    	    {
 	    		    Log(Error, "found undefined type in control configuration!")

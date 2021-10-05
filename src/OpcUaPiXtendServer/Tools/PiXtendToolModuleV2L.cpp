@@ -20,10 +20,10 @@
 
 namespace OpcUaPiXtendServer
 {
-    PiXtendToolModuleV2L::PiXtendToolModuleV2L(void)
+    PiXtendToolModuleV2L::PiXtendToolModuleV2L(const std::string& name)
     : PiXtendToolModule()
     {
-        pixtendSPtr_ = PiXtendModulesFactory::createPiXtendV2L();
+        pixtendSPtr_ = PiXtendModulesFactory::createPiXtendV2L(name);
 
         if (pixtendSPtr_ != nullptr)
         {

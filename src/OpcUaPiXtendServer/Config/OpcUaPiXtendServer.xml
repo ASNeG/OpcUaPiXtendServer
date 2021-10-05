@@ -21,8 +21,8 @@
 
     <Modules>
         <Module>
-            <Name>PiXtendV2S</Name>
-            <Type>V2S</Type>
+            <Name>PiXtendV2L</Name>
+            <Type>V2L</Type>
         </Module>
         
         <Module>

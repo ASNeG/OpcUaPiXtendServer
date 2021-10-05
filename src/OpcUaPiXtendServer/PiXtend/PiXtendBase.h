@@ -67,12 +67,12 @@ namespace OpcUaPiXtendServer
     	using CfgElement = std::pair<std::string, PiXtendValueContext::SPtr>;
     	using CfgElementVec = std::vector<CfgElement>;
 
-        PiXtendBase(const std::string& name);
+        PiXtendBase(const std::string& instanceName);
         virtual ~PiXtendBase(void);
 
         void contextIndex(ContextIndex::SPtr& contextIndex);
         ContextIndex::SPtr contextIndex(void);
-        std::string name(void);
+        std::string instanceName(void);
         bool registerContext(
         	const std::string& contextName,
 			PiXtendValueContext::SPtr& piXtendValueContext
@@ -83,7 +83,7 @@ namespace OpcUaPiXtendServer
 
       private:
         ContextIndex::SPtr contextIndex_ {nullptr};
-        std::string name_ = "";
+        std::string instanceName_ = "";
     };
 
 }
