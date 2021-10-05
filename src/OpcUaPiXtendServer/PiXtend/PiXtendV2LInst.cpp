@@ -88,13 +88,15 @@ namespace OpcUaPiXtendServer
     void
     PiXtendV2LInst::ao0(double data)
     {
-
+    	std::cout << "set ao0" << std::endl;
+    	testValue = data;
     }
 
     double
     PiXtendV2LInst::ao0(void)
     {
-        return 0.0;
+    	std::cout << "get ao0" << std::endl;
+        return testValue;
     }
 
     void

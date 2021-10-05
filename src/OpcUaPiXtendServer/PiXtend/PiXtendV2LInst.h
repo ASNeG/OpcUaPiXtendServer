@@ -122,6 +122,9 @@ namespace OpcUaPiXtendServer
         virtual bool gpio2(void) override;
         virtual void gpio3(bool data) override;
         virtual bool gpio3(void) override;
+
+      private:
+        double testValue;
     };
 
 }

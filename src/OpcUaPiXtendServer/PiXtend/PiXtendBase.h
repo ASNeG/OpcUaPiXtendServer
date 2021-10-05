@@ -81,11 +81,12 @@ namespace OpcUaPiXtendServer
         );
         bool registerContext(const CfgElementVec& cfgElementVec);
 
-        virtual void handleRegisterContext(void) {};
+        virtual void handleRegisterContext(void) = 0;
 
       private:
         ContextIndex::SPtr contextIndex_ {nullptr};
         std::string instanceName_ = "";
+        PiXtendValueContext::Vec piXtendValueContextVec_;
     };
 
 }

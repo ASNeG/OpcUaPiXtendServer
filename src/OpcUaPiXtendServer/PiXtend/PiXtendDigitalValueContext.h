@@ -46,6 +46,9 @@ namespace OpcUaPiXtendServer
 			DeregisterUpdateFunc deregisterUpdateFunc
         );
 
+        virtual void dataValueToOutputStruct(void) override;
+        virtual void inputStructToDataValue(void) override;
+
         void readFunc(ReadFunc readFunc);
         ReadFunc readFunc(void);
         void writeFunc(WriteFunc writeFunc);

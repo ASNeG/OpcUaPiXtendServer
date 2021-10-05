@@ -36,6 +36,19 @@ namespace OpcUaPiXtendServer
     void
 	PiXtendBase::loop(void)
     {
+    	// set all input variables
+    	for ( auto hardwareContext : piXtendValueContextVec_) {
+    		if (!hardwareContext->writeAccess()) continue;
+    		hardwareContext->dataValueToOutputStruct();
+    	}
+
+    	// call hardware access process
+    	// FIXME: TBD
+
+    	// get all input variables
+    	for ( auto hardwareContext : piXtendValueContextVec_) {
+    		hardwareContext->inputStructToDataValue();
+    	}
     }
 
     void
@@ -73,6 +86,10 @@ namespace OpcUaPiXtendServer
     	// add new context to context index
     	BaseClass::SPtr context = piXtendValueContext;
     	contextIndex_->registerContext(contextName, context);
+
+    	// add new context to local vector
+    	piXtendValueContextVec_.push_back(piXtendValueContext);
+
     	return true;
     }
 

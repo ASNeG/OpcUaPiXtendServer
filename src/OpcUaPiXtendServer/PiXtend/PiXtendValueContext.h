@@ -31,6 +31,7 @@ namespace OpcUaPiXtendServer
     {
       public:
     	using SPtr = boost::shared_ptr<PiXtendValueContext>;
+    	using Vec = std::vector<SPtr>;
 
     	enum class ContextType {
     		DigitalValue,
@@ -46,6 +47,9 @@ namespace OpcUaPiXtendServer
         OpcUaStackCore::OpcUaDataValue dataValue(void);
         bool writeAccess(void);
         void writeAccess(bool writeAccess);
+
+        virtual void dataValueToOutputStruct(void) = 0;
+        virtual void inputStructToDataValue(void) = 0;
 
       protected:
         OpcUaStackCore::OpcUaDataValue inputDataValue_;

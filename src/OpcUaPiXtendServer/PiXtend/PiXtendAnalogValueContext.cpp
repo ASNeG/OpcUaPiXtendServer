@@ -40,8 +40,8 @@ namespace OpcUaPiXtendServer
  		WriteFunc writeFunc,
  		RegisterUpdateFunc registerUpdateFunc,
  		DeregisterUpdateFunc deregisterUpdateFunc
-     )
-     {
+    )
+    {
      	auto context = boost::make_shared<PiXtendAnalogValueContext>();
      	context->readFunc(readFunc);
      	context->writeFunc(writeFunc);
@@ -49,7 +49,22 @@ namespace OpcUaPiXtendServer
      	context->deregisterUpdateFunc(deregisterUpdateFunc);
      	context->writeAccess(writeFunc == nullptr ? false : true);
      	return context;
-     }
+    }
+
+    void
+	PiXtendAnalogValueContext::dataValueToOutputStruct(void)
+    {
+    	double value;
+    	outputDataValue_.getValue(value);
+    	writeFunc()(value);
+    }
+
+    void
+	PiXtendAnalogValueContext::inputStructToDataValue(void)
+    {
+    	double value = readFunc()();
+    	inputDataValue_ = OpcUaDataValue(value);
+    }
 
     void
 	PiXtendAnalogValueContext::readFunc(ReadFunc readFunc)

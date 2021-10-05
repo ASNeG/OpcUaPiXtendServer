@@ -52,6 +52,22 @@ namespace OpcUaPiXtendServer
     }
 
     void
+	PiXtendDigitalValueContext::dataValueToOutputStruct(void)
+    {
+    	bool value;
+    	outputDataValue_.getValue(value);
+    	writeFunc()(value);
+    }
+
+    void
+	PiXtendDigitalValueContext::inputStructToDataValue(void)
+    {
+    	bool value = readFunc()();
+    	inputDataValue_ = OpcUaDataValue(value);
+    }
+
+
+    void
 	PiXtendDigitalValueContext::readFunc(ReadFunc readFunc)
     {
     	readFunc_ = readFunc;
