@@ -21,8 +21,8 @@
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendEIODOInst::PiXtendEIODOInst(void)
-    : PiXtendEIODO()
+    PiXtendEIODOInst::PiXtendEIODOInst(const std::string& instanceName)
+    : PiXtendEIODO(instanceName)
     {
     }
 

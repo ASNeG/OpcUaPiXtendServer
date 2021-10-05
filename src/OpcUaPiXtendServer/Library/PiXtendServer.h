@@ -78,6 +78,8 @@ namespace OpcUaPiXtendServer
 
         PiXtendV2S::SPtr piXtendV2S_ {nullptr};
         PiXtendV2L::SPtr piXtendV2L_ {nullptr};
+        std::map<uint32_t, PiXtendEIOAO::SPtr> piXtendEIOAOMap_;
+        std::map<uint32_t, PiXtendEIODO::SPtr> piXtendEIODOMap_;
 
         PiXtendV2SServer::SPtr piXtendV2SServer_ {nullptr};
         PiXtendV2LServer::SPtr piXtendV2LServer_ {nullptr};

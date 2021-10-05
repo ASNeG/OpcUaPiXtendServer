@@ -231,7 +231,7 @@ bool handleModule(std::string& module, ModuleAddress& moduleAddress,
             return false;
         }
 
-        moduleSPtr = boost::make_shared<PiXtendToolModuleEIODO>(moduleAddress);
+        moduleSPtr = boost::make_shared<PiXtendToolModuleEIODO>(module, moduleAddress);
     }
     else
     {

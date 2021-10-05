@@ -18,10 +18,14 @@
 
 #include "OpcUaPiXtendServer/PiXtend/PiXtendEIODO.h"
 
+#define EIODO_DI(PIN_NAME) PIXTEND_BASE_DI(PiXtendEIODO, PIN_NAME)
+#define EIODO_DO(PIN_NAME) PIXTEND_BASE_DO(PiXtendEIODO, PIN_NAME)
+
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendEIODO::PiXtendEIODO(void)
+    PiXtendEIODO::PiXtendEIODO(const std::string& instanceName)
+    : PiXtendBase(instanceName)
     {
     }
 
@@ -29,4 +33,29 @@ namespace OpcUaPiXtendServer
     {
     }
 
+    void
+	PiXtendEIODO::handleRegisterContext(void)
+    {
+    	registerContext({
+       		// digital inputs
+    		{ "DI0", EIODO_DI(di0)},
+    		{ "DI1", EIODO_DI(di1)},
+    		{ "DI2", EIODO_DI(di2)},
+    		{ "DI3", EIODO_DI(di3)},
+    		{ "DI4", EIODO_DI(di4)},
+    		{ "DI5", EIODO_DI(di5)},
+    		{ "DI6", EIODO_DI(di6)},
+    		{ "DI7", EIODO_DI(di7)},
+
+        	// digital outputs
+    		{ "DO0", EIODO_DO(do0)},
+    		{ "DO1", EIODO_DO(do1)},
+    		{ "DO2", EIODO_DO(do2)},
+    		{ "DO3", EIODO_DO(do3)},
+			{ "DO4", EIODO_DO(do4)},
+			{ "DO5", EIODO_DO(do5)},
+			{ "DO6", EIODO_DO(do6)},
+			{ "DO7", EIODO_DO(do7)},
+    	});
+    }
 }

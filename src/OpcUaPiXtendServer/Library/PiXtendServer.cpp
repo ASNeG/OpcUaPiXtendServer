@@ -148,7 +148,8 @@ namespace OpcUaPiXtendServer
 	    			piXtendV2S_ = PiXtendModulesFactory::createPiXtendV2S(module.moduleName());
 	    			piXtendV2S_->contextIndex(contextIndex_);
 	    			if (!piXtendV2S_->startup()) {
-	    				Log(Error, "startup pixtend V2S error");
+	    				Log(Error, "startup pixtend V2S error")
+	    					.parameter("ModuleName", module.moduleName());
 	    				return false;
 	    			}
 	    			break;
@@ -158,12 +159,24 @@ namespace OpcUaPiXtendServer
 	    			piXtendV2L_ = PiXtendModulesFactory::createPiXtendV2L(module.moduleName());
 	    			piXtendV2L_->contextIndex(contextIndex_);
 	    			if (!piXtendV2L_->startup()) {
-	    				Log(Error, "startup pixtend V2l error");
+	    				Log(Error, "startup pixtend V2l error")
+							.parameter("ModuleName", module.moduleName());
 	    				return false;
 	    			}
 	    			break;
 	    		}
 	    		case ServerModule::DO:
+	    		{
+	    			auto piXtendEIODO = PiXtendModulesFactory::createPiXtendEIODO(module.moduleName());
+	    			piXtendEIODO->contextIndex(contextIndex_);
+	    			if (!piXtendEIODO->startup(module.moduleAddress())) {
+	    				Log(Error, "startup pixtend EIODO error")
+						    .parameter("ModuleName", module.moduleName());
+	    				return false;
+	    			}
+	    			piXtendEIODOMap_.insert(std::make_pair(module.moduleAddress(), piXtendEIODO));
+					break;
+	    		}
 	    		case ServerModule::AO:
 	    		{
 	    			break;
