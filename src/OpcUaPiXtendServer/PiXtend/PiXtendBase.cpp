@@ -43,7 +43,7 @@ namespace OpcUaPiXtendServer
     	}
 
     	// call hardware access process
-    	// FIXME: TBD
+    	handleHardwareAccess();
 
     	// get all input variables
     	for ( auto hardwareContext : piXtendValueContextVec_) {

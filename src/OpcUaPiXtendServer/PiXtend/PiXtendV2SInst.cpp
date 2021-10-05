@@ -44,6 +44,12 @@ namespace OpcUaPiXtendServer
         return true;
     }
 
+    void
+	PiXtendV2SInst::handleHardwareAccess(void)
+    {
+    	// FIXME: TBD
+    }
+
     // Inputs Analog
 
     double

@@ -44,6 +44,12 @@ namespace OpcUaPiXtendServer
         return true;
     }
 
+    void
+	PiXtendEIODOInst::handleHardwareAccess(void)
+    {
+    	// FIXME: TBD
+    }
+
     // Inputs Digital
 
     bool

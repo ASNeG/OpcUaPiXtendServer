@@ -81,6 +81,7 @@ namespace OpcUaPiXtendServer
         );
         bool registerContext(const CfgElementVec& cfgElementVec);
 
+        virtual void handleHardwareAccess(void) {};
         virtual void handleRegisterContext(void) = 0;
 
       private:

@@ -38,6 +38,7 @@ namespace OpcUaPiXtendServer
 
         virtual bool startup(uint32_t moduleAddress) override;
         virtual bool shutdown(void) override;
+        virtual void handleHardwareAccess(void) override;
 
         // Inputs Analog
 
