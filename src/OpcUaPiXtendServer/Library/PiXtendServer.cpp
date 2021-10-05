@@ -179,7 +179,15 @@ namespace OpcUaPiXtendServer
 	    		}
 	    		case ServerModule::AO:
 	    		{
-	    			break;
+	    			auto piXtendEIOAO = PiXtendModulesFactory::createPiXtendEIOAO(module.moduleName());
+	    			piXtendEIOAO->contextIndex(contextIndex_);
+	    			if (!piXtendEIOAO->startup(module.moduleAddress())) {
+	    				Log(Error, "startup pixtend EIOAO error")
+						    .parameter("ModuleName", module.moduleName());
+	    				return false;
+	    			}
+	    			piXtendEIOAOMap_.insert(std::make_pair(module.moduleAddress(), piXtendEIOAO));
+					break;
 	    		}
 	    	    default:
 	    	    {

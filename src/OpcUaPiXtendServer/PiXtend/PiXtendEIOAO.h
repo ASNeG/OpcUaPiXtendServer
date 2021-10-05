@@ -23,19 +23,23 @@
 #include <stdint.h>
 #include <functional>
 
+#include "OpcUaPiXtendServer/PiXtend/PiXtendBase.h"
+
 namespace OpcUaPiXtendServer
 {
 
     class PiXtendEIOAO
+    : public PiXtendBase
     {
       public:
         using SPtr = boost::shared_ptr<PiXtendEIOAO>;
 
-        PiXtendEIOAO(void);
+        PiXtendEIOAO(const std::string& instanceName);
         virtual ~PiXtendEIOAO(void);
 
         // Configuration
 
+        virtual void handleRegisterContext(void) override;
         virtual bool startup(uint32_t moduleAddress) = 0;
         virtual bool shutdown(void) = 0;
 

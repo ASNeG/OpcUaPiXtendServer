@@ -32,7 +32,7 @@ namespace OpcUaPiXtendServer
       public:
         using SPtr = boost::shared_ptr<PiXtendEIOAODummy>;
 
-        PiXtendEIOAODummy(void);
+        PiXtendEIOAODummy(const std::string& instanceName);
         virtual ~PiXtendEIOAODummy(void);
 
         // Configuration

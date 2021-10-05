@@ -24,10 +24,10 @@
 #include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaStackServer/Application/ApplicationInfo.h"
-
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2S.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2L.h"
-
+#include "OpcUaPiXtendServer/PiXtend/PiXtendEIODO.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendEIOAO.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2SServer.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2LServer.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendEIODOServer.h"

@@ -52,12 +52,12 @@ namespace OpcUaPiXtendServer
     }
 
     PiXtendEIOAO::SPtr
-    PiXtendModulesFactory::createPiXtendEIOAO(void)
+    PiXtendModulesFactory::createPiXtendEIOAO(const std::string& instanceName)
     {
 #ifdef OPCUAPIXTENDSERVER_MODUL_EIOAO_DUMMY
-        return boost::make_shared<PiXtendEIOAODummy>();
+        return boost::make_shared<PiXtendEIOAODummy>(instanceName);
 #else
-        return boost::make_shared<PiXtendEIOAOInst>();
+        return boost::make_shared<PiXtendEIOAOInst>(instanceName);
 #endif
     }
 

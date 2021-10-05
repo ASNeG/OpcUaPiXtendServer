@@ -21,8 +21,8 @@
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendEIOAOInst::PiXtendEIOAOInst(void)
-    : PiXtendEIOAO()
+    PiXtendEIOAOInst::PiXtendEIOAOInst(const std::string& instanceName)
+    : PiXtendEIOAO(instanceName)
     {
     }
 

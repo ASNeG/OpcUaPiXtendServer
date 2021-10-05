@@ -35,7 +35,7 @@ namespace OpcUaPiXtendServer
 	PiXtendEIOAOServer::handleStartup(void)
     {
     	// get pixtend v2s access interface
-    	pixtend_ = PiXtendModulesFactory::createPiXtendEIOAO();
+    	pixtend_ = PiXtendModulesFactory::createPiXtendEIOAO(instanceName_);
 
        	// startup pixtend interface
         pixtend_->startup(moduleAddress_);
