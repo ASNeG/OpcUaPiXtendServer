@@ -24,6 +24,9 @@
 #include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaStackServer/Application/ApplicationInfo.h"
+
+#include "OpcUaPiXtendServer/PiXtend/PiXtendV2S.h"
+
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2SServer.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2LServer.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendEIODOServer.h"
@@ -60,13 +63,19 @@ namespace OpcUaPiXtendServer
         uint16_t namespaceIndex_ = 0;
 		const OpcUaStackCore::OpcUaNodeId piXtendRootNodeId_ = OpcUaStackCore::OpcUaNodeId("PiXtend", 1);
 
+		ContextIndex::SPtr contextIndex_ = boost::make_shared<ContextIndex>();
+
 		bool findNamespace(void);
 		bool createPiXtendRootObject(void);
+
+		bool startupPiXtend(PiXtendServerControllerCfg& cfg);
 
         bool createSeverModuleV2S(std::string name);
         bool createServerModuleV2L(std::string name);
         bool createServerModuleEIOAO(std::string name, uint32_t address);
         bool createServerModuleEIODO(std::string name, uint32_t address);
+
+        PiXtendV2S::SPtr piXtendV2S_ {nullptr};
 
         PiXtendV2SServer::SPtr piXtendV2SServer_ {nullptr};
         PiXtendV2LServer::SPtr piXtendV2LServer_ {nullptr};

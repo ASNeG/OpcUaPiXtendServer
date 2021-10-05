@@ -16,40 +16,33 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#ifndef __OpcUaPiXtendServer_NodeContext_h__
-#define __OpcUaPiXtendServer_NodeContext_h__
+#ifndef __OpcUaPiXtendServer_PiXtendValueContext_h__
+#define __OpcUaPiXtendServer_PiXtendValueContext_h__
 
 #include <boost/shared_ptr.hpp>
 #include "OpcUaStackCore/Base/BaseClass.h"
-#include "OpcUaStackServer/StandardVariableType/ServerVariables.h"
 
 namespace OpcUaPiXtendServer
 {
 
-	enum class ContextType
-	{
-		None,
-		DigitalIO,
-		AnalogIO
-	};
-
-    class NodeContext
+    class PiXtendValueContext
 	: public OpcUaStackCore::BaseClass
     {
       public:
+    	using SPtr = boost::shared_ptr<PiXtendValueContext>;
 
-    	using SPtr = boost::shared_ptr<NodeContext>;
+    	enum class ContextType {
+    		DigitalValue,
+    		AnalogValue
+    	};
 
-        NodeContext(ContextType contextType);
-        virtual ~NodeContext(void);
+        PiXtendValueContext(PiXtendValueContext::ContextType contextType);
+        virtual ~PiXtendValueContext(void);
 
-        ContextType contextType(void);
-        void serverVariable(OpcUaStackServer::ServerVariable::SPtr& serverVariable);
-        OpcUaStackServer::ServerVariable::SPtr& serverVariable(void);
+        PiXtendValueContext::ContextType contextType(void);
 
       private:
-        ContextType contextType_ = ContextType::None;
-        OpcUaStackServer::ServerVariable::SPtr serverVariable_ = nullptr;
+        ContextType contextType_;
     };
 
 }

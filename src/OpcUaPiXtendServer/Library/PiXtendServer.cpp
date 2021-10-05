@@ -21,6 +21,7 @@
 #include "OpcUaStackServer/ServiceSetApplication/CreateNodeInstance.h"
 
 #include "OpcUaPiXtendServer/Library/PiXtendServer.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
 
 
 using namespace OpcUaStackCore;
@@ -84,6 +85,12 @@ namespace OpcUaPiXtendServer
 			return false;
 		}
 
+        // startup pixtend modules
+        if (!startupPiXtend(controllerCfg)) {
+        	Log(Error, "startup pixtend error");
+        	return false;
+        }
+
         // add configured objects
         auto modules = controllerCfg.configModules();
         for (auto module: modules)
@@ -127,6 +134,34 @@ namespace OpcUaPiXtendServer
                 return false;
             }
         }
+
+		return true;
+	}
+
+	bool
+	PiXtendServer::startupPiXtend(PiXtendServerControllerCfg& cfg)
+	{
+	    for (auto module: cfg.configModules()) {
+	    	switch (module.moduleType()) {
+	    		case ServerModule::V2S:
+	    		{
+	    			piXtendV2S_ = PiXtendModulesFactory::createPiXtendV2S(module.moduleName());
+	    			piXtendV2S_->contextIndex(contextIndex_);
+	    			if (!piXtendV2S_->startup()) {
+	    				Log(Error, "startup pixtend V2S error");
+	    				return false;
+	    			}
+	    			break;
+	    		}
+	    		// FIXME: TBD
+	    	    default:
+	    	    {
+	    		    Log(Error, "found undefined type in control configuration!")
+	    		        .parameter("Name", module.moduleName());
+	    		    return false;
+	    	    }
+	    	}
+	    }
 
 		return true;
 	}

@@ -59,7 +59,7 @@ namespace OpcUaPiXtendServer
         PiXtendModulesFactory(void);
         virtual ~PiXtendModulesFactory(void);
 
-        static PiXtendV2S::SPtr createPiXtendV2S(void);
+        static PiXtendV2S::SPtr createPiXtendV2S(const std::string& name);
         static PiXtendV2L::SPtr createPiXtendV2L(void);
         static PiXtendEIOAO::SPtr createPiXtendEIOAO(void);
         static PiXtendEIODO::SPtr createPiXtendEIODO(void);

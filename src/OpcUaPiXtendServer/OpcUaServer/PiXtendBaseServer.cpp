@@ -199,6 +199,7 @@ namespace OpcUaPiXtendServer
     {
     	// create node context
     	auto nodeContext = boost::make_shared<NodeContextDigitalIO>();
+    	nodeContext->serverVariable(serverVariable);
     	nodeContext->setReadFunc(readFunc);
     	nodeContext->setWriteFunc(writeFunc);
     	BaseClass::SPtr context = nodeContext;
@@ -216,6 +217,7 @@ namespace OpcUaPiXtendServer
     {
     	// create node context
     	auto nodeContext = boost::make_shared<NodeContextDigitalIO>();
+    	nodeContext->serverVariable(serverVariable);
     	nodeContext->setReadFunc(readFunc);
     	BaseClass::SPtr context = nodeContext;
     	serverVariable->applicationContext(context);
@@ -233,6 +235,7 @@ namespace OpcUaPiXtendServer
     {
     	// create node context
     	auto nodeContext = boost::make_shared<NodeContextAnalogIO>();
+    	nodeContext->serverVariable(serverVariable);
     	nodeContext->setReadFunc(readFunc);
     	nodeContext->setWriteFunc(writeFunc);
     	BaseClass::SPtr context = nodeContext;
@@ -250,6 +253,7 @@ namespace OpcUaPiXtendServer
      {
      	// create node context
      	auto nodeContext = boost::make_shared<NodeContextAnalogIO>();
+     	nodeContext->serverVariable(serverVariable);
      	nodeContext->setReadFunc(readFunc);
      	BaseClass::SPtr context = nodeContext;
      	serverVariable->applicationContext(context);

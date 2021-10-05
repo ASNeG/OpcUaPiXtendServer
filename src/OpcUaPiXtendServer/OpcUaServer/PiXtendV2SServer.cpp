@@ -18,6 +18,13 @@
 
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2SServer.h"
 
+#define V2S_DO_RF(PIN) BASE_DO_RF(PiXtendV2S, PIN)
+#define V2S_DO_WF(PIN) BASE_DO_WF(PiXtendV2S, PIN)
+#define V2S_DI_RF(PIN) BASE_DI_RF(PiXtendV2S, PIN)
+#define V2S_AO_RF(PIN) BASE_AO_RF(PiXtendV2S, PIN)
+#define V2S_AO_WF(PIN) BASE_AO_WF(PiXtendV2S, PIN)
+#define V2S_AI_RF(PIN) BASE_AI_RF(PiXtendV2S, PIN)
+
 namespace OpcUaPiXtendServer
 {
 
@@ -34,7 +41,7 @@ namespace OpcUaPiXtendServer
 	PiXtendV2SServer::handleStartup(void)
     {
     	// get pixtend v2s access interface
-    	pixtend_ = PiXtendModulesFactory::createPiXtendV2S();
+    	pixtend_ = PiXtendModulesFactory::createPiXtendV2S(instanceName_);
 
        	// startup pixtend interface
         pixtend_->startup();

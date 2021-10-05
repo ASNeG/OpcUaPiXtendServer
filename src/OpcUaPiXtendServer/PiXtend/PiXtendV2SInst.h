@@ -31,7 +31,7 @@ namespace OpcUaPiXtendServer
       public:
     	using SPtr = boost::shared_ptr<PiXtendV2SInst>;
 
-        PiXtendV2SInst(void);
+        PiXtendV2SInst(const std::string& name);
         virtual ~PiXtendV2SInst(void);
 
         // Configuration

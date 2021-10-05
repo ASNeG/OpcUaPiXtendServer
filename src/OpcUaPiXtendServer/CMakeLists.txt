@@ -94,6 +94,7 @@ target_link_libraries(
     pixtend
     PiXtendTool
     PiXtendAccess
+    ${OPCUASTACK_LIBRARY_CORE}
     ${Boost_LIBRARIES}
 ) 
 

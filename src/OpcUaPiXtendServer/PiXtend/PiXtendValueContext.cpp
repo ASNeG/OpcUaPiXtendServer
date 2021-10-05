@@ -16,38 +16,25 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#include "OpcUaPiXtendServer/OpcUaServer/NodeContext.h"
-
-using namespace OpcUaStackServer;
+#include "OpcUaPiXtendServer/PiXtend/PiXtendValueContext.h"
 
 namespace OpcUaPiXtendServer
 {
 
-    NodeContext::NodeContext(ContextType contextType)
-    : contextType_(contextType)
+    PiXtendValueContext::PiXtendValueContext(PiXtendValueContext::ContextType contextType)
+    : BaseClass()
+    , contextType_(contextType)
     {
     }
 
-    NodeContext::~NodeContext(void)
+    PiXtendValueContext::~PiXtendValueContext(void)
     {
     }
 
-    ContextType
-	NodeContext::contextType(void)
+    PiXtendValueContext::ContextType
+	PiXtendValueContext::contextType(void)
     {
     	return contextType_;
-    }
-
-    void
-	NodeContext::serverVariable(ServerVariable::SPtr& serverVariable)
-    {
-    	serverVariable_ = serverVariable;
-    }
-
-    ServerVariable::SPtr&
-	NodeContext::serverVariable(void)
-    {
-    	return serverVariable_;
     }
 
 }

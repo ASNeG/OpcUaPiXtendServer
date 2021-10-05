@@ -18,6 +18,8 @@
 
 #include "OpcUaPiXtendServer/PiXtend/ContextIndex.h"
 
+using namespace OpcUaStackCore;
+
 namespace OpcUaPiXtendServer
 {
 
@@ -32,7 +34,7 @@ namespace OpcUaPiXtendServer
     bool
 	ContextIndex::registerContext(
         const std::string& contextName,
-    	OpcUaStackCore::BaseClass::SPtr& context
+    	BaseClass::SPtr& context
 	)
     {
     	if (existContext(contextName)) {
@@ -69,7 +71,7 @@ namespace OpcUaPiXtendServer
     	}
     }
 
-    OpcUaStackCore::BaseClass::SPtr
+    BaseClass::SPtr
 	ContextIndex::getContext(
     	const std::string& contextName
     )
