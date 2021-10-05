@@ -22,13 +22,6 @@
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendBaseServer.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
 
-#define V2L_DO_RF(PIN) BASE_DO_RF(PiXtendV2L, PIN)
-#define V2L_DO_WF(PIN) BASE_DO_WF(PiXtendV2L, PIN)
-#define V2L_DI_RF(PIN) BASE_DI_RF(PiXtendV2L, PIN)
-#define V2L_AO_RF(PIN) BASE_AO_RF(PiXtendV2L, PIN)
-#define V2L_AO_WF(PIN) BASE_AO_WF(PiXtendV2L, PIN)
-#define V2L_AI_RF(PIN) BASE_AI_RF(PiXtendV2L, PIN)
-
 namespace OpcUaPiXtendServer
 {
 

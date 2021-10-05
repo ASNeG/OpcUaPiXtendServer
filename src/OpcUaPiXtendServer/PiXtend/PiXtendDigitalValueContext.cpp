@@ -18,12 +18,16 @@
 
 #include "OpcUaPiXtendServer/PiXtend/PiXtendDigitalValueContext.h"
 
+using namespace OpcUaStackCore;
+
 namespace OpcUaPiXtendServer
 {
 
     PiXtendDigitalValueContext::PiXtendDigitalValueContext(void)
     : PiXtendValueContext(ContextType::DigitalValue)
     {
+    	inputDataValue_ = OpcUaDataValue((bool)false);
+    	outputDataValue_ = OpcUaDataValue((bool)false);
     }
 
     PiXtendDigitalValueContext::~PiXtendDigitalValueContext(void)
@@ -43,6 +47,7 @@ namespace OpcUaPiXtendServer
     	context->writeFunc(writeFunc);
     	context->registerUpdateFunc(registerUpdateFunc);
     	context->deregisterUpdateFunc(deregisterUpdateFunc);
+    	context->writeAccess(writeFunc == nullptr ? false : true);
     	return context;
     }
 

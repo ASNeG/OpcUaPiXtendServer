@@ -34,35 +34,28 @@ namespace OpcUaPiXtendServer
     bool
 	PiXtendEIODOServer::handleStartup(void)
     {
-    	// get pixtend v2s access interface
-    	pixtend_ = PiXtendModulesFactory::createPiXtendEIODO(instanceName_);
+    	nodePinConfigVec_ = {
 
-       	// startup pixtend interface
-        pixtend_->startup(moduleAddress_);
+    		// digital outputs
+    		{"DO_DO0_Variable", "DO0"},
+			{"DO_DO1_Variable", "DO1"},
+			{"DO_DO2_Variable", "DO2"},
+			{"DO_DO3_Variable", "DO3"},
+		    {"DO_DO4_Variable", "DO4"},
+			{"DO_DO5_Variable", "DO5"},
+			{"DO_DO6_Variable", "DO6"},
+			{"DO_DO7_Variable", "DO7"},
 
-        // set digital output configuration
-        dOConfigVec_ = {
-            {"DO_DO0_Variable", EIODO_DO_RF(do0), EIODO_DO_WF(do0)},
-            {"DO_DO1_Variable", EIODO_DO_RF(do1), EIODO_DO_WF(do1)},
-            {"DO_DO2_Variable", EIODO_DO_RF(do2), EIODO_DO_WF(do2)},
-            {"DO_DO3_Variable", EIODO_DO_RF(do3), EIODO_DO_WF(do3)},
-			{"DO_DO4_Variable", EIODO_DO_RF(do4), EIODO_DO_WF(do4)},
-			{"DO_DO5_Variable", EIODO_DO_RF(do5), EIODO_DO_WF(do5)},
-			{"DO_DO6_Variable", EIODO_DO_RF(do6), EIODO_DO_WF(do6)},
-			{"DO_DO7_Variable", EIODO_DO_RF(do7), EIODO_DO_WF(do7)}
-        };
-
-        // set digital input configuration
-        dIConfigVec_ = {
-            {"DI_DI0_Variable", EIODO_DI_RF(di0)},
-            {"DI_DI1_Variable", EIODO_DI_RF(di1)},
-            {"DI_DI2_Variable", EIODO_DI_RF(di2)},
-            {"DI_DI3_Variable", EIODO_DI_RF(di3)},
-	        {"DI_DI4_Variable", EIODO_DI_RF(di4)},
-	        {"DI_DI5_Variable", EIODO_DI_RF(di5)},
-	        {"DI_DI6_Variable", EIODO_DI_RF(di6)},
-	        {"DI_DI7_Variable", EIODO_DI_RF(di7)}
-        };
+			// digital inputs
+	        {"DI_DI0_Variable", "DI0"},
+	        {"DI_DI1_Variable", "DI1"},
+	        {"DI_DI2_Variable", "DI2"},
+	        {"DI_DI3_Variable", "DI3"},
+		    {"DI_DI4_Variable", "DI4"},
+		    {"DI_DI5_Variable", "DI5"},
+		    {"DI_DI6_Variable", "DI6"},
+		    {"DI_DI7_Variable", "DI7"},
+    	};
 
     	return true;
     }
@@ -70,10 +63,6 @@ namespace OpcUaPiXtendServer
     bool
 	PiXtendEIODOServer::handleShutdown(void)
     {
-    	// shutdown pixtend interface
-    	pixtend_->shutdown();
-    	pixtend_.reset();
-
     	return true;
     }
 }

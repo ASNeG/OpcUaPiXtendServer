@@ -18,6 +18,8 @@
 
 #include "OpcUaPiXtendServer/PiXtend/PiXtendValueContext.h"
 
+using namespace OpcUaStackCore;
+
 namespace OpcUaPiXtendServer
 {
 
@@ -35,6 +37,34 @@ namespace OpcUaPiXtendServer
 	PiXtendValueContext::contextType(void)
     {
     	return contextType_;
+    }
+
+    void
+	PiXtendValueContext::dataValue(OpcUaDataValue& dataValue)
+    {
+    	outputDataValue_ = dataValue;
+    }
+
+    OpcUaStackCore::OpcUaDataValue
+	PiXtendValueContext::dataValue(void)
+    {
+    	OpcUaDataValue dataValue;
+
+    	dataValue = inputDataValue_;
+
+    	return dataValue;
+    }
+
+    bool
+	PiXtendValueContext::writeAccess(void)
+    {
+    	return writeAccess_;
+    }
+
+    void
+	PiXtendValueContext::writeAccess(bool writeAccess)
+    {
+    	writeAccess_ = writeAccess;
     }
 
 }

@@ -46,10 +46,13 @@ namespace OpcUaPiXtendServer
         ContextType contextType(void);
         void serverVariable(OpcUaStackServer::ServerVariable::SPtr& serverVariable);
         OpcUaStackServer::ServerVariable::SPtr& serverVariable(void);
+        void hardwareContext(BaseClass::SPtr& hardwareContext);
+        BaseClass::SPtr hardwareContext(void);
 
       private:
         ContextType contextType_ = ContextType::None;
         OpcUaStackServer::ServerVariable::SPtr serverVariable_ = nullptr;
+        OpcUaStackCore::BaseClass::SPtr hardwareContext_ = nullptr;
     };
 
 }

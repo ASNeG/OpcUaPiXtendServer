@@ -34,44 +34,33 @@ namespace OpcUaPiXtendServer
     bool
 	PiXtendEIOAOServer::handleStartup(void)
     {
-    	// get pixtend v2s access interface
-    	pixtend_ = PiXtendModulesFactory::createPiXtendEIOAO(instanceName_);
+    	nodePinConfigVec_ = {
 
-       	// startup pixtend interface
-        pixtend_->startup(moduleAddress_);
+			// analog outputs
+            {"AO_AO0_Variable", "AO0"},
+            {"AO_AO1_Variable", "AO1"},
+			{"AO_AO2_Variable", "AO2"},
+			{"AO_AO3_Variable", "AO3"},
+			{"AO_AO4_Variable", "AO4"},
+			{"AO_AO5_Variable", "AO5"},
 
-        // set analog output configuration
-        aOConfigVec_ = {
-            {"AO_AO0_Variable", EIOAO_AO_RF(ao0), EIOAO_AO_WF(ao0)},
-            {"AO_AO1_Variable", EIOAO_AO_RF(ao1), EIOAO_AO_WF(ao1)},
-			{"AO_AO2_Variable", EIOAO_AO_RF(ao2), EIOAO_AO_WF(ao2)},
-			{"AO_AO3_Variable", EIOAO_AO_RF(ao3), EIOAO_AO_WF(ao3)},
-			{"AO_AO4_Variable", EIOAO_AO_RF(ao4), EIOAO_AO_WF(ao4)},
-			{"AO_AO5_Variable", EIOAO_AO_RF(ao5), EIOAO_AO_WF(ao5)}
-        };
+			// analog inputs
+	        {"AI_AI0_Variable", "AI0"},
+	        {"AI_AI1_Variable", "AI1"},
+	        {"AI_AI2_Variable", "AI2"},
+			{"AI_AI3_Variable", "AI3"},
+			{"AI_AI4_Variable", "AI4"},
+			{"AI_AI5_Variable", "AI5"},
+			{"AI_AI6_Variable", "AI6"},
+			{"AI_AI7_Variable", "AI7"},
+    	};
 
-        // set analog input configuration
-        aIConfigVec_ = {
-            {"AI_AI0_Variable", EIOAO_AI_RF(ai0)},
-            {"AI_AI1_Variable", EIOAO_AI_RF(ai1)},
-			{"AI_AI2_Variable", EIOAO_AI_RF(ai2)},
-			{"AI_AI3_Variable", EIOAO_AI_RF(ai3)},
-			{"AI_AI4_Variable", EIOAO_AI_RF(ai4)},
-			{"AI_AI5_Variable", EIOAO_AI_RF(ai5)},
-			{"AI_AI6_Variable", EIOAO_AI_RF(ai6)},
-			{"AI_AI7_Variable", EIOAO_AI_RF(ai7)}
-        };
     	return true;
     }
 
     bool
 	PiXtendEIOAOServer::handleShutdown(void)
     {
-    	// shutdown pixtend interface
-    	pixtend_->shutdown();
-    	pixtend_.reset();
-
-    	return true;
     }
 
 }

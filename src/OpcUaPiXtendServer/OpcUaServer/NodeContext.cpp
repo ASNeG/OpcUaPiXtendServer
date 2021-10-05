@@ -50,4 +50,16 @@ namespace OpcUaPiXtendServer
     	return serverVariable_;
     }
 
+    void
+	NodeContext::hardwareContext(BaseClass::SPtr& hardwareContext)
+    {
+    	hardwareContext_ = hardwareContext;
+    }
+
+    BaseClass::SPtr
+	NodeContext::hardwareContext(void)
+    {
+    	return hardwareContext_;
+    }
+
 }

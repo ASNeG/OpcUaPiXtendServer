@@ -18,12 +18,16 @@
 
 #include "OpcUaPiXtendServer/PiXtend/PiXtendAnalogValueContext.h"
 
+using namespace OpcUaStackCore;
+
 namespace OpcUaPiXtendServer
 {
 
     PiXtendAnalogValueContext::PiXtendAnalogValueContext(void)
     : PiXtendValueContext(ContextType::AnalogValue)
     {
+    	inputDataValue_ = OpcUaDataValue((double)0.0);
+    	outputDataValue_ = OpcUaDataValue((double)0.0);
     }
 
     PiXtendAnalogValueContext::~PiXtendAnalogValueContext(void)
@@ -43,6 +47,7 @@ namespace OpcUaPiXtendServer
      	context->writeFunc(writeFunc);
      	context->registerUpdateFunc(registerUpdateFunc);
      	context->deregisterUpdateFunc(deregisterUpdateFunc);
+     	context->writeAccess(writeFunc == nullptr ? false : true);
      	return context;
      }
 

@@ -22,10 +22,6 @@
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendBaseServer.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
 
-#define EIOAO_AO_RF(PIN) BASE_AO_RF(PiXtendEIOAO, PIN)
-#define EIOAO_AO_WF(PIN) BASE_AO_WF(PiXtendEIOAO, PIN)
-#define EIOAO_AI_RF(PIN) BASE_AI_RF(PiXtendEIOAO, PIN)
-
 namespace OpcUaPiXtendServer
 {
 

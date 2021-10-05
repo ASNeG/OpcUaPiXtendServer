@@ -91,7 +91,7 @@ namespace OpcUaPiXtendServer
         	return false;
         }
 
-        // add configured objects
+        // add configured opc ua server objects
         auto modules = controllerCfg.configModules();
         for (auto module: modules)
         {
@@ -299,7 +299,8 @@ namespace OpcUaPiXtendServer
             name,
             namespaceName_,
             namespaceIndex_,
-            piXtendRootNodeId_
+            piXtendRootNodeId_,
+			contextIndex_
         );
     }
 
@@ -321,7 +322,8 @@ namespace OpcUaPiXtendServer
             name,
             namespaceName_,
             namespaceIndex_,
-            piXtendRootNodeId_
+            piXtendRootNodeId_,
+			contextIndex_
         );
     }
 
@@ -344,7 +346,8 @@ namespace OpcUaPiXtendServer
             name,
             namespaceName_,
             namespaceIndex_,
-            piXtendRootNodeId_
+            piXtendRootNodeId_,
+			contextIndex_
         );
     }
 
@@ -367,7 +370,8 @@ namespace OpcUaPiXtendServer
             name,
             namespaceName_,
             namespaceIndex_,
-            piXtendRootNodeId_
+            piXtendRootNodeId_,
+			contextIndex_
         );
     }
 }

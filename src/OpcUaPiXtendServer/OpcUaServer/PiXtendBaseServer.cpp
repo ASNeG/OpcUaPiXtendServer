@@ -21,7 +21,8 @@
 #include "OpcUaStackServer/ServiceSetApplication/ForwardNodeSync.h"
 #include "OpcUaStackServer/ServiceSetApplication/RegisterForwardNode.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendBaseServer.h"
-#include "OpcUaPiXtendServer/OpcUaServer/NodeContextDigitalIO.h"
+#include "OpcUaPiXtendServer/OpcUaServer/NodeContext.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendValueContext.h"
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
@@ -50,7 +51,8 @@ namespace OpcUaPiXtendServer
 		const std::string& instanceName,
 		const std::string& namespaceName,
 		uint16_t namespaceIndex,
-		const OpcUaStackCore::OpcUaNodeId& parentNodeId
+		const OpcUaStackCore::OpcUaNodeId& parentNodeId,
+		ContextIndex::SPtr& contextIndex
 	)
     {
     	ioThread_ = ioThread;
@@ -60,6 +62,7 @@ namespace OpcUaPiXtendServer
     	namespaceName_ = namespaceName;
     	namespaceIndex_ = namespaceIndex;
     	parentNodeId_ = parentNodeId;
+    	contextIndex_ = contextIndex;
 
     	// call specific startup handler
     	if (!handleStartup()) {
@@ -67,12 +70,7 @@ namespace OpcUaPiXtendServer
     	}
 
     	// create node context
-    	createNodeContext(
-    		dOConfigVec_,
-			dIConfigVec_,
-			aOConfigVec_,
-			aIConfigVec_
-		);
+    	createNodeContext(nodePinConfigVec_);
 
     	// create object instance in information model
     	if (!createObjectInstance()) {
@@ -130,136 +128,33 @@ namespace OpcUaPiXtendServer
     }
 
     bool PiXtendBaseServer::createNodeContext(
-    	const DOConfig::Vec& dOconfigVec,
-		const DIConfig::Vec& dIconfigVec,
-		const AOConfig::Vec& aOconfigVec,
-		const AIConfig::Vec& aIconfigVec
+     	const NodePinConfig::Vec& nodePinConfigVec
 	)
     {
-    	for (auto dOConfig : dOconfigVec) {
+    	for (auto nodePinConfig : nodePinConfigVec) {
         	// create server variable and register server variable
-           	auto serverVariable = boost::make_shared<ServerVariable>(dOConfig.nodeName_);
+           	auto serverVariable = boost::make_shared<ServerVariable>(nodePinConfig.nodeName_);
         	serverVariables().registerServerVariable(serverVariable);
 
-    		auto rc = createNodeContextDigitalIO(
-    			serverVariable,
-				dOConfig.nodeName_,
-				dOConfig.readFunc_,
-				dOConfig.writeFunc_
-    		);
-    	}
+        	// find context
+        	auto contextName = instanceName_ + "." + nodePinConfig.pinName_;
+        	auto hardwareContext = contextIndex_->getContext(contextName);
+        	if (hardwareContext.get() == nullptr) {
+        		Log(Error, "context not exist in context index")
+        			.parameter("ContextName", contextName);
+        		return false;
+        	}
 
-    	for (auto dIConfig : dIconfigVec) {
-        	// create server variable and register server variable
-           	auto serverVariable = boost::make_shared<ServerVariable>(dIConfig.nodeName_);
-        	serverVariables().registerServerVariable(serverVariable);
-
-    		auto rc = createNodeContextDigitalIO(
-    			serverVariable,
-				dIConfig.nodeName_,
-				dIConfig.readFunc_
-    		);
-    	}
-
-    	for (auto aOConfig : aOconfigVec) {
-        	// create server variable and register server variable
-           	auto serverVariable = boost::make_shared<ServerVariable>(aOConfig.nodeName_);
-        	serverVariables().registerServerVariable(serverVariable);
-
-    		auto rc = createNodeContextAnalogIO(
-    			serverVariable,
-				aOConfig.nodeName_,
-				aOConfig.readFunc_,
-				aOConfig.writeFunc_
-    		);
-    	}
-
-    	for (auto aIConfig : aIconfigVec) {
-        	// create server variable and register server variable
-           	auto serverVariable = boost::make_shared<ServerVariable>(aIConfig.nodeName_);
-        	serverVariables().registerServerVariable(serverVariable);
-
-    		auto rc = createNodeContextAnalogIO(
-    			serverVariable,
-				aIConfig.nodeName_,
-				aIConfig.readFunc_
-    		);
+        	// create node context
+        	auto nodeContext = boost::make_shared<NodeContext>(ContextType::AnalogIO);
+        	nodeContext->serverVariable(serverVariable);
+        	nodeContext->hardwareContext(hardwareContext);
+        	BaseClass::SPtr context = nodeContext;
+        	serverVariable->applicationContext(context);
     	}
 
     	return true;
     }
-
-    bool
-	PiXtendBaseServer::createNodeContextDigitalIO(
-	    ServerVariable::SPtr& serverVariable,
-     	const std::string& nodeName,
-		NodeContextDigitalIO::ReadFunc readFunc,
-		NodeContextDigitalIO::WriteFunc writeFunc
-	)
-    {
-    	// create node context
-    	auto nodeContext = boost::make_shared<NodeContextDigitalIO>();
-    	nodeContext->serverVariable(serverVariable);
-    	nodeContext->setReadFunc(readFunc);
-    	nodeContext->setWriteFunc(writeFunc);
-    	BaseClass::SPtr context = nodeContext;
-    	serverVariable->applicationContext(context);
-
-    	return true;
-    }
-
-    bool
-	PiXtendBaseServer::createNodeContextDigitalIO(
-	    ServerVariable::SPtr& serverVariable,
-     	const std::string& nodeName,
-		NodeContextDigitalIO::ReadFunc readFunc
-	)
-    {
-    	// create node context
-    	auto nodeContext = boost::make_shared<NodeContextDigitalIO>();
-    	nodeContext->serverVariable(serverVariable);
-    	nodeContext->setReadFunc(readFunc);
-    	BaseClass::SPtr context = nodeContext;
-    	serverVariable->applicationContext(context);
-
-    	return true;
-    }
-
-    bool
-	PiXtendBaseServer::createNodeContextAnalogIO(
-	    ServerVariable::SPtr& serverVariable,
-     	const std::string& nodeName,
-		NodeContextAnalogIO::ReadFunc readFunc,
-		NodeContextAnalogIO::WriteFunc writeFunc
-	)
-    {
-    	// create node context
-    	auto nodeContext = boost::make_shared<NodeContextAnalogIO>();
-    	nodeContext->serverVariable(serverVariable);
-    	nodeContext->setReadFunc(readFunc);
-    	nodeContext->setWriteFunc(writeFunc);
-    	BaseClass::SPtr context = nodeContext;
-    	serverVariable->applicationContext(context);
-
-    	return true;
-    }
-
-    bool
- 	PiXtendBaseServer::createNodeContextAnalogIO(
- 	    ServerVariable::SPtr& serverVariable,
-      	const std::string& nodeName,
- 		NodeContextAnalogIO::ReadFunc readFunc
- 	)
-     {
-     	// create node context
-     	auto nodeContext = boost::make_shared<NodeContextAnalogIO>();
-     	nodeContext->serverVariable(serverVariable);
-     	nodeContext->setReadFunc(readFunc);
-     	BaseClass::SPtr context = nodeContext;
-     	serverVariable->applicationContext(context);
-
-     	return true;
-     }
 
     bool
 	PiXtendBaseServer::registerServiceFunctions(void)
@@ -271,44 +166,20 @@ namespace OpcUaPiXtendServer
     		if (applicationContext.get() == nullptr) continue;
     		auto nodeContext = boost::static_pointer_cast<NodeContext>(applicationContext);
 
-    		switch (nodeContext->contextType())
-    		{
-    			case ContextType::DigitalIO:
-    			{
-    			   	// register service functions for digital variable
-    			    RegisterForwardNode registerForwardNode(variable->nodeId());
-    			    registerForwardNode.addApplicationContext(applicationContext);
-    			    registerForwardNode.setReadCallback(boost::bind(&PiXtendBaseServer::readDigitalValue, this, _1));
-    			    registerForwardNode.setWriteCallback(boost::bind(&PiXtendBaseServer::writeDigitalValue, this, _1));
-    				registerForwardNode.setMonitoredItemStartCallback(boost::bind(&PiXtendBaseServer::receiveMonotoredItemStart, this, _1));
-    				registerForwardNode.setMonitoredItemStopCallback(boost::bind(&PiXtendBaseServer::receiveMonitoredItemStop, this, _1));
-    			    if (!registerForwardNode.query(applicationServiceIf_, true)) {
-    			    	Log(Error, "register forward node response error")
-    			    		.parameter("NodeId", variable->nodeId())
-							.parameter("NodeName", serverVariable.first)
-							.parameter("ModulName", instanceName_);
-    			    	return false;
-    			    }
-    				break;
-    			}
-    			case ContextType::AnalogIO:
-    			{
-       			   	// register service functions for analog variable
-        			RegisterForwardNode registerForwardNode(variable->nodeId());
-        			registerForwardNode.addApplicationContext(applicationContext);
-        			registerForwardNode.setReadCallback(boost::bind(&PiXtendBaseServer::readAnalogValue, this, _1));
-        			registerForwardNode.setWriteCallback(boost::bind(&PiXtendBaseServer::writeAnalogValue, this, _1));
-    				registerForwardNode.setMonitoredItemStartCallback(boost::bind(&PiXtendBaseServer::receiveMonotoredItemStart, this, _1));
-    				registerForwardNode.setMonitoredItemStopCallback(boost::bind(&PiXtendBaseServer::receiveMonitoredItemStop, this, _1));
-        			if (!registerForwardNode.query(applicationServiceIf_, true)) {
-        			    Log(Error, "register forward node response error")
-							.parameter("NodeId", variable->nodeId())
-							.parameter("NameName", serverVariable.first)
-							.parameter("ModulName", instanceName_);
-        			    return false;
-        			}
-    				break;
-    			}
+    		// register service functions
+    		RegisterForwardNode registerForwardNode(variable->nodeId());
+    		registerForwardNode.addApplicationContext(applicationContext);
+    		registerForwardNode.setReadCallback(boost::bind(&PiXtendBaseServer::readValue, this, _1));
+    		registerForwardNode.setWriteCallback(boost::bind(&PiXtendBaseServer::writeValue, this, _1));
+    		registerForwardNode.setMonitoredItemStartCallback(boost::bind(&PiXtendBaseServer::receiveMonotoredItemStart, this, _1));
+    		registerForwardNode.setMonitoredItemStopCallback(boost::bind(&PiXtendBaseServer::receiveMonitoredItemStop, this, _1));
+    		if (!registerForwardNode.query(applicationServiceIf_, true)) {
+    		    Log(Error, "register forward node response error")
+    			    .parameter("NodeId", variable->nodeId())
+					.parameter("NodeName", serverVariable.first)
+					.parameter("ModulName", instanceName_);
+    			return false;
+
     		}
     	}
 
@@ -316,109 +187,57 @@ namespace OpcUaPiXtendServer
     }
 
     void
-	PiXtendBaseServer::readDigitalValue(
+	PiXtendBaseServer::readValue(
     	ApplicationReadContext* applicationReadContext
 	)
     {
-    	auto applicationContext = applicationReadContext->applicationContext_;
-    	if (!applicationContext) {
-    		applicationReadContext->statusCode_ = BadUnexpectedError;
-    		return;
+    	// get node context
+    	auto nodeContext = boost::static_pointer_cast<NodeContext>(applicationReadContext->applicationContext_);
+    	if (!nodeContext) {
+       		applicationReadContext->statusCode_ = BadUnexpectedError;
+        	return;
     	}
-    	auto nodeContext = boost::static_pointer_cast<NodeContextDigitalIO>(applicationContext);
 
-    	// check if read function exist
-    	if (!nodeContext->existReadFunc()) {
-    		applicationReadContext->statusCode_ = BadUserAccessDenied;
-    		return;
+    	// get hardware context
+    	auto hardwareContext = boost::static_pointer_cast<PiXtendValueContext>(nodeContext->hardwareContext());
+    	if (!hardwareContext) {
+       		applicationReadContext->statusCode_ = BadUnexpectedError;
+        	return;
     	}
 
     	// read pixtend variable
-    	auto value = nodeContext->getReadFunc()();
-
-    	// write pixtend variabe to opc ua node
-    	OpcUaDataValue dataValue((OpcUaBoolean)value);
-    	dataValue.copyTo(applicationReadContext->dataValue_);
+    	applicationReadContext->dataValue_ = hardwareContext->dataValue();
     	applicationReadContext->statusCode_ = Success;
     }
 
     void
-	PiXtendBaseServer::writeDigitalValue(
+	PiXtendBaseServer::writeValue(
 		ApplicationWriteContext* applicationWriteContext
 	)
     {
-       	auto applicationContext = applicationWriteContext->applicationContext_;
-        auto nodeContext = boost::static_pointer_cast<NodeContextDigitalIO>(applicationContext);
-
-        // check if write function exist
-        if (!nodeContext->existWriteFunc()) {
-        	applicationWriteContext->statusCode_ = BadUserAccessDenied;
-        	return;
+       	// get node context
+        auto nodeContext = boost::static_pointer_cast<NodeContext>(applicationWriteContext->applicationContext_);
+        if (!nodeContext) {
+        	applicationWriteContext->statusCode_ = BadUnexpectedError;
+            return;
         }
 
-        // check type of opc ua variable
-        OpcUaBoolean value;
-        if (!applicationWriteContext->dataValue_.getValue(value)) {
-        	applicationWriteContext->statusCode_ = BadTypeMismatch;
-        	return;
+        // get hardware context
+        auto hardwareContext = boost::static_pointer_cast<PiXtendValueContext>(nodeContext->hardwareContext());
+        if (!hardwareContext) {
+        	applicationWriteContext->statusCode_ = BadUnexpectedError;
+            return;
         }
 
-        // set pixtend variable
-        nodeContext->getWriteFunc()((bool)value);
-        applicationWriteContext->statusCode_ = Success;
-    }
-
-    void
-	PiXtendBaseServer::readAnalogValue(
-    	ApplicationReadContext* applicationReadContext
-	)
-    {
-    	auto applicationContext = applicationReadContext->applicationContext_;
-    	if (!applicationContext) {
-    		applicationReadContext->statusCode_ = BadUnexpectedError;
-    		return;
-    	}
-    	auto nodeContext = boost::static_pointer_cast<NodeContextAnalogIO>(applicationContext);
-
-    	// check if read function exist
-    	if (!nodeContext->existReadFunc()) {
-    		applicationReadContext->statusCode_ = BadUserAccessDenied;
+    	// check if write function exist
+    	if (!hardwareContext->writeAccess()) {
+    		applicationWriteContext->statusCode_ = BadUserAccessDenied;
     		return;
     	}
 
-    	// read pixtend variable
-    	auto value = nodeContext->getReadFunc()();
-
-    	// write pixtend variabe to opc ua node
-    	OpcUaDataValue dataValue(value);
-    	dataValue.copyTo(applicationReadContext->dataValue_);
-    	applicationReadContext->statusCode_ = Success;
-    }
-
-    void
- 	PiXtendBaseServer::writeAnalogValue(
- 		ApplicationWriteContext* applicationWriteContext
- 	)
-    {
-        auto applicationContext = applicationWriteContext->applicationContext_;
-        auto nodeContext = boost::static_pointer_cast<NodeContextAnalogIO>(applicationContext);
-
-        // check if write function exist
-        if (!nodeContext->existWriteFunc()) {
-         	applicationWriteContext->statusCode_ = BadUserAccessDenied;
-         	return;
-        }
-
-        // check type of opc ua variable
-        double value;
-        if (!applicationWriteContext->dataValue_.getValue(value)) {
-         	applicationWriteContext->statusCode_ = BadTypeMismatch;
-         	return;
-        }
-
-         // set pixtend variable
-        nodeContext->getWriteFunc()(value);
-        applicationWriteContext->statusCode_ = Success;
+        // write pixtend variable
+    	hardwareContext->dataValue(applicationWriteContext->dataValue_);
+    	applicationWriteContext->statusCode_ = Success;
     }
 
 	void

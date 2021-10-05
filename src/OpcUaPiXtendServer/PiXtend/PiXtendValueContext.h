@@ -21,6 +21,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include "OpcUaStackCore/Base/BaseClass.h"
+#include "OpcUaStackCore/BuildInTypes/OpcUaDataValue.h"
 
 namespace OpcUaPiXtendServer
 {
@@ -41,8 +42,19 @@ namespace OpcUaPiXtendServer
 
         PiXtendValueContext::ContextType contextType(void);
 
+        void dataValue(OpcUaStackCore::OpcUaDataValue& dataValue);
+        OpcUaStackCore::OpcUaDataValue dataValue(void);
+        bool writeAccess(void);
+        void writeAccess(bool writeAccess);
+
+      protected:
+        OpcUaStackCore::OpcUaDataValue inputDataValue_;
+        OpcUaStackCore::OpcUaDataValue outputDataValue_;
+
       private:
         ContextType contextType_;
+        bool writeAccess_ = true;
+
     };
 
 }
