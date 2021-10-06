@@ -26,6 +26,7 @@ extern "C" {
 #include <boost/shared_ptr.hpp>
 #include <stdint.h>
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2L.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendSpiHelper.h"
 
 namespace OpcUaPiXtendServer
 {
@@ -130,17 +131,19 @@ namespace OpcUaPiXtendServer
         virtual bool gpio3(void) override;
 
       private:
+        PiXtendSpiHelper spiHelper_;
+
         using PiXtendSpiInputData = pixtInV2L;
         using PiXtendSpiOutputData = pixtOutV2L;
+        using PiXtendSpiOutputDataDac = pixtOutDAC;
 
         PiXtendSpiInputData spiInputData_;
         PiXtendSpiOutputData spiOutputData_;
+        PiXtendSpiOutputDataDac spiOutputDataDac_;
 
         void resetSpiInputData(PiXtendSpiInputData& spiInputData);
         void resetSpiOutputData(PiXtendSpiOutputData& spiOutputData);
-
-        void changeBit(uint8_t& valueToModify, uint8_t bit, uint8_t position);
-        bool mapBool(uint8_t value, uint8_t position);
+        void resetSpiOutputDataDac(PiXtendSpiOutputDataDac& spiOutputDataDac);
     };
 
 }
