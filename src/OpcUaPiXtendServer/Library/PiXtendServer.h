@@ -66,15 +66,22 @@ namespace OpcUaPiXtendServer
 
 		ContextIndex::SPtr contextIndex_ = boost::make_shared<ContextIndex>();
 
+		bool startupPiXtend(PiXtendServerControllerCfg& cfg);
+		bool shutdownPiXtend(void);
+        bool startupServerV2S(const std::string& name);
+        bool startupServerV2L(const std::string& name);
+        bool startupServerEIOAO(const std::string& name, uint32_t address);
+        bool startupServerEIODO(const std::string& name, uint32_t address);
+
+        bool startupServer(PiXtendServerControllerCfg& cfg);
+        bool shutdownServer(void);
+        bool startupPiXtendV2S(const std::string& name);
+        bool startupPiXtendV2L(const std::string& name);
+        bool startupPiXtendEIOAO(const std::string& name, uint32_t address);
+        bool startupPiXtendEIODO(const std::string& name, uint32_t address);
+
 		bool findNamespace(void);
 		bool createPiXtendRootObject(void);
-
-		bool startupPiXtend(PiXtendServerControllerCfg& cfg);
-
-        bool createSeverModuleV2S(std::string name);
-        bool createServerModuleV2L(std::string name);
-        bool createServerModuleEIOAO(std::string name, uint32_t address);
-        bool createServerModuleEIODO(std::string name, uint32_t address);
 
         PiXtendV2S::SPtr piXtendV2S_ {nullptr};
         PiXtendV2L::SPtr piXtendV2L_ {nullptr};
