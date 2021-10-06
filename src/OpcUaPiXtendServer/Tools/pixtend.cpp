@@ -174,7 +174,7 @@ bool handlePinWrite(PiXtendToolModule::SPtr moduleSPtr,
 // ------------------------------------------------------------------------
 
 bool handleModuleOperation(PiXtendToolModule::SPtr moduleSPtr,
-        std::string& strPin, std::string& operation,
+        std::string& strPin, bool isOperationRead,
         DValue& dValue, AValue& aValue)
 {
     Pins pin;
@@ -184,23 +184,18 @@ bool handleModuleOperation(PiXtendToolModule::SPtr moduleSPtr,
         return false;
     }
 
-    if (operation == operationRead)
+    if (isOperationRead)
     {
         return handlePinRead(moduleSPtr, strPin, pin);
     }
-    else if (operation == operationWrite)
-    {
-        return handlePinWrite(moduleSPtr, strPin, pin, dValue, aValue);
-    }
     else
     {
-        traceStatus("undefined operation");
-        return false;
+        return handlePinWrite(moduleSPtr, strPin, pin, dValue, aValue);
     }
 }
 
 bool handleModule(std::string& module, ModuleAddress& moduleAddress,
-        std::string& strPin, std::string& operation,
+        std::string& strPin, bool isOperationRead,
         DValue& dValue, AValue& aValue)
 {
     PiXtendToolModule::SPtr moduleSPtr = nullptr;
@@ -239,7 +234,7 @@ bool handleModule(std::string& module, ModuleAddress& moduleAddress,
         return false;
     }
 
-    return handleModuleOperation(moduleSPtr, strPin, operation, dValue, aValue);
+    return handleModuleOperation(moduleSPtr, strPin, isOperationRead, dValue, aValue);
 }
 
 // ------------------------------------------------------------------------
@@ -258,14 +253,13 @@ int main(int argc, char** argv)
         ("help,h", "produce help message")
         ("module,m", boost::program_options::value<std::string>()->required(), "name of the module [V2L | V2S | DO | AO]")
         ("pin,p", boost::program_options::value<std::string>()->required(), "name of the pin [D01 | ... | A01 | ...]")
-        ("operation,o", boost::program_options::value<std::string>()->required(), "[read | write [D-Value | A-Value]]")
-        ("d-value,d", boost::program_options::value<std::string>(), "D-Value [on | off]")
-        ("a-value,a", boost::program_options::value<double>(), "A-Value [double]")
-        ("moduleAddress,i", boost::program_options::value<uint32_t>(), "ModuleAddress for eIO modules [uInteger]");
+        ("read,r", boost::program_options::bool_switch()->default_value(false), "operation read")
+        ("write,w", boost::program_options::value<std::string>(), "operation write [D-Value [on | off] | A-Value [double]]")
+        ("moduleAddress,a", boost::program_options::value<uint32_t>(), "moduleAddress for eIO modules [uInteger]");
 
     std::string module {""};
     std::string pin {""};
-    std::string operation {""};
+    bool isOperationRead = false;
     AValue aValue; // optional
     DValue dValue; // optional
     ModuleAddress moduleAddress; // optional
@@ -278,46 +272,42 @@ int main(int argc, char** argv)
             boost::program_options::parse_command_line(argc, argv, desc), vm
         );
 
-        if (vm.count("help") || !vm.count("module") ||
-            !vm.count("pin") || !vm.count("operation"))
+        if (vm.count("help") || !vm.count("module") || !vm.count("pin"))
         {
             std::cout << desc << std::endl;
             return 1;
         }
 
         module = vm["module"].as<std::string>();
-        pin = vm["pin"].as<std::string>();
-        operation = vm["operation"].as<std::string>();
-
         boost::algorithm::to_lower(module);
+
+        pin = vm["pin"].as<std::string>();
         boost::algorithm::to_lower(pin);
-        boost::algorithm::to_lower(operation);
 
-        if (operation == operationWrite)
+        isOperationRead = vm["read"].as<bool>();
+
+        if (!vm.count("write") && !isOperationRead)
         {
-            if (vm.count("d-value"))
-            {
-                std::string strDValue = vm["d-value"].as<std::string>();
-                boost::algorithm::to_lower(strDValue);
+            traceStatus("undefined operation [read | write]");
+            std::cout << desc << std::endl;
+            return 1;
+        }
 
-                bool parseDValue = false;
-                if (!PiXtendToolConfig::mapDValue(strDValue, parseDValue))
-                {
-                    traceStatus("undefined DValue!");
-                    std::cout << desc << std::endl;
-                    return 1;
-                }
+        if (vm.count("write") && !isOperationRead)
+        {
+            std::string writeValue = vm["write"].as<std::string>();
+            boost::algorithm::to_lower(writeValue);
 
-                dValue = { true, parseDValue };
-            }
-            else if (vm.count("a-value"))
+            bool parseDValue = false;
+            if (PiXtendToolConfig::mapDValue(writeValue, parseDValue))
             {
-                aValue = { true, vm["a-value"].as<double>() };
+                // is dValue
+                dValue = {true, parseDValue};
             }
             else
             {
-                std::cout << desc << std::endl;
-                return 1;
+                // is aValue
+                aValue = {true, boost::lexical_cast<double>(writeValue)};
             }
         }
 
@@ -334,7 +324,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    if (!handleModule(module, moduleAddress, pin, operation, dValue, aValue))
+    if (!handleModule(module, moduleAddress, pin, isOperationRead, dValue, aValue))
     {
         std::cout << desc << std::endl;
         return 1;
