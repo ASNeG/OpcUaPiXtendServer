@@ -300,7 +300,7 @@ int main(int argc, char** argv)
                 std::string strDValue = vm["d-value"].as<std::string>();
                 boost::algorithm::to_lower(strDValue);
 
-                bool parseDValue;
+                bool parseDValue = false;
                 if (!PiXtendToolConfig::mapDValue(strDValue, parseDValue))
                 {
                     traceStatus("undefined DValue!");
