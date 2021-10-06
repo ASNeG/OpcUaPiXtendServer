@@ -55,26 +55,9 @@ namespace OpcUaPiXtendServer
     void
  	PiXtendV2LInst::handleHardwareAccess(void)
     {
-        PiXtendSpiInputData transferInputData;
-        PiXtendSpiOutputData transferOutputData;
-        PiXtendSpiOutputDataDac transferOutputDataDac;
-
-        resetSpiInputData(transferInputData);
-        resetSpiOutputData(transferOutputData);
-        resetSpiOutputDataDac(transferOutputDataDac);
-
-        // copy output data
-        transferOutputData = spiOutputData_;
-        transferOutputDataDac = spiOutputDataDac_;
-
         // transfer data
-        Spi_AutoModeV2L(&transferOutputData, &transferInputData);
-        Spi_AutoModeDAC(&transferOutputDataDac);
-
-        // set result
-        spiInputData_ = transferInputData;
-        spiOutputData_ = transferOutputData;
-        spiOutputDataDac_ = transferOutputDataDac;
+        Spi_AutoModeV2L(&spiOutputData_, &spiInputData_);
+        Spi_AutoModeDAC(&spiOutputDataDac_);
 
         // delay
         delay(100); // cycle time 100 ms
