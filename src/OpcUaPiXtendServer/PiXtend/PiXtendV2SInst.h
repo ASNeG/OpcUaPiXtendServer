@@ -21,6 +21,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2S.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendSpiHelper.h"
 
 namespace OpcUaPiXtendServer
 {
@@ -95,6 +96,21 @@ namespace OpcUaPiXtendServer
         virtual bool gpio2(void) override;
         virtual void gpio3(bool data) override;
         virtual bool gpio3(void) override;
+
+      private:
+        PiXtendSpiHelper spiHelper_;
+
+        using PiXtendSpiInputData = pixtInV2S;
+        using PiXtendSpiOutputData = pixtOutV2S;
+        using PiXtendSpiOutputDataDac = pixtOutDAC;
+
+        PiXtendSpiInputData spiInputData_;
+        PiXtendSpiOutputData spiOutputData_;
+        PiXtendSpiOutputDataDac spiOutputDataDac_;
+
+        void resetSpiInputData(PiXtendSpiInputData& spiInputData);
+        void resetSpiOutputData(PiXtendSpiOutputData& spiOutputData);
+        void resetSpiOutputDataDac(PiXtendSpiOutputDataDac& spiOutputDataDac);
     };
 
 }

@@ -19,6 +19,10 @@
 #ifndef __OpcUaPiXtendServer_PiXtendSpiHelper_h__
 #define __OpcUaPiXtendServer_PiXtendSpiHelper_h__
 
+extern "C" {
+#include <pixtend.h>
+}
+
 #include <stdint.h>
 
 namespace OpcUaPiXtendServer

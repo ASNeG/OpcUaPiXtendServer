@@ -29,6 +29,9 @@ namespace OpcUaPiXtendServer
         {
         	ContextIndex::SPtr contextIndex = boost::make_shared<ContextIndex>();
             pixtendSPtr_->startup();
+
+            // read input data
+            pixtendSPtr_->handleHardwareAccess();
         }
     }
 
@@ -36,6 +39,9 @@ namespace OpcUaPiXtendServer
     {
         if (pixtendSPtr_ != nullptr)
         {
+            // write output data
+            pixtendSPtr_->handleHardwareAccess();
+
             pixtendSPtr_->shutdown();
             pixtendSPtr_.reset();
         }
