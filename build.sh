@@ -16,6 +16,10 @@ CMAKE_GENERATOR_LOCAL=-G"Eclipse CDT4 - Unix Makefiles"
 # export OPCUAPIXTENDSERVER_MODUL_EIOAO_DUMMY=1
 # export OPCUAPIXTENDSERVER_MODUL_EIODO_DUMMY=1
 
+# enable hardware access SPI libs
+#
+# export OPCUAPIXTENDSERVER_ACCESS_SPI=1
+
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 

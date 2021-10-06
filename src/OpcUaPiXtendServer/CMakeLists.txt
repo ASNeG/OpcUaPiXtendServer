@@ -40,6 +40,15 @@ include_directories(
     ${OPENSSL_INCLUDE_DIR}
 )
 
+set(HardwareAccessLibs "")
+if (DEFINED ENV{OPCUAPIXTENDSERVER_ACCESS_SPI})
+    set(HardwareAccessLibs
+        pixtend
+        wiringPi
+        boost_program_options # is needed for pi - is not part of Boost_LIBRARIES ???
+    )
+endif()
+
 file(
     GLOB 
     OpcUaPiXtendServer_PiXtendAccess_SRC 
@@ -83,19 +92,21 @@ target_link_libraries(
     ${OPCUASTACK_LIBRARY_SERVER}
     ${OPCUASTACK_LIBRARY_PUBSUB}
     ${Boost_LIBRARIES}
+    ${HardwareAccessLibs}
 )
 
 add_executable( 
-    pixtend
+    pixtendOpcUa
     ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Tools/pixtend.cpp
 )
 
 target_link_libraries(
-    pixtend
+    pixtendOpcUa
     PiXtendTool
     PiXtendAccess
     ${OPCUASTACK_LIBRARY_CORE}
     ${Boost_LIBRARIES}
+    ${HardwareAccessLibs}
 ) 
 
 if (WIN32)
@@ -115,30 +126,38 @@ endif()
 # -----------------------------------------------------------------------------
 if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_V2S_DUMMY})
     add_definitions(-DOPCUAPIXTENDSERVER_MODUL_V2S_DUMMY)
-    message(STATUS "Modul V2S activate dummy")
+    message(STATUS "Module V2S activate dummy")
 else ()
-    message(STATUS "Modul V2S activate real access")
+    message(STATUS "Module V2S activate real access")
 endif ()
 
 if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_V2L_DUMMY})
     add_definitions(-DOPCUAPIXTENDSERVER_MODUL_V2L_DUMMY)
-    message(STATUS "Modul V2L activate dummy")
+    message(STATUS "Module V2L activate dummy")
 else ()
-    message(STATUS "Modul V2L activate real access")    
+    message(STATUS "Module V2L activate real access")
 endif ()
 
 if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_EIOAO_DUMMY})
     add_definitions(-DOPCUAPIXTENDSERVER_MODUL_EIOAO_DUMMY)
-    message(STATUS "Modul EIOAO activate dummy")
+    message(STATUS "Module EIOAO activate dummy")
 else ()
-    message(STATUS "Modul EIOAO activate real access")    
+    message(STATUS "Module EIOAO activate real access")
 endif ()
 
 if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_EIODO_DUMMY})
     add_definitions(-DOPCUAPIXTENDSERVER_MODUL_EIODO_DUMMY)
-    message(STATUS "Modul EIODO activate dummy")
+    message(STATUS "Module EIODO activate dummy")
 else ()
-    message(STATUS "Modul EIODO activate real access")    
+    message(STATUS "Module EIODO activate real access")
+endif ()
+
+
+if (DEFINED ENV{OPCUAPIXTENDSERVER_ACCESS_SPI})
+    add_definitions(-DOPCUAPIXTENDSERVER_ACCESS_SPI)
+    message(STATUS "Module access SPI active")
+else ()
+    message(STATUS "Module access PC active")
 endif ()
 
 # -----------------------------------------------------------------------------
@@ -151,7 +170,7 @@ endif ()
 
 file (GLOB CONFIG_FILES ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Config/*.xml)
 install(TARGETS OpcUaPiXtendServer DESTINATION ${INSTALL_PREFIX}/lib)
-install(TARGETS pixtend DESTINATION ${INSTALL_PREFIX}/bin)
+install(TARGETS pixtendOpcUa DESTINATION ${INSTALL_PREFIX}/bin)
 
 if (WIN32)
     install(FILES ${CONFIG_FILES} DESTINATION ${INSTALL_PREFIX}/../etc/OpcUaStack/OpcUaPiXtendServer) 
