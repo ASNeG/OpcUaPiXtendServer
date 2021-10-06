@@ -31,8 +31,8 @@ namespace OpcUaPiXtendServer
 
     struct PiXtendToolReadStruct
     {
-        AValue aValue;
-        DValue dValue;
+        AValue aValue {false, 0.0};
+        DValue dValue {false, false};
     };
 
     const std::string piXtendModule_V2S   {"v2s"};
@@ -128,7 +128,7 @@ namespace OpcUaPiXtendServer
         virtual ~PiXtendToolConfig(void) = default;
 
         static bool mapInputPin(std::string& strPin, Pins& pin);
-        static bool mapDValue(std::string& strDValue, bool dValue);
+        static bool mapDValue(std::string& strDValue, bool& dValue);
 
       private:
 

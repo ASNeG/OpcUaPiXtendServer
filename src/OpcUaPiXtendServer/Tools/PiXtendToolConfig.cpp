@@ -37,7 +37,7 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-    PiXtendToolConfig::mapDValue(std::string& strDValue, bool dValue)
+    PiXtendToolConfig::mapDValue(std::string& strDValue, bool& dValue)
     {
         if (strDValue == operationDValueOn)
         {
