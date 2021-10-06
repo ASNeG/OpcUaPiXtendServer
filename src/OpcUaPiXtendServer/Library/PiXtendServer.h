@@ -66,6 +66,20 @@ namespace OpcUaPiXtendServer
 
 		ContextIndex::SPtr contextIndex_ = boost::make_shared<ContextIndex>();
 
+        PiXtendV2S::SPtr piXtendV2S_ {nullptr};
+        PiXtendV2L::SPtr piXtendV2L_ {nullptr};
+        std::map<uint32_t, PiXtendEIOAO::SPtr> piXtendEIOAOMap_;
+        std::map<uint32_t, PiXtendEIODO::SPtr> piXtendEIODOMap_;
+
+        PiXtendV2SServer::SPtr piXtendV2SServer_ {nullptr};
+        PiXtendV2LServer::SPtr piXtendV2LServer_ {nullptr};
+        std::unordered_map<uint32_t /*address*/, PiXtendEIOAOServer::SPtr> piXtendEIOAOServerMap_;
+        std::unordered_map<uint32_t /*address*/, PiXtendEIODOServer::SPtr> piXtendEIODOServerMap_;
+
+		boost::shared_ptr<boost::asio::io_service::strand> pixtendLoopstrand_ = nullptr;
+		uint32_t pixtendTimerInterval_ = 200;
+		OpcUaStackCore::SlotTimerElement::SPtr pixtendTimerElement_ = nullptr;
+
 		bool startupPiXtend(PiXtendServerControllerCfg& cfg);
 		bool shutdownPiXtend(void);
         bool startupServerV2S(const std::string& name);
@@ -83,15 +97,9 @@ namespace OpcUaPiXtendServer
 		bool findNamespace(void);
 		bool createPiXtendRootObject(void);
 
-        PiXtendV2S::SPtr piXtendV2S_ {nullptr};
-        PiXtendV2L::SPtr piXtendV2L_ {nullptr};
-        std::map<uint32_t, PiXtendEIOAO::SPtr> piXtendEIOAOMap_;
-        std::map<uint32_t, PiXtendEIODO::SPtr> piXtendEIODOMap_;
-
-        PiXtendV2SServer::SPtr piXtendV2SServer_ {nullptr};
-        PiXtendV2LServer::SPtr piXtendV2LServer_ {nullptr};
-        std::unordered_map<uint32_t /*address*/, PiXtendEIOAOServer::SPtr> piXtendEIOAOServerMap_;
-        std::unordered_map<uint32_t /*address*/, PiXtendEIODOServer::SPtr> piXtendEIODOServerMap_;
+		bool startupPiXtendLoop(void);
+		bool shutdownPiXtendLoop(void);
+		void piXtendLoop(void);
 	};
 
 }

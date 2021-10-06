@@ -96,6 +96,12 @@ namespace OpcUaPiXtendServer
         	return false;
         }
 
+        // startup pixtend loop
+        if (!startupPiXtendLoop()) {
+        	Log(Error, "startup pixtend loop error");
+        	return false;
+        }
+
 		return true;
 	}
 
@@ -103,6 +109,9 @@ namespace OpcUaPiXtendServer
 	PiXtendServer::shutdown(void)
 	{
 		Log(Debug, "PiXtendServer::shutdown");
+
+		// shutdown pixtend loop
+		shutdownPiXtendLoop();
 
 		// shutdown server
 		shutdownServer();
@@ -469,6 +478,64 @@ namespace OpcUaPiXtendServer
 		}
 
 		return true;
+	}
+
+	bool
+	PiXtendServer::startupPiXtendLoop(void)
+	{
+		pixtendLoopstrand_ = ioThread_->createStrand();
+
+		pixtendTimerElement_ = boost::make_shared<SlotTimerElement>();
+		pixtendTimerElement_->timeoutCallback([this](void) { piXtendLoop(); });
+
+		Log(Debug, "start pixtend timer");
+		pixtendTimerElement_->expireTime(
+			boost::posix_time::microsec_clock::local_time() + boost::posix_time::millisec(pixtendTimerInterval_)
+		);
+		ioThread_->slotTimer()->start(pixtendTimerElement_);
+		return true;
+	}
+
+	bool
+	PiXtendServer::shutdownPiXtendLoop(void)
+	{
+		// stop pixtend timer loop
+		if (pixtendTimerElement_.get() != nullptr) {
+			ioThread_->slotTimer()->stop(pixtendTimerElement_);
+			pixtendTimerElement_.reset();
+		}
+
+		return true;
+	}
+
+	void
+	PiXtendServer::piXtendLoop(void)
+	{
+		// call v2s loop
+		if (piXtendV2S_) {
+			piXtendV2S_->loop();
+		}
+
+		// call v2l loop
+		if (piXtendV2L_) {
+			piXtendV2L_->loop();
+		}
+
+		// call EIOAO loops
+		for (auto eIOAO : piXtendEIOAOMap_) {
+			eIOAO.second->loop();
+		}
+
+		// call EIODO loops
+		for (auto eIODO : piXtendEIODOMap_) {
+			eIODO.second->loop();
+		}
+
+		// restart timer
+		pixtendTimerElement_->expireTime(
+			boost::posix_time::microsec_clock::local_time() + boost::posix_time::millisec(pixtendTimerInterval_)
+		);
+		ioThread_->slotTimer()->start(pixtendTimerElement_);
 	}
 
 }
