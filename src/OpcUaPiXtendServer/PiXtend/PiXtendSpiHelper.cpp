@@ -54,11 +54,11 @@ namespace OpcUaPiXtendServer
 
         if (value > 1023)
         {
-            return 1023;
+            return 1.0;
         }
         else if (value == 0)
         {
-            return 0;
+            return 0.0;
         }
         else
         {
@@ -74,7 +74,7 @@ namespace OpcUaPiXtendServer
 
         if (value > 1.0)
         {
-            return 1;
+            return 1023;
         }
         else if (value == 0)
         {
