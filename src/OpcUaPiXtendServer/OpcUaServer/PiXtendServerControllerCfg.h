@@ -37,7 +37,7 @@ namespace OpcUaPiXtendServer
     static const std::unordered_map<std::string, ServerModule> MapType2ServerModule =
     {
         { "v2s", ServerModule::V2S },
-        { "v2L", ServerModule::V2L },
+        { "v2l", ServerModule::V2L },
         { "ao", ServerModule::AO },
         { "do", ServerModule::DO }
     };

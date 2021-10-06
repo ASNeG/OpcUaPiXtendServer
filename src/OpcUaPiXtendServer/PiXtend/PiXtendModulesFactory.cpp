@@ -32,42 +32,42 @@ namespace OpcUaPiXtendServer
     }
 
     PiXtendV2S::SPtr
-    PiXtendModulesFactory::createPiXtendV2S(void)
+    PiXtendModulesFactory::createPiXtendV2S(const std::string& instanceName)
     {
 #ifdef OPCUAPIXTENDSERVER_MODUL_V2S_DUMMY
-        return boost::make_shared<PiXtendV2SDummy>();
+        return boost::make_shared<PiXtendV2SDummy>(instanceName);
 #else
-        return boost::make_shared<PiXtendV2SInst>();
+        return boost::make_shared<PiXtendV2SInst>(instanceName);
 #endif
     }
 
     PiXtendV2L::SPtr
-    PiXtendModulesFactory::createPiXtendV2L(void)
+    PiXtendModulesFactory::createPiXtendV2L(const std::string& instanceName)
     {
 #ifdef OPCUAPIXTENDSERVER_MODUL_V2L_DUMMY
-        return boost::make_shared<PiXtendV2LDummy>();
+        return boost::make_shared<PiXtendV2LDummy>(instanceName);
 #else
-        return boost::make_shared<PiXtendV2LInst>();
+        return boost::make_shared<PiXtendV2LInst>(instanceName);
 #endif
     }
 
     PiXtendEIOAO::SPtr
-    PiXtendModulesFactory::createPiXtendEIOAO(void)
+    PiXtendModulesFactory::createPiXtendEIOAO(const std::string& instanceName)
     {
 #ifdef OPCUAPIXTENDSERVER_MODUL_EIOAO_DUMMY
-        return boost::make_shared<PiXtendEIOAODummy>();
+        return boost::make_shared<PiXtendEIOAODummy>(instanceName);
 #else
-        return boost::make_shared<PiXtendEIOAOInst>();
+        return boost::make_shared<PiXtendEIOAOInst>(instanceName);
 #endif
     }
 
     PiXtendEIODO::SPtr
-    PiXtendModulesFactory::createPiXtendEIODO(void)
+    PiXtendModulesFactory::createPiXtendEIODO(const std::string& instanceName)
     {
 #ifdef OPCUAPIXTENDSERVER_MODUL_EIODO_DUMMY
-        return boost::make_shared<PiXtendEIODODummy>();
+        return boost::make_shared<PiXtendEIODODummy>(instanceName);
 #else
-        return boost::make_shared<PiXtendEIODOInst>();
+        return boost::make_shared<PiXtendEIODOInst>(instanceName);
 #endif
     }
 

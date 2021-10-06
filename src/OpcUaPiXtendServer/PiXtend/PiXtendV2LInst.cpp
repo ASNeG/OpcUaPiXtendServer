@@ -21,8 +21,8 @@
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendV2LInst::PiXtendV2LInst(void)
-    : PiXtendV2L()
+    PiXtendV2LInst::PiXtendV2LInst(const std::string& instanceName)
+    : PiXtendV2L(instanceName)
     {
     }
 
@@ -42,6 +42,12 @@ namespace OpcUaPiXtendServer
     PiXtendV2LInst::shutdown(void)
     {
         return true;
+    }
+
+    void
+ 	PiXtendV2LInst::handleHardwareAccess(void)
+    {
+        // FIXME: TBD
     }
 
     // Inputs Analog
@@ -88,13 +94,15 @@ namespace OpcUaPiXtendServer
     void
     PiXtendV2LInst::ao0(double data)
     {
-
+    	std::cout << "set ao0" << std::endl;
+    	testValue = data;
     }
 
     double
     PiXtendV2LInst::ao0(void)
     {
-        return 0.0;
+    	std::cout << "get ao0" << std::endl;
+        return testValue;
     }
 
     void

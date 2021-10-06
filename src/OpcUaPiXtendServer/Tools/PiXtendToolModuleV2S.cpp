@@ -20,13 +20,14 @@
 
 namespace OpcUaPiXtendServer
 {
-    PiXtendToolModuleV2S::PiXtendToolModuleV2S(void)
+    PiXtendToolModuleV2S::PiXtendToolModuleV2S(const std::string& name)
     : PiXtendToolModule()
     {
-        pixtendSPtr_ = PiXtendModulesFactory::createPiXtendV2S();
+        pixtendSPtr_ = PiXtendModulesFactory::createPiXtendV2S(name);
 
         if (pixtendSPtr_ != nullptr)
         {
+        	ContextIndex::SPtr contextIndex = boost::make_shared<ContextIndex>();
             pixtendSPtr_->startup();
         }
     }

@@ -33,47 +33,36 @@ namespace OpcUaPiXtendServer
     bool
 	PiXtendV2SServer::handleStartup(void)
     {
-    	// get pixtend v2s access interface
-    	pixtend_ = PiXtendModulesFactory::createPiXtendV2S();
+    	nodePinConfigVec_ = {
 
-       	// startup pixtend interface
-        pixtend_->startup();
+    		// digital outputs
+    		{"DO_DO0_Variable", "DO0"},
+			{"DO_DO1_Variable", "DO1"},
+			{"DO_DO2_Variable", "DO2"},
+			{"DO_DO3_Variable", "DO3"},
+			{"RELAY_RELAY0_Variable", "RELAY0"},
+			{"RELAY_RELAY1_Variable", "RELAY1"},
+			{"RELAY_RELAY2_Variable", "RELAY2"},
+			{"RELAY_RELAY3_Variable", "RELAY3"},
 
-        // set digital output configuration
-        dOConfigVec_ = {
-            {"DO_DO0_Variable", V2S_DO_RF(do0), V2S_DO_WF(do0)},
-            {"DO_DO1_Variable", V2S_DO_RF(do1), V2S_DO_WF(do1)},
-            {"DO_DO2_Variable", V2S_DO_RF(do2), V2S_DO_WF(do2)},
-            {"DO_DO3_Variable", V2S_DO_RF(do3), V2S_DO_WF(do3)},
-            {"RELAY_RELAY0_Variable", V2S_DO_RF(relay0), V2S_DO_WF(relay0)},
-            {"RELAY_RELAY1_Variable", V2S_DO_RF(relay1), V2S_DO_WF(relay1)},
-            {"RELAY_RELAY2_Variable", V2S_DO_RF(relay2), V2S_DO_WF(relay2)},
-            {"RELAY_RELAY3_Variable", V2S_DO_RF(relay3), V2S_DO_WF(relay3)}
-        };
+			// digital inputs
+	        {"DI_DI0_Variable", "DI0"},
+	        {"DI_DI1_Variable", "DI1"},
+	        {"DI_DI2_Variable", "DI2"},
+	        {"DI_DI3_Variable", "DI3"},
+		    {"DI_DI4_Variable", "DI4"},
+		    {"DI_DI5_Variable", "DI5"},
+		    {"DI_DI6_Variable", "DI6"},
+		    {"DI_DI7_Variable", "DI7"},
 
-        // set digital input configuration
-        dIConfigVec_ = {
-            {"DI_DI0_Variable", V2S_DI_RF(di0)},
-            {"DI_DI1_Variable", V2S_DI_RF(di1)},
-            {"DI_DI2_Variable", V2S_DI_RF(di2)},
-            {"DI_DI3_Variable", V2S_DI_RF(di3)},
-	        {"DI_DI4_Variable", V2S_DI_RF(di4)},
-	        {"DI_DI5_Variable", V2S_DI_RF(di5)},
-	        {"DI_DI6_Variable", V2S_DI_RF(di6)},
-	        {"DI_DI7_Variable", V2S_DI_RF(di7)}
-        };
+			// analog outputs
+            {"AO_AO0_Variable", "AO0"},
+            {"AO_AO1_Variable", "AO1"},
 
-        // set analog output configuration
-        aOConfigVec_ = {
-            {"AO_AO0_Variable", V2S_AO_RF(ao0), V2S_AO_WF(ao0)},
-            {"AO_AO1_Variable", V2S_AO_RF(ao1), V2S_AO_WF(ao1)}
-        };
-
-        // set analog input configuration
-        aIConfigVec_ = {
-            {"AI_AI0_Variable", V2S_AI_RF(ai0)},
-            {"AI_AI1_Variable", V2S_AI_RF(ai1)}
-        };
+			// analog inputs
+	        {"AI_AI0_Variable", "AI0"},
+	        {"AI_AI1_Variable", "AI1"},
+    	};
 
     	return true;
     }
@@ -81,10 +70,6 @@ namespace OpcUaPiXtendServer
     bool
 	PiXtendV2SServer::handleShutdown(void)
     {
-    	// shutdown pixtend interface
-    	pixtend_->shutdown();
-    	pixtend_.reset();
-
     	return true;
     }
 }

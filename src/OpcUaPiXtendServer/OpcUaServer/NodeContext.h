@@ -21,16 +21,10 @@
 
 #include <boost/shared_ptr.hpp>
 #include "OpcUaStackCore/Base/BaseClass.h"
+#include "OpcUaStackServer/StandardVariableType/ServerVariables.h"
 
 namespace OpcUaPiXtendServer
 {
-
-	enum class ContextType
-	{
-		None,
-		DigitalIO,
-		AnalogIO
-	};
 
     class NodeContext
 	: public OpcUaStackCore::BaseClass
@@ -39,13 +33,17 @@ namespace OpcUaPiXtendServer
 
     	using SPtr = boost::shared_ptr<NodeContext>;
 
-        NodeContext(ContextType contextType);
+        NodeContext(void);
         virtual ~NodeContext(void);
 
-        ContextType contextType(void);
+        void serverVariable(OpcUaStackServer::ServerVariable::SPtr& serverVariable);
+        OpcUaStackServer::ServerVariable::SPtr& serverVariable(void);
+        void hardwareContext(BaseClass::SPtr& hardwareContext);
+        BaseClass::SPtr hardwareContext(void);
 
       private:
-        ContextType contextType_ = ContextType::None;
+        OpcUaStackServer::ServerVariable::SPtr serverVariable_ = nullptr;
+        OpcUaStackCore::BaseClass::SPtr hardwareContext_ = nullptr;
     };
 
 }

@@ -207,11 +207,11 @@ bool handleModule(std::string& module, ModuleAddress& moduleAddress,
 
     if (module == piXtendModule_V2S)
     {
-        moduleSPtr = boost::make_shared<PiXtendToolModuleV2S>();
+        moduleSPtr = boost::make_shared<PiXtendToolModuleV2S>(module);
     }
     else if (module == piXtendModule_V2L)
     {
-        moduleSPtr = boost::make_shared<PiXtendToolModuleV2L>();
+        moduleSPtr = boost::make_shared<PiXtendToolModuleV2L>(module);
     }
     else if (module == piXtendModule_EIOAO)
     {
@@ -221,7 +221,7 @@ bool handleModule(std::string& module, ModuleAddress& moduleAddress,
             return false;
         }
 
-        moduleSPtr = boost::make_shared<PiXtendToolModuleEIOAO>(moduleAddress);
+        moduleSPtr = boost::make_shared<PiXtendToolModuleEIOAO>(module, moduleAddress);
     }
     else if (module == piXtendModule_EIODO)
     {
@@ -231,7 +231,7 @@ bool handleModule(std::string& module, ModuleAddress& moduleAddress,
             return false;
         }
 
-        moduleSPtr = boost::make_shared<PiXtendToolModuleEIODO>(moduleAddress);
+        moduleSPtr = boost::make_shared<PiXtendToolModuleEIODO>(module, moduleAddress);
     }
     else
     {

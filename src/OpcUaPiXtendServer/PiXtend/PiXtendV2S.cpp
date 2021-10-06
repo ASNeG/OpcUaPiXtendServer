@@ -18,10 +18,16 @@
 
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2S.h"
 
+#define V2S_AI(PIN_NAME) PIXTEND_BASE_AI(PiXtendV2S, PIN_NAME)
+#define V2S_AO(PIN_NAME) PIXTEND_BASE_AO(PiXtendV2S, PIN_NAME)
+#define V2S_DI(PIN_NAME) PIXTEND_BASE_DI(PiXtendV2S, PIN_NAME)
+#define V2S_DO(PIN_NAME) PIXTEND_BASE_DO(PiXtendV2S, PIN_NAME)
+
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendV2S::PiXtendV2S(void)
+    PiXtendV2S::PiXtendV2S(const std::string& instanceName)
+    : PiXtendBase(instanceName)
     {
     }
 
@@ -29,4 +35,37 @@ namespace OpcUaPiXtendServer
     {
     }
 
+    void
+	PiXtendV2S::handleRegisterContext(void)
+    {
+    	registerContext({
+    		// analog inputs
+    		{ "AI0", V2S_AI(ai0)},
+			{ "AI1", V2S_AI(ai1)},
+
+    		// analog outputs
+       		{ "AO0", V2S_AI(ao0)},
+    		{ "AO1", V2S_AI(ao1)},
+
+    		// digital inputs
+			{ "DI0", V2S_DI(di0)},
+			{ "DI1", V2S_DI(di1)},
+			{ "DI2", V2S_DI(di2)},
+			{ "DI3", V2S_DI(di3)},
+			{ "DI4", V2S_DI(di4)},
+			{ "DI5", V2S_DI(di5)},
+			{ "DI6", V2S_DI(di6)},
+			{ "DI7", V2S_DI(di7)},
+
+    		// digital outputs
+			{ "DO0", V2S_DO(do0)},
+			{ "DO1", V2S_DO(do1)},
+			{ "DO2", V2S_DO(do2)},
+			{ "DO3", V2S_DO(do3)},
+			{ "RELAY0", V2S_DO(relay0)},
+			{ "RELAY1", V2S_DO(relay1)},
+			{ "RELAY2", V2S_DO(relay2)},
+			{ "RELAY3", V2S_DO(relay3)}
+    	});
+    }
 }

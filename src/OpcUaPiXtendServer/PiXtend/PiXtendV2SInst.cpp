@@ -21,8 +21,8 @@
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendV2SInst::PiXtendV2SInst(void)
-    : PiXtendV2S()
+    PiXtendV2SInst::PiXtendV2SInst(const std::string& instanceName)
+    : PiXtendV2S(instanceName)
     {
     }
 
@@ -42,6 +42,12 @@ namespace OpcUaPiXtendServer
     PiXtendV2SInst::shutdown(void)
     {
         return true;
+    }
+
+    void
+	PiXtendV2SInst::handleHardwareAccess(void)
+    {
+    	// FIXME: TBD
     }
 
     // Inputs Analog

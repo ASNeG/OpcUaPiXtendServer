@@ -21,8 +21,8 @@
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendEIOAOInst::PiXtendEIOAOInst(void)
-    : PiXtendEIOAO()
+    PiXtendEIOAOInst::PiXtendEIOAOInst(const std::string& instanceName)
+    : PiXtendEIOAO(instanceName)
     {
     }
 
@@ -42,6 +42,12 @@ namespace OpcUaPiXtendServer
     PiXtendEIOAOInst::shutdown(void)
     {
         return true;
+    }
+
+    void
+	PiXtendEIOAOInst::handleHardwareAccess(void)
+    {
+    	// FIXME: TBD
     }
 
     // Inputs Analog

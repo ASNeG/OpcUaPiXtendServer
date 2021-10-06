@@ -16,43 +16,55 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#include "OpcUaPiXtendServer/OpcUaServer/NodeContext.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendValueContext.h"
 
-using namespace OpcUaStackServer;
+using namespace OpcUaStackCore;
 
 namespace OpcUaPiXtendServer
 {
 
-    NodeContext::NodeContext(void)
+    PiXtendValueContext::PiXtendValueContext(PiXtendValueContext::ContextType contextType)
+    : BaseClass()
+    , contextType_(contextType)
     {
     }
 
-    NodeContext::~NodeContext(void)
+    PiXtendValueContext::~PiXtendValueContext(void)
     {
     }
 
-    void
-	NodeContext::serverVariable(ServerVariable::SPtr& serverVariable)
+    PiXtendValueContext::ContextType
+	PiXtendValueContext::contextType(void)
     {
-    	serverVariable_ = serverVariable;
-    }
-
-    ServerVariable::SPtr&
-	NodeContext::serverVariable(void)
-    {
-    	return serverVariable_;
+    	return contextType_;
     }
 
     void
-	NodeContext::hardwareContext(BaseClass::SPtr& hardwareContext)
+	PiXtendValueContext::dataValue(OpcUaDataValue& dataValue)
     {
-    	hardwareContext_ = hardwareContext;
+    	outputDataValue_ = dataValue;
     }
 
-    BaseClass::SPtr
-	NodeContext::hardwareContext(void)
+    OpcUaStackCore::OpcUaDataValue
+	PiXtendValueContext::dataValue(void)
     {
-    	return hardwareContext_;
+    	OpcUaDataValue dataValue;
+
+    	dataValue = inputDataValue_;
+
+    	return dataValue;
+    }
+
+    bool
+	PiXtendValueContext::writeAccess(void)
+    {
+    	return writeAccess_;
+    }
+
+    void
+	PiXtendValueContext::writeAccess(bool writeAccess)
+    {
+    	writeAccess_ = writeAccess;
     }
 
 }

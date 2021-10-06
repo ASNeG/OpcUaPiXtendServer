@@ -24,48 +24,17 @@
 #include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaStackServer/StandardObjectType/ObjectBase.h"
-#include "OpcUaPiXtendServer/OpcUaServer/NodeContextDigitalIO.h"
-#include "OpcUaPiXtendServer/OpcUaServer/NodeContextAnalogIO.h"
-
-#define BASE_DO_RF(CLASS, PIN) boost::bind(static_cast<bool (CLASS::*)(void)>(&CLASS::PIN) , pixtend_.get())
-#define BASE_DO_WF(CLASS, PIN) boost::bind(static_cast<void (CLASS::*)(bool)>(&CLASS::PIN) , pixtend_.get(), _1)
-#define BASE_DI_RF(CLASS, PIN) boost::bind(static_cast<bool (CLASS::*)(void)>(&CLASS::PIN) , pixtend_.get())
-#define BASE_AO_RF(CLASS, PIN) boost::bind(static_cast<double (CLASS::*)(void)>(&CLASS::PIN) , pixtend_.get())
-#define BASE_AO_WF(CLASS, PIN) boost::bind(static_cast<void (CLASS::*)(double)>(&CLASS::PIN) , pixtend_.get(), _1)
-#define BASE_AI_RF(CLASS, PIN) boost::bind(static_cast<double (CLASS::*)(void)>(&CLASS::PIN) , pixtend_.get())
+#include "OpcUaPiXtendServer/PiXtend/ContextIndex.h"
 
 namespace OpcUaPiXtendServer
 {
 
-	class DOConfig {
+	class NodePinConfig {
 	  public:
-		using Vec = std::vector<DOConfig>;
+		using Vec = std::vector<NodePinConfig>;
 
-       	std::string nodeName_;
-		NodeContextDigitalIO::ReadFunc readFunc_;
-		NodeContextDigitalIO::WriteFunc writeFunc_;
-	};
-	class DIConfig {
-	  public:
-		using Vec = std::vector<DIConfig>;
-
-       	std::string nodeName_;
-		NodeContextDigitalIO::ReadFunc readFunc_;
-	};
-	class AOConfig {
-	  public:
-		using Vec = std::vector<AOConfig>;
-
-       	std::string nodeName_;
-		NodeContextAnalogIO::ReadFunc readFunc_;
-		NodeContextAnalogIO::WriteFunc writeFunc_;
-	};
-	class AIConfig {
-	  public:
-		using Vec = std::vector<AIConfig>;
-
-       	std::string nodeName_;
-		NodeContextAnalogIO::ReadFunc readFunc_;
+		std::string nodeName_;
+		std::string pinName_;
 	};
 
     class PiXtendBaseServer
@@ -83,11 +52,14 @@ namespace OpcUaPiXtendServer
         virtual ~PiXtendBaseServer(void);
 
         bool startup(
+        	OpcUaStackCore::IOThread::SPtr& ioThread,
+        	boost::shared_ptr<boost::asio::io_service::strand>& strand,
         	OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
             const std::string& instanceName,
 			const std::string& namespaceName,
 			uint16_t namespaceIndex,
-			const OpcUaStackCore::OpcUaNodeId& parentNodeId
+			const OpcUaStackCore::OpcUaNodeId& parentNodeId,
+			ContextIndex::SPtr& contextIndex
 		);
         bool shutdown(void);
 
@@ -99,53 +71,38 @@ namespace OpcUaPiXtendServer
         uint16_t namespaceIndex_ = 0;
         std::string instanceName_ = "";
         OpcUaStackCore::OpcUaNodeId parentNodeId_;
+        ContextIndex::SPtr contextIndex_;
 
-        DOConfig::Vec dOConfigVec_;
-        DIConfig::Vec dIConfigVec_;
-        AOConfig::Vec aOConfigVec_;
-        AIConfig::Vec aIConfigVec_;
+        NodePinConfig::Vec nodePinConfigVec_;
 
         virtual bool handleStartup(void) = 0;
         virtual bool handleShutdown(void) = 0;
 
       private:
+        OpcUaStackCore::IOThread::SPtr ioThread_;
+        boost::shared_ptr<boost::asio::io_service::strand> strand_;
+
         bool createObjectInstance(void);
 
         bool createNodeContext(
-        	const DOConfig::Vec& dOconfigVec,
-			const DIConfig::Vec& dIconfigVec,
-        	const AOConfig::Vec& aOconfigVec,
-			const AIConfig::Vec& aIconfigVec
-		);
-        bool createNodeContextDigitalIO(
-        	OpcUaStackServer::ServerVariable::SPtr& serverVariable,
-        	const std::string& nodeName,
-			NodeContextDigitalIO::ReadFunc readFunc,
-			NodeContextDigitalIO::WriteFunc writeFunc
-		);
-        bool createNodeContextDigitalIO(
-        	OpcUaStackServer::ServerVariable::SPtr& serverVariable,
-        	const std::string& nodeName,
-			NodeContextDigitalIO::ReadFunc readFunc
-		);
-        bool createNodeContextAnalogIO(
-        	OpcUaStackServer::ServerVariable::SPtr& serverVariable,
-        	const std::string& nodeName,
-			NodeContextAnalogIO::ReadFunc readFunc,
-			NodeContextAnalogIO::WriteFunc writeFunc
-		);
-        bool createNodeContextAnalogIO(
-        	OpcUaStackServer::ServerVariable::SPtr& serverVariable,
-        	const std::string& nodeName,
-			NodeContextAnalogIO::ReadFunc readFunc
+        	const NodePinConfig::Vec& nodePinConfigVec
 		);
 
         bool registerServiceFunctions(void);
 
-        void readDigitalValue(ApplicationReadContext* applicationReadContext);
-        void writeDigitalValue(ApplicationWriteContext* applicationWriteContext);
-        void readAnalogValue(ApplicationReadContext* applicationReadContext);
-        void writeAnalogValue(ApplicationWriteContext* applicationWriteContext);
+        // opc ua service function
+        void readValue(
+        	ApplicationReadContext* applicationReadContext
+		);
+        void writeValue(
+        	ApplicationWriteContext* applicationWriteContext
+		);
+		void receiveMonotoredItemStart(
+			OpcUaStackCore::ApplicationMonitoredItemStartContext* monitoredItemStartContext
+		);
+		void receiveMonitoredItemStop(
+			OpcUaStackCore::ApplicationMonitoredItemStopContext* monitoredItemStopContext
+		);
     };
 
 }

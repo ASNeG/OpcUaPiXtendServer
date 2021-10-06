@@ -16,31 +16,40 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#ifndef __OpcUaPiXtendServer_PiXtendEIOAOServer_h__
-#define __OpcUaPiXtendServer_PiXtendEIOAOServer_h__
+#ifndef __OpcUaPiXtendServer_ContextIndex_h__
+#define __OpcUaPiXtendServer_ContextIndex_h__
 
-#include "OpcUaPiXtendServer/OpcUaServer/PiXtendBaseServer.h"
-#include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
+#include <boost/shared_ptr.hpp>
+#include "OpcUaStackCore/Base/BaseClass.h"
 
 namespace OpcUaPiXtendServer
 {
 
-    class PiXtendEIOAOServer
-    : public PiXtendBaseServer
+    class ContextIndex
     {
       public:
+    	using SPtr = boost::shared_ptr<ContextIndex>;
+    	using ContextMap = std::map<std::string, OpcUaStackCore::BaseClass::SPtr>;
 
-        using SPtr = boost::shared_ptr<PiXtendEIOAOServer>;
+        ContextIndex(void);
+        virtual ~ContextIndex(void);
 
-    	PiXtendEIOAOServer(uint32_t moduleAddress);
-    	~PiXtendEIOAOServer(void);
-
-    	virtual bool handleStartup(void) override;
-    	virtual bool handleShutdown(void) override;
+        bool registerContext(
+            const std::string& contextName,
+        	OpcUaStackCore::BaseClass::SPtr& context
+		);
+        bool deregisterContext(
+        	const std::string& contextName
+        );
+        bool existContext(
+        	const std::string& contextName
+        );
+        OpcUaStackCore::BaseClass::SPtr getContext(
+        	const std::string& contextName
+        );
 
       private:
-    	PiXtendEIOAO::SPtr pixtend_ = nullptr;
-    	uint32_t moduleAddress_ = 0;
+        ContextMap contextMap_;
     };
 
 }

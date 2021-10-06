@@ -21,8 +21,8 @@
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendEIODOInst::PiXtendEIODOInst(void)
-    : PiXtendEIODO()
+    PiXtendEIODOInst::PiXtendEIODOInst(const std::string& instanceName)
+    : PiXtendEIODO(instanceName)
     {
     }
 
@@ -42,6 +42,12 @@ namespace OpcUaPiXtendServer
     PiXtendEIODOInst::shutdown(void)
     {
         return true;
+    }
+
+    void
+	PiXtendEIODOInst::handleHardwareAccess(void)
+    {
+    	// FIXME: TBD
     }
 
     // Inputs Digital

@@ -31,13 +31,14 @@ namespace OpcUaPiXtendServer
       public:
         using SPtr = boost::shared_ptr<PiXtendV2LInst>;
 
-        PiXtendV2LInst(void);
+        PiXtendV2LInst(const std::string& instanceName);
         virtual ~PiXtendV2LInst(void);
 
         // Configuration
 
         virtual bool startup(void) override;
         virtual bool shutdown(void) override;
+        virtual void handleHardwareAccess(void) override;
 
         // Inputs Analog
 
@@ -122,6 +123,9 @@ namespace OpcUaPiXtendServer
         virtual bool gpio2(void) override;
         virtual void gpio3(bool data) override;
         virtual bool gpio3(void) override;
+
+      private:
+        double testValue;
     };
 
 }

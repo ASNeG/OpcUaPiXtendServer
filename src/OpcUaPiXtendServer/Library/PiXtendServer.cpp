@@ -21,6 +21,7 @@
 #include "OpcUaStackServer/ServiceSetApplication/CreateNodeInstance.h"
 
 #include "OpcUaPiXtendServer/Library/PiXtendServer.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
 
 
 using namespace OpcUaStackCore;
@@ -84,7 +85,13 @@ namespace OpcUaPiXtendServer
 			return false;
 		}
 
-        // add configured objects
+        // startup pixtend modules
+        if (!startupPiXtend(controllerCfg)) {
+        	Log(Error, "startup pixtend error");
+        	return false;
+        }
+
+        // add configured opc ua server objects
         auto modules = controllerCfg.configModules();
         for (auto module: modules)
         {
@@ -127,6 +134,69 @@ namespace OpcUaPiXtendServer
                 return false;
             }
         }
+
+		return true;
+	}
+
+	bool
+	PiXtendServer::startupPiXtend(PiXtendServerControllerCfg& cfg)
+	{
+	    for (auto module: cfg.configModules()) {
+	    	switch (module.moduleType()) {
+	    		case ServerModule::V2S:
+	    		{
+	    			piXtendV2S_ = PiXtendModulesFactory::createPiXtendV2S(module.moduleName());
+	    			piXtendV2S_->contextIndex(contextIndex_);
+	    			if (!piXtendV2S_->startup()) {
+	    				Log(Error, "startup pixtend V2S error")
+	    					.parameter("ModuleName", module.moduleName());
+	    				return false;
+	    			}
+	    			break;
+	    		}
+	    		case ServerModule::V2L:
+	    		{
+	    			piXtendV2L_ = PiXtendModulesFactory::createPiXtendV2L(module.moduleName());
+	    			piXtendV2L_->contextIndex(contextIndex_);
+	    			if (!piXtendV2L_->startup()) {
+	    				Log(Error, "startup pixtend V2l error")
+							.parameter("ModuleName", module.moduleName());
+	    				return false;
+	    			}
+	    			break;
+	    		}
+	    		case ServerModule::DO:
+	    		{
+	    			auto piXtendEIODO = PiXtendModulesFactory::createPiXtendEIODO(module.moduleName());
+	    			piXtendEIODO->contextIndex(contextIndex_);
+	    			if (!piXtendEIODO->startup(module.moduleAddress())) {
+	    				Log(Error, "startup pixtend EIODO error")
+						    .parameter("ModuleName", module.moduleName());
+	    				return false;
+	    			}
+	    			piXtendEIODOMap_.insert(std::make_pair(module.moduleAddress(), piXtendEIODO));
+					break;
+	    		}
+	    		case ServerModule::AO:
+	    		{
+	    			auto piXtendEIOAO = PiXtendModulesFactory::createPiXtendEIOAO(module.moduleName());
+	    			piXtendEIOAO->contextIndex(contextIndex_);
+	    			if (!piXtendEIOAO->startup(module.moduleAddress())) {
+	    				Log(Error, "startup pixtend EIOAO error")
+						    .parameter("ModuleName", module.moduleName());
+	    				return false;
+	    			}
+	    			piXtendEIOAOMap_.insert(std::make_pair(module.moduleAddress(), piXtendEIOAO));
+					break;
+	    		}
+	    	    default:
+	    	    {
+	    		    Log(Error, "found undefined type in control configuration!")
+	    		        .parameter("Name", module.moduleName());
+	    		    return false;
+	    	    }
+	    	}
+	    }
 
 		return true;
 	}
@@ -223,11 +293,14 @@ namespace OpcUaPiXtendServer
 
         piXtendV2SServer_ = boost::make_shared<PiXtendV2SServer>();
         return piXtendV2SServer_->startup(
+        	ioThread_,
+			strand_,
             applicationServiceIf_,
             name,
             namespaceName_,
             namespaceIndex_,
-            piXtendRootNodeId_
+            piXtendRootNodeId_,
+			contextIndex_
         );
     }
 
@@ -243,11 +316,14 @@ namespace OpcUaPiXtendServer
 
         piXtendV2LServer_ = boost::make_shared<PiXtendV2LServer>();
         return piXtendV2LServer_->startup(
+        	ioThread_,
+        	strand_,
             applicationServiceIf_,
             name,
             namespaceName_,
             namespaceIndex_,
-            piXtendRootNodeId_
+            piXtendRootNodeId_,
+			contextIndex_
         );
     }
 
@@ -264,11 +340,14 @@ namespace OpcUaPiXtendServer
 
         piXtendEIOAOServerMap_[address] = boost::make_shared<PiXtendEIOAOServer>(address);
         return piXtendEIOAOServerMap_[address]->startup(
+        	ioThread_,
+        	strand_,
             applicationServiceIf_,
             name,
             namespaceName_,
             namespaceIndex_,
-            piXtendRootNodeId_
+            piXtendRootNodeId_,
+			contextIndex_
         );
     }
 
@@ -285,11 +364,14 @@ namespace OpcUaPiXtendServer
 
         piXtendEIODOServerMap_[address] = boost::make_shared<PiXtendEIODOServer>(address);
         return piXtendEIODOServerMap_[address]->startup(
+        	ioThread_,
+        	strand_,
             applicationServiceIf_,
             name,
             namespaceName_,
             namespaceIndex_,
-            piXtendRootNodeId_
+            piXtendRootNodeId_,
+			contextIndex_
         );
     }
 }
