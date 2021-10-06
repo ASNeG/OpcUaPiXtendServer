@@ -19,7 +19,12 @@
 #ifndef __OpcUaPiXtendServer_PiXtendV2LInst_h__
 #define __OpcUaPiXtendServer_PiXtendV2LInst_h__
 
+extern "C" {
+#include <pixtend.h>
+}
+
 #include <boost/shared_ptr.hpp>
+#include <stdint.h>
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2L.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendSpiHelper.h"
 
