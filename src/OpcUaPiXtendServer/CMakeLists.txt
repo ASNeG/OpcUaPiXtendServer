@@ -45,7 +45,6 @@ if (DEFINED ENV{OPCUAPIXTENDSERVER_ACCESS_SPI})
     set(HardwareAccessLibs
         pixtend
         wiringPi
-        boost_program_options # is needed for pi - is not part of Boost_LIBRARIES ???
     )
 endif()
 

@@ -52,12 +52,18 @@ namespace OpcUaPiXtendServer
         // Wertebereich 0 - 1023
         // Umlegung auf 0 - 1
 
-        if (value <= 1023)
+        if (value > 1023)
+        {
+            return 1023;
+        }
+        else if (value == 0)
+        {
+            return 0;
+        }
+        else
         {
             return static_cast<double>(value) / 1023;
         }
-        // TODO error log!
-        return 0.0;
     }
 
     uint16_t
@@ -66,12 +72,18 @@ namespace OpcUaPiXtendServer
         // Wertebereich 0 - 1
         // Umlegung auf 0 - 1023
 
-        if (value <= 1 && value >= 0)
+        if (value > 1.0)
+        {
+            return 1;
+        }
+        else if (value == 0)
+        {
+            return 0;
+        }
+        else
         {
             return static_cast<uint16_t>(value * 1023);
         }
-        // TODO error log!
-        return 0;
     }
 
 }
