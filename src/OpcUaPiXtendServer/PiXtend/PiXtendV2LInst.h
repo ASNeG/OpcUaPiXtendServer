@@ -19,7 +19,12 @@
 #ifndef __OpcUaPiXtendServer_PiXtendV2LInst_h__
 #define __OpcUaPiXtendServer_PiXtendV2LInst_h__
 
+extern "C" {
+#include <pixtend.h>
+}
+
 #include <boost/shared_ptr.hpp>
+#include <stdint.h>
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2L.h"
 
 namespace OpcUaPiXtendServer
@@ -125,7 +130,17 @@ namespace OpcUaPiXtendServer
         virtual bool gpio3(void) override;
 
       private:
-        double testValue;
+        using PiXtendSpiInputData = pixtInV2L;
+        using PiXtendSpiOutputData = pixtOutV2L;
+
+        PiXtendSpiInputData spiInputData_;
+        PiXtendSpiOutputData spiOutputData_;
+
+        void resetSpiInputData(PiXtendSpiInputData& spiInputData);
+        void resetSpiOutputData(PiXtendSpiOutputData& spiOutputData);
+
+        void changeBit(uint8_t& valueToModify, uint8_t bit, uint8_t position);
+        bool mapBool(uint8_t value, uint8_t position);
     };
 
 }
