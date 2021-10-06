@@ -37,6 +37,7 @@ namespace OpcUaPiXtendServer
     {
         resetSpiInputData(spiInputData_);
         resetSpiOutputData(spiOutputData_);
+        resetSpiOutputDataDac(spiOutputDataDac_);
 
         //Configure SPI
         Spi_SetupV2(0); // communication with microcontroller
@@ -56,19 +57,24 @@ namespace OpcUaPiXtendServer
     {
         PiXtendSpiInputData transferInputData;
         PiXtendSpiOutputData transferOutputData;
+        PiXtendSpiOutputDataDac transferOutputDataDac;
 
         resetSpiInputData(transferInputData);
         resetSpiOutputData(transferOutputData);
+        resetSpiOutputDataDac(transferOutputDataDac);
 
         // copy output data
         transferOutputData = spiOutputData_;
+        transferOutputDataDac = spiOutputDataDac_;
 
         // transfer data
         Spi_AutoModeV2L(&transferOutputData, &transferInputData);
+        Spi_AutoModeDAC(&transferOutputDataDac);
 
         // set result
         spiInputData_ = transferInputData;
         spiOutputData_ = transferOutputData;
+        spiOutputDataDac_ = transferOutputDataDac;
 
         // delay
         delay(100); // cycle time 100 ms
@@ -79,37 +85,37 @@ namespace OpcUaPiXtendServer
     double
     PiXtendV2LInst::ai0(void)
     {
-        return 0.0;
+        return spiHelper_.analog2Percent(spiInputData_.wAnalogIn0);
     }
 
     double
     PiXtendV2LInst::ai1(void)
     {
-        return 0.0;
+        return spiHelper_.analog2Percent(spiInputData_.wAnalogIn1);
     }
 
     double
     PiXtendV2LInst::ai2(void)
     {
-        return 0.0;
+        return spiHelper_.analog2Percent(spiInputData_.wAnalogIn2);
     }
 
     double
     PiXtendV2LInst::ai3(void)
     {
-        return 0.0;
+        return spiHelper_.analog2Percent(spiInputData_.wAnalogIn3);
     }
 
     double
     PiXtendV2LInst::ai4(void)
     {
-        return 0.0;
+        return spiHelper_.analog2Percent(spiInputData_.wAnalogIn4);
     }
 
     double
     PiXtendV2LInst::ai5(void)
     {
-        return 0.0;
+        return spiHelper_.analog2Percent(spiInputData_.wAnalogIn5);
     }
 
     // Output Analog
@@ -117,25 +123,25 @@ namespace OpcUaPiXtendServer
     void
     PiXtendV2LInst::ao0(double data)
     {
-
+        spiOutputDataDac_.wAOut0 = spiHelper_.percent2Analog(data);
     }
 
     double
     PiXtendV2LInst::ao0(void)
     {
-        return 0.0;
+        return spiHelper_.analog2Percent(spiOutputDataDac_.wAOut0);
     }
 
     void
     PiXtendV2LInst::ao1(double data)
     {
-
+        spiOutputDataDac_.wAOut1 = spiHelper_.percent2Analog(data);
     }
 
     double
     PiXtendV2LInst::ao1(void)
     {
-        return 0.0;
+        return spiHelper_.analog2Percent(spiOutputDataDac_.wAOut1);
     }
 
     // Inputs Digital
@@ -143,97 +149,97 @@ namespace OpcUaPiXtendServer
     bool
     PiXtendV2LInst::di0(void)
     {
-        return mapBool(spiInputData_.byDigitalIn0, 0);
+        return spiHelper_.bit2Bool(spiInputData_.byDigitalIn0, 0);
     }
 
     bool
     PiXtendV2LInst::di1(void)
     {
-        return mapBool(spiInputData_.byDigitalIn0, 1);
+        return spiHelper_.bit2Bool(spiInputData_.byDigitalIn0, 1);
     }
 
     bool
     PiXtendV2LInst::di2(void)
     {
-        return mapBool(spiInputData_.byDigitalIn0, 2);
+        return spiHelper_.bit2Bool(spiInputData_.byDigitalIn0, 2);
     }
 
     bool
     PiXtendV2LInst::di3(void)
     {
-        return mapBool(spiInputData_.byDigitalIn0, 3);
+        return spiHelper_.bit2Bool(spiInputData_.byDigitalIn0, 3);
     }
 
     bool
     PiXtendV2LInst::di4(void)
     {
-        return mapBool(spiInputData_.byDigitalIn0, 4);
+        return spiHelper_.bit2Bool(spiInputData_.byDigitalIn0, 4);
     }
 
     bool
     PiXtendV2LInst::di5(void)
     {
-        return mapBool(spiInputData_.byDigitalIn0, 5);
+        return spiHelper_.bit2Bool(spiInputData_.byDigitalIn0, 5);
     }
 
     bool
     PiXtendV2LInst::di6(void)
     {
-        return mapBool(spiInputData_.byDigitalIn0, 6);
+        return spiHelper_.bit2Bool(spiInputData_.byDigitalIn0, 6);
     }
 
     bool
     PiXtendV2LInst::di7(void)
     {
-        return mapBool(spiInputData_.byDigitalIn0, 7);
+        return spiHelper_.bit2Bool(spiInputData_.byDigitalIn0, 7);
     }
 
     bool
     PiXtendV2LInst::di8(void)
     {
-        return mapBool(spiInputData_.byDigitalIn1, 0);
+        return spiHelper_.bit2Bool(spiInputData_.byDigitalIn1, 0);
     }
 
     bool
     PiXtendV2LInst::di9(void)
     {
-        return mapBool(spiInputData_.byDigitalIn1, 1);
+        return spiHelper_.bit2Bool(spiInputData_.byDigitalIn1, 1);
     }
 
     bool
     PiXtendV2LInst::di10(void)
     {
-        return mapBool(spiInputData_.byDigitalIn1, 2);
+        return spiHelper_.bit2Bool(spiInputData_.byDigitalIn1, 2);
     }
 
     bool
     PiXtendV2LInst::di11(void)
     {
-        return mapBool(spiInputData_.byDigitalIn1, 3);
+        return spiHelper_.bit2Bool(spiInputData_.byDigitalIn1, 3);
     }
 
     bool
     PiXtendV2LInst::di12(void)
     {
-        return mapBool(spiInputData_.byDigitalIn1, 4);
+        return spiHelper_.bit2Bool(spiInputData_.byDigitalIn1, 4);
     }
 
     bool
     PiXtendV2LInst::di13(void)
     {
-        return mapBool(spiInputData_.byDigitalIn1, 5);
+        return spiHelper_.bit2Bool(spiInputData_.byDigitalIn1, 5);
     }
 
     bool
     PiXtendV2LInst::di14(void)
     {
-        return mapBool(spiInputData_.byDigitalIn1, 6);
+        return spiHelper_.bit2Bool(spiInputData_.byDigitalIn1, 6);
     }
 
     bool
     PiXtendV2LInst::di15(void)
     {
-        return mapBool(spiInputData_.byDigitalIn1, 7);
+        return spiHelper_.bit2Bool(spiInputData_.byDigitalIn1, 7);
     }
 
     // Output Digital
@@ -242,156 +248,156 @@ namespace OpcUaPiXtendServer
     PiXtendV2LInst::do0(bool data)
     {
         uint8_t bit = (data) ? 0x1 : 0x0;
-        changeBit(spiOutputData_.byDigitalOut0, bit, 0);
+        spiHelper_.changeBit(spiOutputData_.byDigitalOut0, bit, 0);
     }
 
     bool
     PiXtendV2LInst::do0(void)
     {
-        return mapBool(spiOutputData_.byDigitalOut0, 0);
+        return spiHelper_.bit2Bool(spiOutputData_.byDigitalOut0, 0);
     }
 
     void
     PiXtendV2LInst::do1(bool data)
     {
         uint8_t bit = (data) ? 0x1 : 0x0;
-        changeBit(spiOutputData_.byDigitalOut0, bit, 1);
+        spiHelper_.changeBit(spiOutputData_.byDigitalOut0, bit, 1);
     }
 
     bool
     PiXtendV2LInst::do1(void)
     {
-        return mapBool(spiOutputData_.byDigitalOut0, 1);
+        return spiHelper_.bit2Bool(spiOutputData_.byDigitalOut0, 1);
     }
 
     void
     PiXtendV2LInst::do2(bool data)
     {
         uint8_t bit = (data) ? 0x1 : 0x0;
-        changeBit(spiOutputData_.byDigitalOut0, bit, 2);
+        spiHelper_.changeBit(spiOutputData_.byDigitalOut0, bit, 2);
     }
 
     bool
     PiXtendV2LInst::do2(void)
     {
-        return mapBool(spiOutputData_.byDigitalOut0, 2);
+        return spiHelper_.bit2Bool(spiOutputData_.byDigitalOut0, 2);
     }
 
     void
     PiXtendV2LInst::do3(bool data)
     {
         uint8_t bit = (data) ? 0x1 : 0x0;
-        changeBit(spiOutputData_.byDigitalOut0, bit, 3);
+        spiHelper_.changeBit(spiOutputData_.byDigitalOut0, bit, 3);
     }
 
     bool
     PiXtendV2LInst::do3(void)
     {
-        return mapBool(spiOutputData_.byDigitalOut0, 3);
+        return spiHelper_.bit2Bool(spiOutputData_.byDigitalOut0, 3);
     }
 
     void
     PiXtendV2LInst::do4(bool data)
     {
         uint8_t bit = (data) ? 0x1 : 0x0;
-        changeBit(spiOutputData_.byDigitalOut0, bit, 4);
+        spiHelper_.changeBit(spiOutputData_.byDigitalOut0, bit, 4);
     }
 
     bool
     PiXtendV2LInst::do4(void)
     {
-        return mapBool(spiOutputData_.byDigitalOut0, 4);
+        return spiHelper_.bit2Bool(spiOutputData_.byDigitalOut0, 4);
     }
 
     void
     PiXtendV2LInst::do5(bool data)
     {
         uint8_t bit = (data) ? 0x1 : 0x0;
-        changeBit(spiOutputData_.byDigitalOut0, bit, 5);
+        spiHelper_.changeBit(spiOutputData_.byDigitalOut0, bit, 5);
     }
 
     bool
     PiXtendV2LInst::do5(void)
     {
-        return mapBool(spiOutputData_.byDigitalOut0, 5);
+        return spiHelper_.bit2Bool(spiOutputData_.byDigitalOut0, 5);
     }
 
     void
     PiXtendV2LInst::do6(bool data)
     {
         uint8_t bit = (data) ? 0x1 : 0x0;
-        changeBit(spiOutputData_.byDigitalOut0, bit, 6);
+        spiHelper_.changeBit(spiOutputData_.byDigitalOut0, bit, 6);
     }
 
     bool
     PiXtendV2LInst::do6(void)
     {
-        return mapBool(spiOutputData_.byDigitalOut0, 6);
+        return spiHelper_.bit2Bool(spiOutputData_.byDigitalOut0, 6);
     }
 
     void
     PiXtendV2LInst::do7(bool data)
     {
         uint8_t bit = (data) ? 0x1 : 0x0;
-        changeBit(spiOutputData_.byDigitalOut0, bit, 7);
+        spiHelper_.changeBit(spiOutputData_.byDigitalOut0, bit, 7);
     }
 
     bool
     PiXtendV2LInst::do7(void)
     {
-        return mapBool(spiOutputData_.byDigitalOut0, 7);
+        return spiHelper_.bit2Bool(spiOutputData_.byDigitalOut0, 7);
     }
 
     void
     PiXtendV2LInst::do8(bool data)
     {
         uint8_t bit = (data) ? 0x1 : 0x0;
-        changeBit(spiOutputData_.byDigitalOut1, bit, 0);
+        spiHelper_.changeBit(spiOutputData_.byDigitalOut1, bit, 0);
     }
 
     bool
     PiXtendV2LInst::do8(void)
     {
-        return mapBool(spiOutputData_.byDigitalOut1, 0);
+        return spiHelper_.bit2Bool(spiOutputData_.byDigitalOut1, 0);
     }
 
     void
     PiXtendV2LInst::do9(bool data)
     {
         uint8_t bit = (data) ? 0x1 : 0x0;
-        changeBit(spiOutputData_.byDigitalOut1, bit, 1);
+        spiHelper_.changeBit(spiOutputData_.byDigitalOut1, bit, 1);
     }
 
     bool
     PiXtendV2LInst::do9(void)
     {
-        return mapBool(spiOutputData_.byDigitalOut1, 1);
+        return spiHelper_.bit2Bool(spiOutputData_.byDigitalOut1, 1);
     }
 
     void
     PiXtendV2LInst::do10(bool data)
     {
         uint8_t bit = (data) ? 0x1 : 0x0;
-        changeBit(spiOutputData_.byDigitalOut1, bit, 2);
+        spiHelper_.changeBit(spiOutputData_.byDigitalOut1, bit, 2);
     }
 
     bool
     PiXtendV2LInst::do10(void)
     {
-        return mapBool(spiOutputData_.byDigitalOut1, 2);
+        return spiHelper_.bit2Bool(spiOutputData_.byDigitalOut1, 2);
     }
 
     void
     PiXtendV2LInst::do11(bool data)
     {
         uint8_t bit = (data) ? 0x1 : 0x0;
-        changeBit(spiOutputData_.byDigitalOut1, bit, 3);
+        spiHelper_.changeBit(spiOutputData_.byDigitalOut1, bit, 3);
     }
 
     bool
     PiXtendV2LInst::do11(void)
     {
-        return mapBool(spiOutputData_.byDigitalOut1, 3);
+        return spiHelper_.bit2Bool(spiOutputData_.byDigitalOut1, 3);
     }
 
     // Relay
@@ -400,52 +406,52 @@ namespace OpcUaPiXtendServer
     PiXtendV2LInst::relay0(bool data)
     {
         uint8_t bit = (data) ? 0x1 : 0x0;
-        changeBit(spiOutputData_.byRelayOut, bit, 0);
+        spiHelper_.changeBit(spiOutputData_.byRelayOut, bit, 0);
     }
 
     bool
     PiXtendV2LInst::relay0(void)
     {
-        return mapBool(spiOutputData_.byRelayOut, 0);
+        return spiHelper_.bit2Bool(spiOutputData_.byRelayOut, 0);
     }
 
     void
     PiXtendV2LInst::relay1(bool data)
     {
         uint8_t bit = (data) ? 0x1 : 0x0;
-        changeBit(spiOutputData_.byRelayOut, bit, 1);
+        spiHelper_.changeBit(spiOutputData_.byRelayOut, bit, 1);
     }
 
     bool
     PiXtendV2LInst::relay1(void)
     {
-        return mapBool(spiOutputData_.byRelayOut, 1);
+        return spiHelper_.bit2Bool(spiOutputData_.byRelayOut, 1);
     }
 
     void
     PiXtendV2LInst::relay2(bool data)
     {
         uint8_t bit = (data) ? 0x1 : 0x0;
-        changeBit(spiOutputData_.byRelayOut, bit, 2);
+        spiHelper_.changeBit(spiOutputData_.byRelayOut, bit, 2);
     }
 
     bool
     PiXtendV2LInst::relay2(void)
     {
-        return mapBool(spiOutputData_.byRelayOut, 2);
+        return spiHelper_.bit2Bool(spiOutputData_.byRelayOut, 2);
     }
 
     void
     PiXtendV2LInst::relay3(bool data)
     {
         uint8_t bit = (data) ? 0x1 : 0x0;
-        changeBit(spiOutputData_.byRelayOut, bit, 3);
+        spiHelper_.changeBit(spiOutputData_.byRelayOut, bit, 3);
     }
 
     bool
     PiXtendV2LInst::relay3(void)
     {
-        return mapBool(spiOutputData_.byRelayOut, 3);
+        return spiHelper_.bit2Bool(spiOutputData_.byRelayOut, 3);
     }
 
     // Input/Output General Purpose
@@ -496,23 +502,6 @@ namespace OpcUaPiXtendServer
     PiXtendV2LInst::gpio3(void)
     {
         return false;
-    }
-
-    void
-    PiXtendV2LInst::changeBit(uint8_t& valueToModify, uint8_t bit, uint8_t position)
-    {
-        uint8_t mask = 1 << position;
-        valueToModify = ((valueToModify & ~mask) | (bit << position));
-    }
-
-    bool
-    PiXtendV2LInst::mapBool(uint8_t value, uint8_t position)
-    {
-        if ((value & (1 << position)) == 0)
-        {
-            return false; // bit is not set
-        }
-        return true;
     }
 
     void
@@ -601,6 +590,13 @@ namespace OpcUaPiXtendServer
         spiOutputData.byGPIO2Dht11 = 0;
         spiOutputData.byGPIO3Dht11 = 0;
         memset(spiOutputData.abyRetainDataOut, 0, sizeof(spiOutputData.abyRetainDataOut));
+    }
+
+    void
+    PiXtendV2LInst::resetSpiOutputDataDac(PiXtendSpiOutputDataDac& spiOutputDataDac)
+    {
+        spiOutputDataDac.wAOut0 = 0;
+        spiOutputDataDac.wAOut1 = 0;
     }
 
 }
