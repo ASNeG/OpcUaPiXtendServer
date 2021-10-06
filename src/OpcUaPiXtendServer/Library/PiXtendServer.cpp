@@ -62,7 +62,6 @@ namespace OpcUaPiXtendServer
 		applicationInfo_ = applicationInfo;
 
 		// parse pixtend configuration
-        // parse controller configuration
         PiXtendServerControllerCfg controllerCfg;
         if (!controllerCfg.parse(&config))
         {
@@ -92,48 +91,33 @@ namespace OpcUaPiXtendServer
         }
 
         // add configured opc ua server objects
-        auto modules = controllerCfg.configModules();
-        for (auto module: modules)
-        {
-            if (module.moduleType() == ServerModule::V2S)
-            {
-                if (!createSeverModuleV2S(module.moduleName()))
-                {
-                    Log(Error, "cannot create v2s module");
-                    return false;
-                }
-            }
-            else if (module.moduleType() == ServerModule::V2L)
-            {
-                if (!createServerModuleV2L(module.moduleName()))
-                {
-                    Log(Error, "cannot create v2l module");
-                    return false;
-                }
-            }
-            else if (module.moduleType() == ServerModule::AO)
-            {
-                if (!createServerModuleEIOAO(module.moduleName(), module.moduleAddress()))
-                {
-                    Log(Error, "cannot create ao module");
-                    return false;
-                }
-            }
-            else if (module.moduleType() == ServerModule::DO)
-            {
-                if (!createServerModuleEIODO(module.moduleName(), module.moduleAddress()))
-                {
-                    Log(Error, "cannot create do module");
-                    return false;
-                }
-            }
-            else
-            {
-                Log(Error, "found undefined type in control configuration!")
-                        .parameter("Name", module.moduleName());
-                return false;
-            }
+        if (!startupServer(controllerCfg)) {
+        	Log(Error, "startup server error");
+        	return false;
         }
+
+        // startup pixtend loop
+        if (!startupPiXtendLoop()) {
+        	Log(Error, "startup pixtend loop error");
+        	return false;
+        }
+
+		return true;
+	}
+
+	bool
+	PiXtendServer::shutdown(void)
+	{
+		Log(Debug, "PiXtendServer::shutdown");
+
+		// shutdown pixtend loop
+		shutdownPiXtendLoop();
+
+		// shutdown server
+		shutdownServer();
+
+		// shutdown pixtend
+		shutdownPiXtend();
 
 		return true;
 	}
@@ -145,49 +129,36 @@ namespace OpcUaPiXtendServer
 	    	switch (module.moduleType()) {
 	    		case ServerModule::V2S:
 	    		{
-	    			piXtendV2S_ = PiXtendModulesFactory::createPiXtendV2S(module.moduleName());
-	    			piXtendV2S_->contextIndex(contextIndex_);
-	    			if (!piXtendV2S_->startup()) {
-	    				Log(Error, "startup pixtend V2S error")
-	    					.parameter("ModuleName", module.moduleName());
+	    			if (!startupPiXtendV2S(module.moduleName())) {
+	    				Log(Error, "cannot create v2s pixtend module");
 	    				return false;
 	    			}
 	    			break;
 	    		}
 	    		case ServerModule::V2L:
 	    		{
-	    			piXtendV2L_ = PiXtendModulesFactory::createPiXtendV2L(module.moduleName());
-	    			piXtendV2L_->contextIndex(contextIndex_);
-	    			if (!piXtendV2L_->startup()) {
-	    				Log(Error, "startup pixtend V2l error")
-							.parameter("ModuleName", module.moduleName());
+	                if (!startupPiXtendV2L(module.moduleName())) {
+	                    Log(Error, "cannot create v2l pixtend module");
+	                    return false;
+	                }
+	                break;
+	    		}
+	    		case ServerModule::DO:
+	    		{
+	    			if (!startupPiXtendEIODO(module.moduleName(), module.moduleAddress())) {
+	    				Log(Error, "cannot create do pixtend module");
 	    				return false;
 	    			}
 	    			break;
 	    		}
-	    		case ServerModule::DO:
-	    		{
-	    			auto piXtendEIODO = PiXtendModulesFactory::createPiXtendEIODO(module.moduleName());
-	    			piXtendEIODO->contextIndex(contextIndex_);
-	    			if (!piXtendEIODO->startup(module.moduleAddress())) {
-	    				Log(Error, "startup pixtend EIODO error")
-						    .parameter("ModuleName", module.moduleName());
-	    				return false;
-	    			}
-	    			piXtendEIODOMap_.insert(std::make_pair(module.moduleAddress(), piXtendEIODO));
-					break;
-	    		}
 	    		case ServerModule::AO:
 	    		{
-	    			auto piXtendEIOAO = PiXtendModulesFactory::createPiXtendEIOAO(module.moduleName());
-	    			piXtendEIOAO->contextIndex(contextIndex_);
-	    			if (!piXtendEIOAO->startup(module.moduleAddress())) {
-	    				Log(Error, "startup pixtend EIOAO error")
-						    .parameter("ModuleName", module.moduleName());
-	    				return false;
-	    			}
-	    			piXtendEIOAOMap_.insert(std::make_pair(module.moduleAddress(), piXtendEIOAO));
-					break;
+	                if (!startupPiXtendEIOAO(module.moduleName(), module.moduleAddress()))
+	                {
+	                    Log(Error, "cannot create do pixtend module");
+	                    return false;
+	                }
+	                break;
 	    		}
 	    	    default:
 	    	    {
@@ -202,10 +173,143 @@ namespace OpcUaPiXtendServer
 	}
 
 	bool
-	PiXtendServer::shutdown(void)
+	PiXtendServer::shutdownPiXtend(void)
 	{
-		Log(Debug, "PiXtendServer::shutdown");
+		// shutdown pixtend v2s
+		if (piXtendV2S_) {
+			piXtendV2S_->shutdown();
+			piXtendV2S_.reset();
+		}
 
+		// shutdown pixtend v2l
+		if (piXtendV2L_) {
+			piXtendV2L_->shutdown();
+			piXtendV2L_.reset();
+		}
+
+		// shutdown pixtend EIOAO
+		for (auto pixtendEIOAO : piXtendEIOAOMap_) {
+			pixtendEIOAO.second->shutdown();
+		}
+		piXtendEIOAOMap_.clear();
+
+		// shutdown pixtend EIODO
+		for (auto pixtendEIODO : piXtendEIODOMap_) {
+			pixtendEIODO.second->shutdown();
+		}
+		piXtendEIODOMap_.clear();
+
+		return true;
+	}
+
+    bool
+	PiXtendServer::startupPiXtendV2S(const std::string& name)
+    {
+		piXtendV2S_ = PiXtendModulesFactory::createPiXtendV2S(name);
+		piXtendV2S_->contextIndex(contextIndex_);
+		if (!piXtendV2S_->startup()) {
+			Log(Error, "startup pixtend V2S error")
+				.parameter("ModuleName", name);
+			return false;
+		}
+		return true;
+    }
+
+    bool
+	PiXtendServer::startupPiXtendV2L(const std::string& name)
+    {
+		piXtendV2L_ = PiXtendModulesFactory::createPiXtendV2L(name);
+		piXtendV2L_->contextIndex(contextIndex_);
+		if (!piXtendV2L_->startup()) {
+			Log(Error, "startup pixtend V2l error")
+				.parameter("ModuleName", name);
+			return false;
+		}
+		return true;
+    }
+
+    bool
+	PiXtendServer::startupPiXtendEIODO(const std::string& name, uint32_t address)
+    {
+		auto piXtendEIODO = PiXtendModulesFactory::createPiXtendEIODO(name);
+		piXtendEIODO->contextIndex(contextIndex_);
+		if (!piXtendEIODO->startup(address)) {
+			Log(Error, "startup pixtend EIODO error")
+			    .parameter("ModuleName", name);
+			return false;
+		}
+		piXtendEIODOMap_.insert(std::make_pair(address, piXtendEIODO));
+		return true;
+    }
+
+    bool
+	PiXtendServer::startupPiXtendEIOAO(const std::string& name, uint32_t address)
+    {
+		auto piXtendEIOAO = PiXtendModulesFactory::createPiXtendEIOAO(name);
+		piXtendEIOAO->contextIndex(contextIndex_);
+		if (!piXtendEIOAO->startup(address)) {
+			Log(Error, "startup pixtend EIOAO error")
+			    .parameter("ModuleName", name);
+			return false;
+		}
+		piXtendEIOAOMap_.insert(std::make_pair(address, piXtendEIOAO));
+		return true;
+    }
+
+
+	bool
+	PiXtendServer::startupServer(PiXtendServerControllerCfg& cfg)
+	{
+	    for (auto module: cfg.configModules()) {
+	    	switch (module.moduleType()) {
+	    		case ServerModule::V2S:
+	    		{
+	    			if (!startupServerV2S(module.moduleName())) {
+	    				Log(Error, "cannot create v2s server module");
+	    				return false;
+	    			}
+	    			break;
+	    		}
+	    		case ServerModule::V2L:
+	            {
+	                if (!startupServerV2L(module.moduleName())) {
+	                    Log(Error, "cannot create v2l server module");
+	                    return false;
+	                }
+	                break;
+	            }
+	    		case ServerModule::AO:
+	            {
+	                if (!startupServerEIOAO(module.moduleName(), module.moduleAddress())) {
+	                    Log(Error, "cannot create ao server module");
+	                    return false;
+	                }
+	                break;
+	            }
+	    		case ServerModule::DO:
+	            {
+	                if (!startupServerEIODO(module.moduleName(), module.moduleAddress()))
+	                {
+	                    Log(Error, "cannot create do server module");
+	                    return false;
+	                }
+	                break;
+	            }
+	    		default:
+	            {
+	                Log(Error, "found undefined type in control configuration!")
+	                        .parameter("Name", module.moduleName());
+	                return false;
+	            }
+	        }
+	    }
+
+		return true;
+	}
+
+	bool
+	PiXtendServer::shutdownServer(void)
+	{
 		// shutdown V2S server
 		if (piXtendV2SServer_.get() != nullptr) {
 			piXtendV2SServer_->shutdown();
@@ -237,52 +341,8 @@ namespace OpcUaPiXtendServer
 		return true;
 	}
 
-	bool
-	PiXtendServer::findNamespace(void)
-	{
-		// create and get namespace list
-		GetNamespaceInfo getNamespaceInfo;
-		getNamespaceInfo.newNamespaceUri(namespaceName_);
-		if (!getNamespaceInfo.query(applicationServiceIf_)) {
-			Log(Error, "create namespace error")
-				.parameter("NamespaceName", namespaceName_);
-			return false;
-		}
-
-        namespaceIndex_ = getNamespaceInfo.getNamespaceIndex(namespaceName_); // FIXME: cast from int32 to uint16!!
-		if (namespaceIndex_ == -1) {
-			Log(Error, "get namesapce index error")
-				.parameter("NamespaceName", namespaceName_);
-			return false;
-		}
-
-		return true;
-	}
-
-	bool
-	PiXtendServer::createPiXtendRootObject(void)
-	{
-		// create pixtend root object
-		CreateNodeInstance createNodeInstance(
-			"PiXtend1",										// name
-			NodeClass::EnumObject,							// node class
-			OpcUaNodeId(OpcUaId_ObjectsFolder),				// parent node id (Objects)
-			piXtendRootNodeId_,								// node id
-			OpcUaLocalizedText("en", "PiXtend"),			// dispplay name
-			OpcUaQualifiedName("PiXtend", 1),				// browse name
-			OpcUaNodeId(OpcUaId_HasComponent),				// reference type id
-			OpcUaNodeId(OpcUaId_BaseObjectType)				// type node id
-		);
-
-		if (!createNodeInstance.query(applicationServiceIf_)) {
-			return false;
-		}
-
-		return true;
-	}
-
     bool
-    PiXtendServer::createSeverModuleV2S(std::string name)
+    PiXtendServer::startupServerV2S(const std::string& name)
     {
         if (piXtendV2SServer_ != nullptr)
         {
@@ -305,7 +365,7 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-    PiXtendServer::createServerModuleV2L(std::string name)
+    PiXtendServer::startupServerV2L(const std::string& name)
     {
         if (piXtendV2LServer_ != nullptr)
         {
@@ -328,7 +388,7 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-    PiXtendServer::createServerModuleEIOAO(std::string name, uint32_t address)
+    PiXtendServer::startupServerEIOAO(const std::string& name, uint32_t address)
     {
         if (piXtendEIOAOServerMap_.find(address) != piXtendEIOAOServerMap_.end())
         {
@@ -352,7 +412,7 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-    PiXtendServer::createServerModuleEIODO(std::string name, uint32_t address)
+    PiXtendServer::startupServerEIODO(const std::string& name, uint32_t address)
     {
         if (piXtendEIODOServerMap_.find(address) != piXtendEIODOServerMap_.end())
         {
@@ -374,4 +434,108 @@ namespace OpcUaPiXtendServer
 			contextIndex_
         );
     }
+
+
+	bool
+	PiXtendServer::createPiXtendRootObject(void)
+	{
+		// create pixtend root object
+		CreateNodeInstance createNodeInstance(
+			"PiXtend1",										// name
+			NodeClass::EnumObject,							// node class
+			OpcUaNodeId(OpcUaId_ObjectsFolder),				// parent node id (Objects)
+			piXtendRootNodeId_,								// node id
+			OpcUaLocalizedText("en", "PiXtend"),			// dispplay name
+			OpcUaQualifiedName("PiXtend", 1),				// browse name
+			OpcUaNodeId(OpcUaId_HasComponent),				// reference type id
+			OpcUaNodeId(OpcUaId_BaseObjectType)				// type node id
+		);
+
+		if (!createNodeInstance.query(applicationServiceIf_)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	bool
+	PiXtendServer::findNamespace(void)
+	{
+		// create and get namespace list
+		GetNamespaceInfo getNamespaceInfo;
+		getNamespaceInfo.newNamespaceUri(namespaceName_);
+		if (!getNamespaceInfo.query(applicationServiceIf_)) {
+			Log(Error, "create namespace error")
+				.parameter("NamespaceName", namespaceName_);
+			return false;
+		}
+
+        namespaceIndex_ = getNamespaceInfo.getNamespaceIndex(namespaceName_); // FIXME: cast from int32 to uint16!!
+		if (namespaceIndex_ == -1) {
+			Log(Error, "get namesapce index error")
+				.parameter("NamespaceName", namespaceName_);
+			return false;
+		}
+
+		return true;
+	}
+
+	bool
+	PiXtendServer::startupPiXtendLoop(void)
+	{
+		pixtendLoopstrand_ = ioThread_->createStrand();
+
+		pixtendTimerElement_ = boost::make_shared<SlotTimerElement>();
+		pixtendTimerElement_->timeoutCallback([this](void) { piXtendLoop(); });
+
+		Log(Debug, "start pixtend timer");
+		pixtendTimerElement_->expireTime(
+			boost::posix_time::microsec_clock::local_time() + boost::posix_time::millisec(pixtendTimerInterval_)
+		);
+		ioThread_->slotTimer()->start(pixtendTimerElement_);
+		return true;
+	}
+
+	bool
+	PiXtendServer::shutdownPiXtendLoop(void)
+	{
+		// stop pixtend timer loop
+		if (pixtendTimerElement_.get() != nullptr) {
+			ioThread_->slotTimer()->stop(pixtendTimerElement_);
+			pixtendTimerElement_.reset();
+		}
+
+		return true;
+	}
+
+	void
+	PiXtendServer::piXtendLoop(void)
+	{
+		// call v2s loop
+		if (piXtendV2S_) {
+			piXtendV2S_->loop();
+		}
+
+		// call v2l loop
+		if (piXtendV2L_) {
+			piXtendV2L_->loop();
+		}
+
+		// call EIOAO loops
+		for (auto eIOAO : piXtendEIOAOMap_) {
+			eIOAO.second->loop();
+		}
+
+		// call EIODO loops
+		for (auto eIODO : piXtendEIODOMap_) {
+			eIODO.second->loop();
+		}
+
+		// restart timer
+		pixtendTimerElement_->expireTime(
+			boost::posix_time::microsec_clock::local_time() + boost::posix_time::millisec(pixtendTimerInterval_)
+		);
+		ioThread_->slotTimer()->start(pixtendTimerElement_);
+	}
+
 }
