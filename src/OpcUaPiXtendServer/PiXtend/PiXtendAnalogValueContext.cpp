@@ -66,6 +66,25 @@ namespace OpcUaPiXtendServer
     	inputDataValue_ = OpcUaDataValue(value);
     }
 
+    bool
+	PiXtendAnalogValueContext::equal(
+      	OpcUaDataValue& dataValue1,
+		OpcUaDataValue& dataValue2
+	)
+    {
+    	double diff, value1, value2;
+
+    	dataValue1.getValue(value1);
+    	dataValue2.getValue(value2);
+    	diff = value1 - value2;
+
+    	if (diff > precision_ || diff < -precision_) {
+    		return false;
+    	}
+
+    	return true;
+    }
+
     void
 	PiXtendAnalogValueContext::readFunc(ReadFunc readFunc)
     {

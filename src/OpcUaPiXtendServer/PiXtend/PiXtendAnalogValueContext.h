@@ -48,6 +48,10 @@ namespace OpcUaPiXtendServer
 
         virtual void dataValueToOutputStruct(void) override;
         virtual void inputStructToDataValue(void) override;
+        virtual bool equal(
+         	OpcUaStackCore::OpcUaDataValue& dataValue1,
+ 			OpcUaStackCore::OpcUaDataValue& dataValue2
+ 		) override;
 
         void readFunc(ReadFunc readFunc);
         ReadFunc readFunc(void);
@@ -59,6 +63,7 @@ namespace OpcUaPiXtendServer
         DeregisterUpdateFunc deregisterUpdateFunc(void);
 
       private:
+        const double precision_ = 1.0/1023/2.0;
         ReadFunc readFunc_;
         WriteFunc writeFunc_;
         RegisterUpdateFunc registerUpdateFunc_;

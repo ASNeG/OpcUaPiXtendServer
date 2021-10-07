@@ -48,6 +48,10 @@ namespace OpcUaPiXtendServer
 
         virtual void dataValueToOutputStruct(void) override;
         virtual void inputStructToDataValue(void) override;
+        virtual bool equal(
+          	OpcUaStackCore::OpcUaDataValue& dataValue1,
+  			OpcUaStackCore::OpcUaDataValue& dataValue2
+  		) override;
 
         void readFunc(ReadFunc readFunc);
         ReadFunc readFunc(void);
