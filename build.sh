@@ -9,12 +9,13 @@
 # -----------------------------------------------------------------------------
 CMAKE_GENERATOR_LOCAL=-G"Eclipse CDT4 - Unix Makefiles"
 
-# enable dummy pixtend modules for testing
+# enable hardware access for pixtend modules
+# hardware access will use the spi interface or the pc interface (dummy class)
 #
-# export OPCUAPIXTENDSERVER_MODUL_V2S_DUMMY=1
-# export OPCUAPIXTENDSERVER_MODUL_V2L_DUMMY=1
-# export OPCUAPIXTENDSERVER_MODUL_EIOAO_DUMMY=1
-# export OPCUAPIXTENDSERVER_MODUL_EIODO_DUMMY=1
+# export OPCUAPIXTENDSERVER_MODUL_V2S_HARDWARE_ACCESS=1
+# export OPCUAPIXTENDSERVER_MODUL_V2L_HARDWARE_ACCESS=1
+# export OPCUAPIXTENDSERVER_MODUL_EIOAO_HARDWARE_ACCESS=1
+# export OPCUAPIXTENDSERVER_MODUL_EIODO_HARDWARE_ACCESS=1
 
 # enable hardware access SPI libs
 #

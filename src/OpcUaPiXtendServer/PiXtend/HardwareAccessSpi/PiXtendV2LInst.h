@@ -16,24 +16,25 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#ifndef __OpcUaPiXtendServer_PiXtendV2SInst_h__
-#define __OpcUaPiXtendServer_PiXtendV2SInst_h__
+#ifndef __OpcUaPiXtendServer_PiXtendV2LInst_h__
+#define __OpcUaPiXtendServer_PiXtendV2LInst_h__
 
 #include <boost/shared_ptr.hpp>
-#include "OpcUaPiXtendServer/PiXtend/PiXtendV2S.h"
-#include "OpcUaPiXtendServer/PiXtend/PiXtendSpiHelper.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendV2L.h"
+#include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendHardwareAccessSpi.h"
+#include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendSpiHelper.h"
 
 namespace OpcUaPiXtendServer
 {
 
-    class PiXtendV2SInst
-    : public PiXtendV2S
+    class PiXtendV2LInst
+    : public PiXtendV2L
     {
       public:
-    	using SPtr = boost::shared_ptr<PiXtendV2SInst>;
+        using SPtr = boost::shared_ptr<PiXtendV2LInst>;
 
-        PiXtendV2SInst(const std::string& instanceName);
-        virtual ~PiXtendV2SInst(void);
+        PiXtendV2LInst(const std::string& instanceName);
+        virtual ~PiXtendV2LInst(void);
 
         // Configuration
 
@@ -45,6 +46,10 @@ namespace OpcUaPiXtendServer
 
         virtual double ai0(void) override;
         virtual double ai1(void) override;
+        virtual double ai2(void) override;
+        virtual double ai3(void) override;
+        virtual double ai4(void) override;
+        virtual double ai5(void) override;
 
         // Output Analog
 
@@ -63,6 +68,14 @@ namespace OpcUaPiXtendServer
         virtual bool di5(void) override;
         virtual bool di6(void) override;
         virtual bool di7(void) override;
+        virtual bool di8(void) override;
+        virtual bool di9(void) override;
+        virtual bool di10(void) override;
+        virtual bool di11(void) override;
+        virtual bool di12(void) override;
+        virtual bool di13(void) override;
+        virtual bool di14(void) override;
+        virtual bool di15(void) override;
 
         // Output Digital
 
@@ -74,6 +87,22 @@ namespace OpcUaPiXtendServer
         virtual bool do2(void) override;
         virtual void do3(bool data) override;
         virtual bool do3(void) override;
+        virtual void do4(bool data) override;
+        virtual bool do4(void) override;
+        virtual void do5(bool data) override;
+        virtual bool do5(void) override;
+        virtual void do6(bool data) override;
+        virtual bool do6(void) override;
+        virtual void do7(bool data) override;
+        virtual bool do7(void) override;
+        virtual void do8(bool data) override;
+        virtual bool do8(void) override;
+        virtual void do9(bool data) override;
+        virtual bool do9(void) override;
+        virtual void do10(bool data) override;
+        virtual bool do10(void) override;
+        virtual void do11(bool data) override;
+        virtual bool do11(void) override;
 
         // Relay
 
@@ -100,8 +129,8 @@ namespace OpcUaPiXtendServer
       private:
         PiXtendSpiHelper spiHelper_;
 
-        using PiXtendSpiInputData = pixtInV2S;
-        using PiXtendSpiOutputData = pixtOutV2S;
+        using PiXtendSpiInputData = pixtInV2L;
+        using PiXtendSpiOutputData = pixtOutV2L;
         using PiXtendSpiOutputDataDac = pixtOutDAC;
 
         PiXtendSpiInputData spiInputData_;

@@ -16,185 +16,161 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#include "OpcUaPiXtendServer/PiXtend/PiXtendEIODOInst.h"
+#include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendEIOAOInst.h"
 
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendEIODOInst::PiXtendEIODOInst(const std::string& instanceName)
-    : PiXtendEIODO(instanceName)
+    PiXtendEIOAOInst::PiXtendEIOAOInst(const std::string& instanceName)
+    : PiXtendEIOAO(instanceName)
     {
     }
 
-    PiXtendEIODOInst::~PiXtendEIODOInst(void)
+    PiXtendEIOAOInst::~PiXtendEIOAOInst(void)
     {
     }
 
     // Configuration
 
     bool
-    PiXtendEIODOInst::startup(uint32_t moduleAddress)
+    PiXtendEIOAOInst::startup(uint32_t moduleAddress)
     {
         return true;
     }
 
     bool
-    PiXtendEIODOInst::shutdown(void)
+    PiXtendEIOAOInst::shutdown(void)
     {
         return true;
     }
 
     void
-	PiXtendEIODOInst::handleHardwareAccess(void)
+	PiXtendEIOAOInst::handleHardwareAccess(void)
     {
     	// FIXME: TBD
     }
 
-    // Inputs Digital
+    // Inputs Analog
 
-    bool
-    PiXtendEIODOInst::di0(void)
+    double
+    PiXtendEIOAOInst::ai0(void)
     {
         return 0.0;
     }
 
-    bool
-    PiXtendEIODOInst::di1(void)
+    double
+    PiXtendEIOAOInst::ai1(void)
     {
         return 0.0;
     }
 
-    bool
-    PiXtendEIODOInst::di2(void)
+    double
+    PiXtendEIOAOInst::ai2(void)
     {
         return 0.0;
     }
 
-    bool
-    PiXtendEIODOInst::di3(void)
+    double
+    PiXtendEIOAOInst::ai3(void)
     {
         return 0.0;
     }
 
-    bool
-    PiXtendEIODOInst::di4(void)
+    double
+    PiXtendEIOAOInst::ai4(void)
     {
         return 0.0;
     }
 
-    bool
-    PiXtendEIODOInst::di5(void)
+    double
+    PiXtendEIOAOInst::ai5(void)
     {
         return 0.0;
     }
 
-    bool
-    PiXtendEIODOInst::di6(void)
+    double
+    PiXtendEIOAOInst::ai6(void)
     {
         return 0.0;
     }
 
-    bool
-    PiXtendEIODOInst::di7(void)
+    double
+    PiXtendEIOAOInst::ai7(void)
     {
         return 0.0;
     }
 
 
-    // Output Digital
+    // Output Analog
 
     void
-    PiXtendEIODOInst::do0(bool data)
+    PiXtendEIOAOInst::ao0(double data)
     {
 
     }
 
-    bool
-    PiXtendEIODOInst::do0(void)
-    {
-        return 0.0;
-    }
-
-    void
-    PiXtendEIODOInst::do1(bool data)
-    {
-
-    }
-
-    bool
-    PiXtendEIODOInst::do1(void)
+    double
+    PiXtendEIOAOInst::ao0(void)
     {
         return 0.0;
     }
 
     void
-    PiXtendEIODOInst::do2(bool data)
+    PiXtendEIOAOInst::ao1(double data)
     {
 
     }
 
-    bool
-    PiXtendEIODOInst::do2(void)
-    {
-        return 0.0;
-    }
-
-    void
-    PiXtendEIODOInst::do3(bool data)
-    {
-
-    }
-
-    bool
-    PiXtendEIODOInst::do3(void)
+    double
+    PiXtendEIOAOInst::ao1(void)
     {
         return 0.0;
     }
 
     void
-    PiXtendEIODOInst::do4(bool data)
+    PiXtendEIOAOInst::ao2(double data)
     {
 
     }
 
-    bool
-    PiXtendEIODOInst::do4(void)
-    {
-        return 0.0;
-    }
-
-    void
-    PiXtendEIODOInst::do5(bool data)
-    {
-
-    }
-
-    bool
-    PiXtendEIODOInst::do5(void)
+    double
+    PiXtendEIOAOInst::ao2(void)
     {
         return 0.0;
     }
 
     void
-    PiXtendEIODOInst::do6(bool data)
+    PiXtendEIOAOInst::ao3(double data)
     {
 
     }
 
-    bool
-    PiXtendEIODOInst::do6(void)
+    double
+    PiXtendEIOAOInst::ao3(void)
     {
         return 0.0;
     }
 
     void
-    PiXtendEIODOInst::do7(bool data)
+    PiXtendEIOAOInst::ao4(double data)
     {
 
     }
 
-    bool
-    PiXtendEIODOInst::do7(void)
+    double
+    PiXtendEIOAOInst::ao4(void)
+    {
+        return 0.0;
+    }
+
+    void
+    PiXtendEIOAOInst::ao5(double data)
+    {
+
+    }
+
+    double
+    PiXtendEIOAOInst::ao5(void)
     {
         return 0.0;
     }

@@ -41,10 +41,23 @@ include_directories(
 )
 
 set(HardwareAccessLibs "")
+
 if (DEFINED ENV{OPCUAPIXTENDSERVER_ACCESS_SPI})
+    file(
+        GLOB
+        OpcUaPiXtendServer_PiXtendHardwareAccess_SRC
+        ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/*.cpp
+    )
+
+    add_library(
+        PiXtendHardwareAccess STATIC
+        ${OpcUaPiXtendServer_PiXtendHardwareAccess_SRC}
+    )
+
     set(HardwareAccessLibs
         pixtend
         wiringPi
+        PiXtendHardwareAccess
     )
 endif()
 
@@ -123,32 +136,32 @@ endif()
 #
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
-if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_V2S_DUMMY})
-    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_V2S_DUMMY)
-    message(STATUS "Module V2S activate dummy")
-else ()
+if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_V2S_HARDWARE_ACCESS})
+    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_V2S_HARDWARE_ACCESS)
     message(STATUS "Module V2S activate real access")
+else ()
+    message(STATUS "Module V2S activate dummy")
 endif ()
 
-if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_V2L_DUMMY})
-    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_V2L_DUMMY)
-    message(STATUS "Module V2L activate dummy")
-else ()
+if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_V2L_HARDWARE_ACCESS})
+    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_V2L_HARDWARE_ACCESS)
     message(STATUS "Module V2L activate real access")
+else ()
+    message(STATUS "Module V2L activate dummy")
 endif ()
 
-if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_EIOAO_DUMMY})
-    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_EIOAO_DUMMY)
-    message(STATUS "Module EIOAO activate dummy")
-else ()
+if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_EIOAO_HARDWARE_ACCESS})
+    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_EIOAO_HARDWARE_ACCESS)
     message(STATUS "Module EIOAO activate real access")
+else ()
+    message(STATUS "Module EIOAO activate dummy")
 endif ()
 
-if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_EIODO_DUMMY})
-    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_EIODO_DUMMY)
-    message(STATUS "Module EIODO activate dummy")
-else ()
+if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_EIODO_HARDWARE_ACCESS})
+    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_EIODO_HARDWARE_ACCESS)
     message(STATUS "Module EIODO activate real access")
+else ()
+    message(STATUS "Module EIODO activate dummy")
 endif ()
 
 

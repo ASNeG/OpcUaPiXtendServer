@@ -23,28 +23,44 @@
 #include <string>
 #include <functional>
 
-#ifdef OPCUAPIXTENDSERVER_MODUL_V2S_DUMMY
+#ifdef OPCUAPIXTENDSERVER_MODUL_V2S_HARDWARE_ACCESS
+    #ifdef OPCUAPIXTENDSERVER_ACCESS_SPI
+        #include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendV2SInst.h"
+    #else
+        #include "OpcUaPiXtendServer/PiXtend/PiXtendV2SDummy.h"
+    #endif
+#else
     #include "OpcUaPiXtendServer/PiXtend/PiXtendV2SDummy.h"
-#else
-    #include "OpcUaPiXtendServer/PiXtend/PiXtendV2SInst.h"
 #endif
 
-#ifdef OPCUAPIXTENDSERVER_MODUL_V2L_DUMMY
+#ifdef OPCUAPIXTENDSERVER_MODUL_V2L_HARDWARE_ACCESS
+    #ifdef OPCUAPIXTENDSERVER_ACCESS_SPI
+        #include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendV2LInst.h"
+    #else
+        #include "OpcUaPiXtendServer/PiXtend/PiXtendV2LDummy.h"
+    #endif
+#else
     #include "OpcUaPiXtendServer/PiXtend/PiXtendV2LDummy.h"
-#else
-    #include "OpcUaPiXtendServer/PiXtend/PiXtendV2LInst.h"
 #endif
 
-#ifdef OPCUAPIXTENDSERVER_MODUL_EIOAO_DUMMY
+#ifdef OPCUAPIXTENDSERVER_MODUL_EIOAO_HARDWARE_ACCESS
+    #ifdef OPCUAPIXTENDSERVER_ACCESS_SPI
+        #include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendEIOAOInst.h"
+    #else
+        #include "OpcUaPiXtendServer/PiXtend/PiXtendEIOAODummy.h"
+    #endif
+#else
     #include "OpcUaPiXtendServer/PiXtend/PiXtendEIOAODummy.h"
-#else
-    #include "OpcUaPiXtendServer/PiXtend/PiXtendEIOAOInst.h"
 #endif
 
-#ifdef OPCUAPIXTENDSERVER_MODUL_EIODO_DUMMY
-    #include "OpcUaPiXtendServer/PiXtend/PiXtendEIODODummy.h"
+#ifdef OPCUAPIXTENDSERVER_MODUL_EIODO_HARDWARE_ACCESS
+    #ifdef OPCUAPIXTENDSERVER_ACCESS_SPI
+        #include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendEIODOInst.h"
+    #else
+        #include "OpcUaPiXtendServer/PiXtend/PiXtendEIODODummy.h"
+    #endif
 #else
-    #include "OpcUaPiXtendServer/PiXtend/PiXtendEIODOInst.h"
+    #include "OpcUaPiXtendServer/PiXtend/PiXtendEIODODummy.h"
 #endif
 
 
