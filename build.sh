@@ -9,13 +9,6 @@
 # -----------------------------------------------------------------------------
 CMAKE_GENERATOR_LOCAL=-G"Eclipse CDT4 - Unix Makefiles"
 
-# enable dummy pixtend modules for testing
-#
-# export OPCUAPIXTENDSERVER_MODUL_V2S_DUMMY=1
-# export OPCUAPIXTENDSERVER_MODUL_V2L_DUMMY=1
-# export OPCUAPIXTENDSERVER_MODUL_EIOAO_DUMMY=1
-# export OPCUAPIXTENDSERVER_MODUL_EIODO_DUMMY=1
-
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 

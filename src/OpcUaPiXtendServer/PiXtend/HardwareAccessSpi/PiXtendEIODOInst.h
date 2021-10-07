@@ -21,6 +21,8 @@
 
 #include <boost/shared_ptr.hpp>
 #include "OpcUaPiXtendServer/PiXtend/PiXtendEIODO.h"
+#include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendHardwareAccessSpi.h"
+#include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendSpiHelper.h"
 
 namespace OpcUaPiXtendServer
 {

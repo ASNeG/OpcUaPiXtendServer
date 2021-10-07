@@ -16,40 +16,27 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#include "OpcUaPiXtendServer/Tools/PiXtendToolConfig.h"
+#ifndef __OpcUaPiXtendServer_PiXtendSpiHelper_h__
+#define __OpcUaPiXtendServer_PiXtendSpiHelper_h__
+
+#include <stdint.h>
 
 namespace OpcUaPiXtendServer
 {
 
-    bool
-    PiXtendToolConfig::mapInputPin(std::string& strPin, Pins& pin)
+    class PiXtendSpiHelper
     {
-        auto findPin = mapString2Pin.find(strPin);
+      public:
+        PiXtendSpiHelper(void);
+        virtual ~PiXtendSpiHelper(void);
 
-        if (findPin == mapString2Pin.end())
-        {
-            pin = Pins::Pin_Undefined;
-            return false;
-        }
+        void changeBit(uint8_t& valueToModify, uint8_t bit, uint8_t position);
+        bool bit2Bool(uint8_t value, uint8_t position);
 
-        pin = findPin->second;
-        return true;
-    }
-
-    bool
-    PiXtendToolConfig::mapDValue(std::string& strDValue, bool& dValue)
-    {
-        if (strDValue == operationDValueOn)
-        {
-            dValue = true;
-            return true;
-        }
-        else if (strDValue == operationDValueOff)
-        {
-            dValue = false;
-            return true;
-        }
-        return false;
-    }
+        double analog2Percent(uint16_t value);
+        uint16_t percent2Analog(double value);
+    };
 
 }
+
+#endif

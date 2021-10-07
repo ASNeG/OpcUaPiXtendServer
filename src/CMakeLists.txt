@@ -41,6 +41,20 @@ endif ()
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 #
+# global build configuration
+#
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+option(OPCUAPIXTENDSERVER_MODULE_V2S_HARDWARE_ACCESS "module v2s use real hardware access" OFF)
+option(OPCUAPIXTENDSERVER_MODULE_V2L_HARDWARE_ACCESS "module v2l use real hardware access" OFF)
+option(OPCUAPIXTENDSERVER_MODULE_EIOAO_HARDWARE_ACCESS "module eIO analog one use real hardware access" OFF)
+option(OPCUAPIXTENDSERVER_MODULE_EIODO_HARDWARE_ACCESS "module eIO digial one use real hardware access" OFF)
+
+option(OPCUAPIXTENDSERVER_ACCESS_SPI "hardware access use spi interface" OFF)
+
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+#
 # global info messages
 #
 # -----------------------------------------------------------------------------
@@ -59,6 +73,13 @@ message(STATUS "  host system processor: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 message(STATUS "  system processor: ${CMAKE_SYSTEM_PROCESSOR}")
 message(STATUS "  system name: ${CMAKE_SYSTEM_NAME}")
 message(STATUS "  host system: ${CMAKE_HOST_SYSTEM}")
+
+message(STATUS "Configuration info")
+message(STATUS "  v2s real hardware access: ${OPCUAPIXTENDSERVER_MODULE_V2S_HARDWARE_ACCESS}")
+message(STATUS "  v2l real hardware access: ${OPCUAPIXTENDSERVER_MODULE_V2L_HARDWARE_ACCESS}")
+message(STATUS "  eioao real hardware access: ${OPCUAPIXTENDSERVER_MODULE_EIOAO_HARDWARE_ACCESS}")
+message(STATUS "  eiodo real hardware access: ${OPCUAPIXTENDSERVER_MODULE_EIODO_HARDWARE_ACCESS}")
+message(STATUS "  hardware access use spi: ${OPCUAPIXTENDSERVER_ACCESS_SPI}")
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
