@@ -40,32 +40,29 @@ include_directories(
     ${OPENSSL_INCLUDE_DIR}
 )
 
-set(HardwareAccessLibs "")
+set(HardwareAccessLibs
+    "" # hardware access for pc/dummy - no libs needed
+)
 
-if (DEFINED ENV{OPCUAPIXTENDSERVER_ACCESS_SPI})
-    file(
-        GLOB
-        OpcUaPiXtendServer_PiXtendHardwareAccess_SRC
-        ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/*.cpp
-    )
-
-    add_library(
-        PiXtendHardwareAccess STATIC
-        ${OpcUaPiXtendServer_PiXtendHardwareAccess_SRC}
-    )
-
+if (${OPCUAPIXTENDSERVER_ACCESS_SPI})
     set(HardwareAccessLibs
         pixtend
         wiringPi
-        PiXtendHardwareAccess
+    )
+
+    file(
+        GLOB
+        OpcUaPiXtendServer_PiXtendAccess_SRC
+        ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/*.cpp
+        ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/*.cpp
+    )
+else()
+    file(
+        GLOB
+        OpcUaPiXtendServer_PiXtendAccess_SRC
+        ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/*.cpp
     )
 endif()
-
-file(
-    GLOB 
-    OpcUaPiXtendServer_PiXtendAccess_SRC 
-    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/*.cpp
-)
 
 add_library(
     PiXtendAccess STATIC
@@ -132,44 +129,28 @@ endif()
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 #
-# config moduls by env variables
+# add configuration to cpp build
 #
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
-if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_V2S_HARDWARE_ACCESS})
-    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_V2S_HARDWARE_ACCESS)
-    message(STATUS "Module V2S activate real access")
-else ()
-    message(STATUS "Module V2S activate dummy")
+if (${OPCUAPIXTENDSERVER_MODULE_V2S_HARDWARE_ACCESS})
+    add_definitions(-DOPCUAPIXTENDSERVER_MODULE_V2S_HARDWARE_ACCESS)
 endif ()
 
-if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_V2L_HARDWARE_ACCESS})
-    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_V2L_HARDWARE_ACCESS)
-    message(STATUS "Module V2L activate real access")
-else ()
-    message(STATUS "Module V2L activate dummy")
+if (${OPCUAPIXTENDSERVER_MODULE_V2L_HARDWARE_ACCESS})
+    add_definitions(-DOPCUAPIXTENDSERVER_MODULE_V2L_HARDWARE_ACCESS)
 endif ()
 
-if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_EIOAO_HARDWARE_ACCESS})
-    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_EIOAO_HARDWARE_ACCESS)
-    message(STATUS "Module EIOAO activate real access")
-else ()
-    message(STATUS "Module EIOAO activate dummy")
+if (${OPCUAPIXTENDSERVER_MODULE_EIOAO_HARDWARE_ACCESS})
+    add_definitions(-DOPCUAPIXTENDSERVER_MODULE_EIOAO_HARDWARE_ACCESS)
 endif ()
 
-if (DEFINED ENV{OPCUAPIXTENDSERVER_MODUL_EIODO_HARDWARE_ACCESS})
-    add_definitions(-DOPCUAPIXTENDSERVER_MODUL_EIODO_HARDWARE_ACCESS)
-    message(STATUS "Module EIODO activate real access")
-else ()
-    message(STATUS "Module EIODO activate dummy")
+if (DEFINED ENV{OPCUAPIXTENDSERVER_MODULE_EIODO_HARDWARE_ACCESS})
+    add_definitions(-DOPCUAPIXTENDSERVER_MODULE_EIODO_HARDWARE_ACCESS)
 endif ()
 
-
-if (DEFINED ENV{OPCUAPIXTENDSERVER_ACCESS_SPI})
+if (${OPCUAPIXTENDSERVER_ACCESS_SPI})
     add_definitions(-DOPCUAPIXTENDSERVER_ACCESS_SPI)
-    message(STATUS "Module access SPI active")
-else ()
-    message(STATUS "Module access PC active")
 endif ()
 
 # -----------------------------------------------------------------------------

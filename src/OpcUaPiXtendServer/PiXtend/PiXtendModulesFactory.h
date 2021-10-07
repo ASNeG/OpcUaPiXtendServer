@@ -23,7 +23,7 @@
 #include <string>
 #include <functional>
 
-#ifdef OPCUAPIXTENDSERVER_MODUL_V2S_HARDWARE_ACCESS
+#ifdef OPCUAPIXTENDSERVER_MODULE_V2S_HARDWARE_ACCESS
     #ifdef OPCUAPIXTENDSERVER_ACCESS_SPI
         #include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendV2SInst.h"
     #else
@@ -33,7 +33,7 @@
     #include "OpcUaPiXtendServer/PiXtend/PiXtendV2SDummy.h"
 #endif
 
-#ifdef OPCUAPIXTENDSERVER_MODUL_V2L_HARDWARE_ACCESS
+#ifdef OPCUAPIXTENDSERVER_MODULE_V2L_HARDWARE_ACCESS
     #ifdef OPCUAPIXTENDSERVER_ACCESS_SPI
         #include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendV2LInst.h"
     #else
@@ -43,7 +43,7 @@
     #include "OpcUaPiXtendServer/PiXtend/PiXtendV2LDummy.h"
 #endif
 
-#ifdef OPCUAPIXTENDSERVER_MODUL_EIOAO_HARDWARE_ACCESS
+#ifdef OPCUAPIXTENDSERVER_MODULE_EIOAO_HARDWARE_ACCESS
     #ifdef OPCUAPIXTENDSERVER_ACCESS_SPI
         #include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendEIOAOInst.h"
     #else
@@ -53,7 +53,7 @@
     #include "OpcUaPiXtendServer/PiXtend/PiXtendEIOAODummy.h"
 #endif
 
-#ifdef OPCUAPIXTENDSERVER_MODUL_EIODO_HARDWARE_ACCESS
+#ifdef OPCUAPIXTENDSERVER_MODULE_EIODO_HARDWARE_ACCESS
     #ifdef OPCUAPIXTENDSERVER_ACCESS_SPI
         #include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendEIODOInst.h"
     #else
