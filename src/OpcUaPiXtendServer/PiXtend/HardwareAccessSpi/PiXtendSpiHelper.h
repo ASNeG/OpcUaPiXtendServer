@@ -19,12 +19,6 @@
 #ifndef __OpcUaPiXtendServer_PiXtendSpiHelper_h__
 #define __OpcUaPiXtendServer_PiXtendSpiHelper_h__
 
-#if OPCUAPIXTENDSERVER_ACCESS_SPI
-extern "C" {
-#include <pixtend.h>
-}
-#endif
-
 #include <stdint.h>
 
 namespace OpcUaPiXtendServer

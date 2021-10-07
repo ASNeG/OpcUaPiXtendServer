@@ -16,7 +16,7 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#include "OpcUaPiXtendServer/PiXtend/PiXtendV2SInst.h"
+#include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendV2SInst.h"
 
 namespace OpcUaPiXtendServer
 {
