@@ -35,6 +35,8 @@ namespace OpcUaPiXtendServer
 
         double analog2Percent(uint16_t value);
         uint16_t percent2Analog(double value);
+
+        bool checkTrxValue(uint32_t trxValue);
     };
 
 }

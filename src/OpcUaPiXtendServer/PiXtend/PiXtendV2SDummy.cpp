@@ -44,6 +44,38 @@ namespace OpcUaPiXtendServer
         return true;
     }
 
+    // Status information
+
+    uint8_t
+    PiXtendV2SDummy::firmware(void)
+    {
+        return 0;
+    }
+
+    uint8_t
+    PiXtendV2SDummy::hardware(void)
+    {
+        return 0;
+    }
+
+    uint8_t
+    PiXtendV2SDummy::model(void)
+    {
+        return 0;
+    }
+
+    uint8_t
+    PiXtendV2SDummy::ucStatus(void)
+    {
+        return 0;
+    }
+
+    uint8_t
+    PiXtendV2SDummy::ucWarning(void)
+    {
+        return 0;
+    }
+
     // Inputs Analog
 
     double

@@ -17,6 +17,7 @@
  */
 
 #include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendV2SInst.h"
+#include "OpcUaStackCore/Base/Log.h"
 
 namespace OpcUaPiXtendServer
 {
@@ -43,6 +44,35 @@ namespace OpcUaPiXtendServer
         Spi_SetupV2(0); // communication with microcontroller
         Spi_SetupV2(1); // communication with DAC (analog inputs/outputs)
 
+        // read first time - configuration
+        int32_t trxValue = Spi_AutoModeV2S(&spiOutputData_, &spiInputData_);
+        Spi_AutoModeDAC(&spiOutputDataDac_);
+
+        if (!spiHelper_.checkTrxValue(trxValue))
+        {
+            OpcUaStackCore::Log(OpcUaStackCore::Error,
+                "transaction error in module v2s");
+            return false;
+        }
+
+        if (spiInputData_.byModelIn != model_)
+        {
+            OpcUaStackCore::Log(OpcUaStackCore::Error,
+                "receive undefined model in module v2s")
+                .parameter("expected model", model_)
+                .parameter("received model", spiInputData_.byModelIn);
+            return false;
+        }
+
+        if (spiInputData_.byHardware != hardware_)
+        {
+            OpcUaStackCore::Log(OpcUaStackCore::Error,
+                "different hardware versions in module v2s")
+                .parameter("expected hardware", hardware_)
+                .parameter("received hardware", spiInputData_.byHardware);
+            return false;
+        }
+
         return true;
     }
 
@@ -56,11 +86,50 @@ namespace OpcUaPiXtendServer
 	PiXtendV2SInst::handleHardwareAccess(void)
     {
         // transfer data
-        Spi_AutoModeV2S(&spiOutputData_, &spiInputData_);
+        int32_t trxValue = Spi_AutoModeV2S(&spiOutputData_, &spiInputData_);
         Spi_AutoModeDAC(&spiOutputDataDac_);
 
-        // delay
-        delay(100); // cycle time 100 ms
+        // check transaction value
+        if (!spiHelper_.checkTrxValue(trxValue))
+        {
+            OpcUaStackCore::Log(OpcUaStackCore::Error,
+                "transaction error in module v2s");
+        }
+
+        // cycle time in <ms>
+        delay(delayTime_);
+    }
+
+    // Status information
+
+    uint8_t
+    PiXtendV2SInst::firmware(void)
+    {
+        return spiInputData_.byFirmware;
+    }
+
+    uint8_t
+    PiXtendV2SInst::hardware(void)
+    {
+        return spiInputData_.byHardware;
+    }
+
+    uint8_t
+    PiXtendV2SInst::model(void)
+    {
+        return spiInputData_.byModelIn;
+    }
+
+    uint8_t
+    PiXtendV2SInst::ucStatus(void)
+    {
+        return spiInputData_.byUCState;
+    }
+
+    uint8_t
+    PiXtendV2SInst::ucWarning(void)
+    {
+        return spiInputData_.byUCWarnings;
     }
 
     // Inputs Analog
@@ -351,7 +420,7 @@ namespace OpcUaPiXtendServer
     void
     PiXtendV2SInst::resetSpiOutputData(PiXtendSpiOutputData& spiOutputData)
     {
-        spiOutputData.byModelOut = 83; // Set model as handshake, PiXtend V2 -S- = 83
+        spiOutputData.byModelOut = model_;
         spiOutputData.byUCMode = 0;
         spiOutputData.byUCCtrl0 = 0;
         spiOutputData.byUCCtrl1 = 0;
