@@ -17,6 +17,7 @@
  */
 
 #include "OpcUaPiXtendServer/Tools/PiXtendToolModuleV2S.h"
+#include "OpcUaStackCore/Base/Log.h"
 
 namespace OpcUaPiXtendServer
 {
@@ -27,8 +28,13 @@ namespace OpcUaPiXtendServer
 
         if (pixtendSPtr_ != nullptr)
         {
-        	ContextIndex::SPtr contextIndex = boost::make_shared<ContextIndex>();
-            pixtendSPtr_->startup();
+            if (!pixtendSPtr_->startup())
+            {
+                OpcUaStackCore::Log(OpcUaStackCore::Error,
+                    "startup for v2s module failed");
+                pixtendSPtr_.reset();
+                return;
+            }
 
             // read input data
             pixtendSPtr_->handleHardwareAccess();
@@ -52,6 +58,8 @@ namespace OpcUaPiXtendServer
     {
         if (pixtendSPtr_ == nullptr)
         {
+            OpcUaStackCore::Log(OpcUaStackCore::Error,
+                "tool module v2s is not connected");
             return false;
         }
 
@@ -146,12 +154,15 @@ namespace OpcUaPiXtendServer
     {
         if (pixtendSPtr_ == nullptr)
         {
+            OpcUaStackCore::Log(OpcUaStackCore::Error,
+                "tool module v2s is not connected");
             return false;
         }
 
         if (!data.first)
         {
-            // data is undefined
+            OpcUaStackCore::Log(OpcUaStackCore::Error,
+                "aValue is not set");
             return false;
         }
 
@@ -175,12 +186,15 @@ namespace OpcUaPiXtendServer
     {
         if (pixtendSPtr_ == nullptr)
         {
+            OpcUaStackCore::Log(OpcUaStackCore::Error,
+                "tool module v2s is not connected");
             return false;
         }
 
         if (!data.first)
         {
-            // data is undefined
+            OpcUaStackCore::Log(OpcUaStackCore::Error,
+                "dValue is not set");
             return false;
         }
 
