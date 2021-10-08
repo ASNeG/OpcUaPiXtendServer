@@ -37,16 +37,12 @@ namespace OpcUaPiXtendServer
     PiXtendDigitalValueContext::SPtr
 	PiXtendDigitalValueContext::createContext(
     	ReadFunc readFunc,
-		WriteFunc writeFunc,
-		RegisterUpdateFunc registerUpdateFunc,
-		DeregisterUpdateFunc deregisterUpdateFunc
+		WriteFunc writeFunc
     )
     {
     	auto context = boost::make_shared<PiXtendDigitalValueContext>();
     	context->readFunc(readFunc);
     	context->writeFunc(writeFunc);
-    	context->registerUpdateFunc(registerUpdateFunc);
-    	context->deregisterUpdateFunc(deregisterUpdateFunc);
     	context->writeAccess(writeFunc == nullptr ? false : true);
     	return context;
     }
@@ -101,30 +97,6 @@ namespace OpcUaPiXtendServer
 	PiXtendDigitalValueContext::writeFunc(void)
     {
     	return writeFunc_;
-    }
-
-    void
-	PiXtendDigitalValueContext::registerUpdateFunc(RegisterUpdateFunc registerUpdateFunc)
-    {
-    	registerUpdateFunc_ = registerUpdateFunc;
-    }
-
-    PiXtendDigitalValueContext::RegisterUpdateFunc
-	PiXtendDigitalValueContext::registerUpdateFunc(void)
-    {
-    	return registerUpdateFunc_;
-    }
-
-    void
-	PiXtendDigitalValueContext::deregisterUpdateFunc(DeregisterUpdateFunc deregisterUpdateFunc)
-    {
-    	deregisterUpdateFunc_ = deregisterUpdateFunc;
-    }
-
-    PiXtendDigitalValueContext::DeregisterUpdateFunc
-	PiXtendDigitalValueContext::deregisterUpdateFunc(void)
-    {
-    	return deregisterUpdateFunc_;
     }
 
 }

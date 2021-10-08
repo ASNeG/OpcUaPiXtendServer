@@ -32,7 +32,6 @@ namespace OpcUaPiXtendServer
 	: public OpcUaStackCore::BaseClass
     {
       public:
-    	using UpdateFunc = std::function<void (OpcUaStackCore::BaseClass::SPtr&, OpcUaStackCore::OpcUaDataValue& dataValue)>;
     	using SPtr = boost::shared_ptr<PiXtendValueContext>;
     	using Vec = std::vector<SPtr>;
 

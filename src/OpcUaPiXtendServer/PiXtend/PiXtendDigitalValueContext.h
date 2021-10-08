@@ -32,18 +32,13 @@ namespace OpcUaPiXtendServer
     	using SPtr = boost::shared_ptr<PiXtendDigitalValueContext>;
     	using ReadFunc = std::function<bool (void)>;
     	using WriteFunc = std::function<void (bool)>;
-    	using UpdateFunc = std::function<void (OpcUaStackCore::BaseClass::SPtr&, double)>;
-    	using RegisterUpdateFunc = std::function<void (UpdateFunc)>;
-    	using DeregisterUpdateFunc = std::function<void (void)>;
 
         PiXtendDigitalValueContext(void);
         virtual ~PiXtendDigitalValueContext(void);
 
         static PiXtendDigitalValueContext::SPtr createContext(
         	ReadFunc readFunc,
-			WriteFunc writeFunc,
-			RegisterUpdateFunc registerUpdateFunc,
-			DeregisterUpdateFunc deregisterUpdateFunc
+			WriteFunc writeFunc
         );
 
         virtual void dataValueToOutputStruct(void) override;
@@ -53,16 +48,10 @@ namespace OpcUaPiXtendServer
         ReadFunc readFunc(void);
         void writeFunc(WriteFunc writeFunc);
         WriteFunc writeFunc(void);
-        void registerUpdateFunc(RegisterUpdateFunc registerUpdateFunc);
-        RegisterUpdateFunc registerUpdateFunc(void);
-        void deregisterUpdateFunc(DeregisterUpdateFunc DeregisterUpdateFunc);
-        DeregisterUpdateFunc deregisterUpdateFunc(void);
 
       private:
         ReadFunc readFunc_;
         WriteFunc writeFunc_;
-        RegisterUpdateFunc registerUpdateFunc_;
-        DeregisterUpdateFunc deregisterUpdateFunc_;
     };
 
 }

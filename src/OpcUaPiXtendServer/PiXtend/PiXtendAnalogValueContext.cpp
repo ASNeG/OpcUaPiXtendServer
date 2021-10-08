@@ -37,16 +37,12 @@ namespace OpcUaPiXtendServer
     PiXtendAnalogValueContext::SPtr
 	PiXtendAnalogValueContext::createContext(
      	ReadFunc readFunc,
- 		WriteFunc writeFunc,
- 		RegisterUpdateFunc registerUpdateFunc,
- 		DeregisterUpdateFunc deregisterUpdateFunc
+ 		WriteFunc writeFunc
     )
     {
      	auto context = boost::make_shared<PiXtendAnalogValueContext>();
      	context->readFunc(readFunc);
      	context->writeFunc(writeFunc);
-     	context->registerUpdateFunc(registerUpdateFunc);
-     	context->deregisterUpdateFunc(deregisterUpdateFunc);
      	context->writeAccess(writeFunc == nullptr ? false : true);
      	return context;
     }
@@ -102,30 +98,6 @@ namespace OpcUaPiXtendServer
 	PiXtendAnalogValueContext::writeFunc(void)
     {
     	return writeFunc_;
-    }
-
-    void
-	PiXtendAnalogValueContext::registerUpdateFunc(RegisterUpdateFunc registerUpdateFunc)
-    {
-    	registerUpdateFunc_ = registerUpdateFunc;
-    }
-
-    PiXtendAnalogValueContext::RegisterUpdateFunc
-	PiXtendAnalogValueContext::registerUpdateFunc(void)
-    {
-    	return registerUpdateFunc_;
-    }
-
-    void
-	PiXtendAnalogValueContext::deregisterUpdateFunc(DeregisterUpdateFunc deregisterUpdateFunc)
-    {
-    	deregisterUpdateFunc_ = deregisterUpdateFunc;
-    }
-
-    PiXtendAnalogValueContext::DeregisterUpdateFunc
-	PiXtendAnalogValueContext::deregisterUpdateFunc(void)
-    {
-    	return deregisterUpdateFunc_;
     }
 
 }

@@ -32,18 +32,13 @@ namespace OpcUaPiXtendServer
     	using SPtr = boost::shared_ptr<PiXtendAnalogValueContext>;
     	using ReadFunc = std::function<float (void)>;
     	using WriteFunc = std::function<void (float)>;
-    	using UpdateFunc = std::function<void (OpcUaStackCore::BaseClass::SPtr&, double)>;
-    	using RegisterUpdateFunc = std::function<void (UpdateFunc)>;
-    	using DeregisterUpdateFunc = std::function<void (void)>;
 
         PiXtendAnalogValueContext(void);
         virtual ~PiXtendAnalogValueContext(void);
 
         static PiXtendAnalogValueContext::SPtr createContext(
          	ReadFunc readFunc,
- 			WriteFunc writeFunc,
- 			RegisterUpdateFunc registerUpdateFunc,
- 			DeregisterUpdateFunc deregisterUpdateFunc
+ 			WriteFunc writeFunc
         );
 
         virtual void dataValueToOutputStruct(void) override;
@@ -53,17 +48,11 @@ namespace OpcUaPiXtendServer
         ReadFunc readFunc(void);
         void writeFunc(WriteFunc writeFunc);
         WriteFunc writeFunc(void);
-        void registerUpdateFunc(RegisterUpdateFunc registerUpdateFunc);
-        RegisterUpdateFunc registerUpdateFunc(void);
-        void deregisterUpdateFunc(DeregisterUpdateFunc DeregisterUpdateFunc);
-        DeregisterUpdateFunc deregisterUpdateFunc(void);
 
       private:
         const double precision_ = 1.0/1023/2.0;
         ReadFunc readFunc_;
         WriteFunc writeFunc_;
-        RegisterUpdateFunc registerUpdateFunc_;
-        DeregisterUpdateFunc deregisterUpdateFunc_;
     };
 
 }
