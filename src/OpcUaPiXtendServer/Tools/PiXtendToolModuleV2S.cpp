@@ -19,6 +19,8 @@
 #include "OpcUaPiXtendServer/Tools/PiXtendToolModuleV2S.h"
 #include "OpcUaStackCore/Base/Log.h"
 
+using namespace OpcUaStackCore;
+
 namespace OpcUaPiXtendServer
 {
     PiXtendToolModuleV2S::PiXtendToolModuleV2S(const std::string& name)
@@ -30,8 +32,7 @@ namespace OpcUaPiXtendServer
         {
             if (!pixtendSPtr_->startup())
             {
-                OpcUaStackCore::Log(OpcUaStackCore::Error,
-                    "startup for v2s module failed");
+                Log(Error, "startup for v2s module failed");
                 pixtendSPtr_.reset();
                 return;
             }
@@ -58,8 +59,7 @@ namespace OpcUaPiXtendServer
     {
         if (pixtendSPtr_ == nullptr)
         {
-            OpcUaStackCore::Log(OpcUaStackCore::Error,
-                "tool module v2s is not connected");
+            Log(Error, "tool module v2s is not connected");
             return false;
         }
 
@@ -154,15 +154,13 @@ namespace OpcUaPiXtendServer
     {
         if (pixtendSPtr_ == nullptr)
         {
-            OpcUaStackCore::Log(OpcUaStackCore::Error,
-                "tool module v2s is not connected");
+            Log(Error, "tool module v2s is not connected");
             return false;
         }
 
         if (!data.first)
         {
-            OpcUaStackCore::Log(OpcUaStackCore::Error,
-                "aValue is not set");
+            Log(Error, "aValue is not set");
             return false;
         }
 
@@ -186,15 +184,13 @@ namespace OpcUaPiXtendServer
     {
         if (pixtendSPtr_ == nullptr)
         {
-            OpcUaStackCore::Log(OpcUaStackCore::Error,
-                "tool module v2s is not connected");
+            Log(Error, "tool module v2s is not connected");
             return false;
         }
 
         if (!data.first)
         {
-            OpcUaStackCore::Log(OpcUaStackCore::Error,
-                "dValue is not set");
+            Log(Error, "dValue is not set");
             return false;
         }
 
