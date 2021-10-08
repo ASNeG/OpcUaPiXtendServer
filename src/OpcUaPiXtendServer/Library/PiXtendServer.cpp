@@ -206,6 +206,12 @@ namespace OpcUaPiXtendServer
 	PiXtendServer::startupPiXtendV2S(const std::string& name)
     {
 		piXtendV2S_ = PiXtendModulesFactory::createPiXtendV2S(name);
+        if (piXtendV2S_ == nullptr) {
+            Log(Error, "cannot create module v2s")
+                .parameter("ModuleName", name);
+            return false;
+        }
+
 		piXtendV2S_->contextIndex(contextIndex_);
 		if (!piXtendV2S_->startup()) {
 			Log(Error, "startup pixtend V2S error")
@@ -219,6 +225,12 @@ namespace OpcUaPiXtendServer
 	PiXtendServer::startupPiXtendV2L(const std::string& name)
     {
 		piXtendV2L_ = PiXtendModulesFactory::createPiXtendV2L(name);
+        if (piXtendV2L_ == nullptr) {
+            Log(Error, "cannot create module v2l")
+                .parameter("ModuleName", name);
+            return false;
+        }
+
 		piXtendV2L_->contextIndex(contextIndex_);
 		if (!piXtendV2L_->startup()) {
 			Log(Error, "startup pixtend V2l error")
@@ -232,10 +244,17 @@ namespace OpcUaPiXtendServer
 	PiXtendServer::startupPiXtendEIODO(const std::string& name, uint32_t address)
     {
 		auto piXtendEIODO = PiXtendModulesFactory::createPiXtendEIODO(name);
+        if (piXtendEIODO == nullptr) {
+            Log(Error, "cannot create module eIO DO")
+                .parameter("ModuleName", name);
+            return false;
+        }
+
 		piXtendEIODO->contextIndex(contextIndex_);
 		if (!piXtendEIODO->startup(address)) {
 			Log(Error, "startup pixtend EIODO error")
-			    .parameter("ModuleName", name);
+                .parameter("ModuleName", name)
+                .parameter("ModuleAddress", address);
 			return false;
 		}
 		piXtendEIODOMap_.insert(std::make_pair(address, piXtendEIODO));
@@ -246,6 +265,13 @@ namespace OpcUaPiXtendServer
 	PiXtendServer::startupPiXtendEIOAO(const std::string& name, uint32_t address)
     {
 		auto piXtendEIOAO = PiXtendModulesFactory::createPiXtendEIOAO(name);
+        if (piXtendEIOAO == nullptr) {
+            Log(Error, "cannot create module eIO AO")
+                .parameter("ModuleName", name)
+                .parameter("ModuleAddress", address);
+            return false;
+        }
+
 		piXtendEIOAO->contextIndex(contextIndex_);
 		if (!piXtendEIOAO->startup(address)) {
 			Log(Error, "startup pixtend EIOAO error")

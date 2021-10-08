@@ -45,12 +45,11 @@ endif ()
 #
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
-option(OPCUAPIXTENDSERVER_MODULE_V2S_HARDWARE_ACCESS "module v2s use real hardware access" OFF)
-option(OPCUAPIXTENDSERVER_MODULE_V2L_HARDWARE_ACCESS "module v2l use real hardware access" OFF)
-option(OPCUAPIXTENDSERVER_MODULE_EIOAO_HARDWARE_ACCESS "module eIO analog one use real hardware access" OFF)
-option(OPCUAPIXTENDSERVER_MODULE_EIODO_HARDWARE_ACCESS "module eIO digial one use real hardware access" OFF)
+set(OPTION_OPCUAPIXTENDSERVER_SPI "SPI_OFF" CACHE STRING "SPI feature is deactivated.")
+set(OPTION_OPCUAPIXTENDSERVER_SPI "SPI_DUMMY" CACHE STRING "SPI feature is deactivated, instead use dummy classes.")
+set(OPTION_OPCUAPIXTENDSERVER_SPI "SPI_ON" CACHE STRING "SPI feature is activated.")
 
-option(OPCUAPIXTENDSERVER_ACCESS_SPI "hardware access use spi interface" OFF)
+set_property(CACHE OPTION_OPCUAPIXTENDSERVER_SPI PROPERTY STRINGS SPI_OFF SPI_ON SPI_DUMMY)
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
@@ -75,11 +74,7 @@ message(STATUS "  system name: ${CMAKE_SYSTEM_NAME}")
 message(STATUS "  host system: ${CMAKE_HOST_SYSTEM}")
 
 message(STATUS "Configuration info")
-message(STATUS "  v2s real hardware access: ${OPCUAPIXTENDSERVER_MODULE_V2S_HARDWARE_ACCESS}")
-message(STATUS "  v2l real hardware access: ${OPCUAPIXTENDSERVER_MODULE_V2L_HARDWARE_ACCESS}")
-message(STATUS "  eioao real hardware access: ${OPCUAPIXTENDSERVER_MODULE_EIOAO_HARDWARE_ACCESS}")
-message(STATUS "  eiodo real hardware access: ${OPCUAPIXTENDSERVER_MODULE_EIODO_HARDWARE_ACCESS}")
-message(STATUS "  hardware access use spi: ${OPCUAPIXTENDSERVER_ACCESS_SPI}")
+message(STATUS "  option SPI: ${OPTION_OPCUAPIXTENDSERVER_SPI}")
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
