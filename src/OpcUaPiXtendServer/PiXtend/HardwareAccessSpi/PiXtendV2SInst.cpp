@@ -19,6 +19,8 @@
 #include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendV2SInst.h"
 #include "OpcUaStackCore/Base/Log.h"
 
+using namespace OpcUaStackCore;
+
 namespace OpcUaPiXtendServer
 {
 
@@ -45,20 +47,18 @@ namespace OpcUaPiXtendServer
         Spi_SetupV2(1); // communication with DAC (analog inputs/outputs)
 
         // read first time - configuration
-        int32_t trxValue = Spi_AutoModeV2S(&spiOutputData_, &spiInputData_);
+        int32_t returnValue = Spi_AutoModeV2S(&spiOutputData_, &spiInputData_);
         Spi_AutoModeDAC(&spiOutputDataDac_);
 
-        if (!spiHelper_.checkTrxValue(trxValue))
+        if (!spiHelper_.checkPixtendReturnValue(returnValue))
         {
-            OpcUaStackCore::Log(OpcUaStackCore::Error,
-                "transaction error in module v2s");
+            Log(Error, "communication error in module v2s");
             return false;
         }
 
         if (spiInputData_.byModelIn != model_)
         {
-            OpcUaStackCore::Log(OpcUaStackCore::Error,
-                "receive undefined model in module v2s")
+            Log(Error, "receive undefined model in module v2s")
                 .parameter("expected model", model_)
                 .parameter("received model", spiInputData_.byModelIn);
             return false;
@@ -66,8 +66,7 @@ namespace OpcUaPiXtendServer
 
         if (spiInputData_.byHardware != hardware_)
         {
-            OpcUaStackCore::Log(OpcUaStackCore::Error,
-                "different hardware versions in module v2s")
+            Log(Error, "different hardware versions in module v2s")
                 .parameter("expected hardware", hardware_)
                 .parameter("received hardware", spiInputData_.byHardware);
             return false;
@@ -89,14 +88,12 @@ namespace OpcUaPiXtendServer
         delay(delayTime_);
 
         // transfer data
-        int32_t trxValue = Spi_AutoModeV2S(&spiOutputData_, &spiInputData_);
+        int32_t returnValue = Spi_AutoModeV2S(&spiOutputData_, &spiInputData_);
         Spi_AutoModeDAC(&spiOutputDataDac_);
 
-        // check transaction value
-        if (!spiHelper_.checkTrxValue(trxValue))
+        if (!spiHelper_.checkPixtendReturnValue(returnValue))
         {
-            OpcUaStackCore::Log(OpcUaStackCore::Error,
-                "transaction error in module v2s");
+            Log(Error, "communication error in module v2s");
         }
     }
 
@@ -335,48 +332,52 @@ namespace OpcUaPiXtendServer
     void
     PiXtendV2SInst::gpio0(bool data)
     {
-
+        Log(Warning, "not implemented in module v2s");
     }
 
     bool
     PiXtendV2SInst::gpio0(void)
     {
+        Log(Warning, "not implemented in module v2s");
         return false;
     }
 
     void
     PiXtendV2SInst::gpio1(bool data)
     {
-
+        Log(Warning, "not implemented in module v2s");
     }
 
     bool
     PiXtendV2SInst::gpio1(void)
     {
+        Log(Warning, "not implemented in module v2s");
         return false;
     }
 
     void
     PiXtendV2SInst::gpio2(bool data)
     {
-
+        Log(Warning, "not implemented in module v2s");
     }
 
     bool
     PiXtendV2SInst::gpio2(void)
     {
+        Log(Warning, "not implemented in module v2s");
         return false;
     }
 
     void
     PiXtendV2SInst::gpio3(bool data)
     {
-
+        Log(Warning, "not implemented in module v2s");
     }
 
     bool
     PiXtendV2SInst::gpio3(void)
     {
+        Log(Warning, "not implemented in module v2s");
         return false;
     }
 
