@@ -42,11 +42,6 @@ namespace OpcUaPiXtendServer
     void
 	PiXtendValueContext::dataValue(OpcUaDataValue& dataValue)
     {
-    	// compare old and new data value
-    	if (!equal(dataValue, outputDataValue_)) {
-    		updateContext_.callEvents(dataValue);
-    	}
-
     	// set data value
     	outputDataValue_ = dataValue;
     }

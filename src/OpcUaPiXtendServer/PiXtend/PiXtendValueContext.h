@@ -60,20 +60,15 @@ namespace OpcUaPiXtendServer
 
         virtual void dataValueToOutputStruct(void) = 0;
         virtual void inputStructToDataValue(void) = 0;
-        virtual bool equal(
-        	OpcUaStackCore::OpcUaDataValue& dataValue1,
-			OpcUaStackCore::OpcUaDataValue& dataValue2
-		) = 0;
 
       protected:
         OpcUaStackCore::OpcUaDataValue inputDataValue_;
         OpcUaStackCore::OpcUaDataValue outputDataValue_;
+        UpdateContext updateContext_;
 
       private:
         ContextType contextType_;
         bool writeAccess_ = true;
-        UpdateContext updateContext_;
-
     };
 
 }
