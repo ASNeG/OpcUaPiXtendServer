@@ -85,6 +85,9 @@ namespace OpcUaPiXtendServer
     void
  	PiXtendV2LInst::handleHardwareAccess(void)
     {
+        // cycle time in <ms>
+        delay(delayTime_);
+
         // transfer data
         int32_t trxValue = Spi_AutoModeV2L(&spiOutputData_, &spiInputData_);
         Spi_AutoModeDAC(&spiOutputDataDac_);
@@ -95,9 +98,6 @@ namespace OpcUaPiXtendServer
             OpcUaStackCore::Log(OpcUaStackCore::Error,
                 "transaction error in module v2l");
         }
-
-        // cycle time in <ms>
-        delay(delayTime_);
     }
 
     // Status information
