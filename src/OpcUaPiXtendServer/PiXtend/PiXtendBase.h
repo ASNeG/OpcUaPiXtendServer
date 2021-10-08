@@ -34,27 +34,19 @@
 
 #define PIXTEND_BASE_AI(CLASS, PIN) PiXtendAnalogValueContext::createContext( \
 		    PIXTEND_BASE_A_RF(CLASS, PIN), \
-			nullptr, \
-			nullptr, \
 			nullptr \
 		)
 #define PIXTEND_BASE_AO(CLASS, PIN) PiXtendAnalogValueContext::createContext( \
 		    PIXTEND_BASE_A_RF(CLASS, PIN), \
-			PIXTEND_BASE_A_WF(CLASS, PIN), \
-			nullptr, \
-			nullptr \
+			PIXTEND_BASE_A_WF(CLASS, PIN) \
 		)
 #define PIXTEND_BASE_DI(CLASS, PIN) PiXtendDigitalValueContext::createContext( \
 		    PIXTEND_BASE_D_RF(CLASS, PIN), \
-			nullptr, \
-			nullptr, \
 			nullptr \
 		)
 #define PIXTEND_BASE_DO(CLASS, PIN) PiXtendDigitalValueContext::createContext( \
 		    PIXTEND_BASE_D_RF(CLASS, PIN), \
-			PIXTEND_BASE_D_WF(CLASS, PIN), \
-			nullptr, \
-			nullptr \
+			PIXTEND_BASE_D_WF(CLASS, PIN) \
 		)
 
 namespace OpcUaPiXtendServer
