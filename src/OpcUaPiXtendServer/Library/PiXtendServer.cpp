@@ -461,9 +461,8 @@ namespace OpcUaPiXtendServer
 	bool
 	PiXtendServer::findNamespace(void)
 	{
-		// create and get namespace list
+		// get namespace list
 		GetNamespaceInfo getNamespaceInfo;
-		getNamespaceInfo.newNamespaceUri(namespaceName_);
 		if (!getNamespaceInfo.query(applicationServiceIf_)) {
 			Log(Error, "create namespace error")
 				.parameter("NamespaceName", namespaceName_);
