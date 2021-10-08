@@ -20,6 +20,7 @@
 #define __OpcUaPiXtendServer_PiXtendValueContext_h__
 
 #include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
 #include "OpcUaStackCore/Base/BaseClass.h"
 #include "OpcUaStackCore/BuildInTypes/OpcUaDataValue.h"
 #include "OpcUaPiXtendServer/PiXtend/UpdateContext.h"
@@ -45,8 +46,10 @@ namespace OpcUaPiXtendServer
 
         PiXtendValueContext::ContextType contextType(void);
 
-        void dataValue(OpcUaStackCore::OpcUaDataValue& dataValue);
-        OpcUaStackCore::OpcUaDataValue dataValue(void);
+        void dataValueIn(const OpcUaStackCore::OpcUaDataValue& dataValue);
+        void dataValueOut(const OpcUaStackCore::OpcUaDataValue& dataValue);
+        OpcUaStackCore::OpcUaDataValue dataValueIn(void);
+        OpcUaStackCore::OpcUaDataValue dataValueOut(void);
         bool writeAccess(void);
         void writeAccess(bool writeAccess);
         bool addMonitoredItem(
@@ -57,18 +60,19 @@ namespace OpcUaPiXtendServer
         bool delMonitoredItem(
         	OpcUaStackCore::OpcUaNodeId& id
         );
+        void handleUpdateEvent(OpcUaStackCore::OpcUaDataValue& dataValue);
 
         virtual void dataValueToOutputStruct(void) = 0;
         virtual void inputStructToDataValue(void) = 0;
 
-      protected:
-        OpcUaStackCore::OpcUaDataValue inputDataValue_;
-        OpcUaStackCore::OpcUaDataValue outputDataValue_;
-        UpdateContext updateContext_;
-
       private:
         ContextType contextType_;
         bool writeAccess_ = true;
+
+        boost::mutex valueMutex_;
+        OpcUaStackCore::OpcUaDataValue inputDataValue_;
+        OpcUaStackCore::OpcUaDataValue outputDataValue_;
+        UpdateContext updateContext_;
     };
 
 }
