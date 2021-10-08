@@ -103,10 +103,9 @@ namespace OpcUaPiXtendServer
 	)
     {
     	for (auto updateElement : updateElementMap_) {
-    		updateElement.second->updateFunc()(
-    			dataValue,
-    			updateElement.second->context()
-    		);
+    		auto updateFunc = updateElement.second->updateFunc();
+    		auto context = updateElement.second->context();
+    		updateFunc(dataValue, context);
     	}
     }
 

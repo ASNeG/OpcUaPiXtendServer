@@ -245,7 +245,35 @@ namespace OpcUaPiXtendServer
 		OpcUaStackCore::ApplicationMonitoredItemStartContext* monitoredItemStartContext
 	)
 	{
-		// FIXME: todo
+		// update function to write data value to node
+		auto updateFunc = [this](OpcUaDataValue& dataValue, BaseClass::SPtr& context) {
+			// get opc ua node base node class
+			auto nodeContext = boost::static_pointer_cast<NodeContext>(context);
+			auto baseNodeClass = nodeContext->serverVariable()->baseNode().lock();
+			if (!baseNodeClass) return;
+
+			// set variable
+			baseNodeClass->setValueSync(dataValue);
+		};
+
+       	// get node context
+        auto nodeContext = boost::static_pointer_cast<NodeContext>(monitoredItemStartContext->applicationContext_);
+        if (!nodeContext) {
+            return;
+        }
+
+        // get hardware context
+        auto hardwareContext = boost::static_pointer_cast<PiXtendValueContext>(nodeContext->hardwareContext());
+        if (!hardwareContext) {
+            return;
+        }
+
+        // register update function in hardware context
+        hardwareContext->addMonitoredItem(
+        	monitoredItemStartContext->nodeId_,
+			updateFunc,
+			monitoredItemStartContext->applicationContext_
+        );
 	}
 
 	void
@@ -253,7 +281,22 @@ namespace OpcUaPiXtendServer
 		OpcUaStackCore::ApplicationMonitoredItemStopContext* monitoredItemStopContext
 	)
 	{
-		// FIXME: todo
+       	// get node context
+        auto nodeContext = boost::static_pointer_cast<NodeContext>(monitoredItemStopContext->applicationContext_);
+        if (!nodeContext) {
+            return;
+        }
+
+        // get hardware context
+        auto hardwareContext = boost::static_pointer_cast<PiXtendValueContext>(nodeContext->hardwareContext());
+        if (!hardwareContext) {
+            return;
+        }
+
+        // deregister update function in hardware context
+        hardwareContext->delMonitoredItem(
+        	monitoredItemStopContext->nodeId_
+        );
 	}
 
 }

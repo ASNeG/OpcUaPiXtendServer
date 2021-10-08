@@ -30,7 +30,7 @@ namespace OpcUaPiXtendServer
 	{
 	  public:
 		using SPtr = boost::shared_ptr<UpdateElement>;
-		using UpdateFunc = std::function<void (const OpcUaStackCore::OpcUaDataValue& dataValue, const OpcUaStackCore::BaseClass::SPtr& context)>;
+		using UpdateFunc = std::function<void (OpcUaStackCore::OpcUaDataValue& dataValue, OpcUaStackCore::BaseClass::SPtr& context)>;
 		using Map = std::map<OpcUaStackCore::OpcUaNodeId, UpdateElement::SPtr>;
 
 		UpdateElement(void);
