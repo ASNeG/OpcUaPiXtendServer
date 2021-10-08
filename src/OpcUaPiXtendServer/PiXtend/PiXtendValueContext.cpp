@@ -40,19 +40,45 @@ namespace OpcUaPiXtendServer
     }
 
     void
-	PiXtendValueContext::dataValue(OpcUaDataValue& dataValue)
+	PiXtendValueContext::dataValueIn(const OpcUaDataValue& dataValue)
     {
     	// set data value
+    	valueMutex_.lock();
+    	inputDataValue_ = dataValue;
+    	valueMutex_.unlock();
+    }
+
+    void
+	PiXtendValueContext::dataValueOut(const OpcUaDataValue& dataValue)
+    {
+    	// set data value
+    	valueMutex_.lock();
     	outputDataValue_ = dataValue;
+    	valueMutex_.unlock();
     }
 
     OpcUaStackCore::OpcUaDataValue
-	PiXtendValueContext::dataValue(void)
+	PiXtendValueContext::dataValueIn(void)
     {
     	OpcUaDataValue dataValue;
 
     	// get data value
+    	valueMutex_.lock();
     	dataValue = inputDataValue_;
+    	valueMutex_.unlock();
+
+    	return dataValue;
+    }
+
+    OpcUaStackCore::OpcUaDataValue
+	PiXtendValueContext::dataValueOut(void)
+    {
+    	OpcUaDataValue dataValue;
+
+    	// get data value
+    	valueMutex_.lock();
+    	dataValue = outputDataValue_;
+    	valueMutex_.unlock();
 
     	return dataValue;
     }
@@ -79,6 +105,12 @@ namespace OpcUaPiXtendServer
     	return updateContext_.addContext(
     		id, updateFunc, context
     	);
+    }
+
+    void
+	PiXtendValueContext::handleUpdateEvent(OpcUaStackCore::OpcUaDataValue& dataValue)
+    {
+    	updateContext_.callEvents(dataValue);
     }
 
     bool

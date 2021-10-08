@@ -26,8 +26,8 @@ namespace OpcUaPiXtendServer
     PiXtendDigitalValueContext::PiXtendDigitalValueContext(void)
     : PiXtendValueContext(ContextType::DigitalValue)
     {
-    	inputDataValue_ = OpcUaDataValue((bool)false);
-    	outputDataValue_ = OpcUaDataValue((bool)false);
+    	dataValueIn(OpcUaDataValue((bool)false));
+    	dataValueOut(OpcUaDataValue((bool)false));
     }
 
     PiXtendDigitalValueContext::~PiXtendDigitalValueContext(void)
@@ -55,7 +55,8 @@ namespace OpcUaPiXtendServer
 	PiXtendDigitalValueContext::dataValueToOutputStruct(void)
     {
     	bool value;
-    	outputDataValue_.getValue(value);
+    	auto dataValue = dataValueOut();
+    	dataValue.getValue(value);
     	writeFunc()(value);
     }
 
@@ -64,17 +65,18 @@ namespace OpcUaPiXtendServer
     {
     	bool value = readFunc()();
     	bool oldValue;
-    	outputDataValue_.getValue(oldValue);
+    	auto oldDataValue = dataValueOut();
+    	oldDataValue.getValue(oldValue);
 
     	OpcUaDataValue dataValue(value);
 
     	// check if value changed
     	if (value != oldValue) {
-    		updateContext_.callEvents(dataValue);
+    		handleUpdateEvent(dataValue);
     	}
 
     	// set input value
-    	inputDataValue_ = OpcUaDataValue(value);
+    	dataValueIn(OpcUaDataValue(value));
     }
 
     void

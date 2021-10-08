@@ -27,6 +27,12 @@ namespace OpcUaPiXtendServer
 	{
 	}
 
+	UpdateElement::UpdateElement(UpdateFunc updateFunc, OpcUaStackCore::BaseClass::SPtr& context)
+	{
+		updateFunc_ = updateFunc;
+		context_ = context;
+	}
+
 	UpdateElement::~UpdateElement(void)
 	{
 	}
@@ -70,6 +76,8 @@ namespace OpcUaPiXtendServer
 		OpcUaStackCore::BaseClass::SPtr& context
 	)
     {
+    	boost::mutex::scoped_lock g(mutex_);
+
     	// check if element already exist
     	if (updateElementMap_.find(id) != updateElementMap_.end()) {
     		return false;
@@ -88,6 +96,8 @@ namespace OpcUaPiXtendServer
     	OpcUaNodeId& id
     )
     {
+    	boost::mutex::scoped_lock g(mutex_);
+
     	// check if element exist
     	if (updateElementMap_.find(id) == updateElementMap_.end()) {
     		return false;
@@ -102,9 +112,22 @@ namespace OpcUaPiXtendServer
 		OpcUaDataValue& dataValue
 	)
     {
-    	for (auto updateElement : updateElementMap_) {
-    		auto updateFunc = updateElement.second->updateFunc();
-    		auto context = updateElement.second->context();
+    	UpdateElement::Vec updateElementVec;
+
+    	// get all update elements
+    	mutex_.lock();
+    	for (auto updateElementPair : updateElementMap_) {
+    		auto updateFunc = updateElementPair.second->updateFunc();
+    		auto context = updateElementPair.second->context();
+    		auto updateElement = boost::make_shared<UpdateElement>(updateFunc, context);
+    		updateElementVec.push_back(updateElement);
+    	}
+    	mutex_.lock();
+
+    	// call update functions
+    	for (auto updateElement : updateElementVec) {
+    		auto updateFunc = updateElement->updateFunc();
+    		auto context = updateElement->context();
     		updateFunc(dataValue, context);
     	}
     }

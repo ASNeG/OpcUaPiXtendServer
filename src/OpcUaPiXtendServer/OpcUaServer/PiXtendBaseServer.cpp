@@ -206,7 +206,7 @@ namespace OpcUaPiXtendServer
     	}
 
     	// read pixtend variable
-    	applicationReadContext->dataValue_ = hardwareContext->dataValue();
+    	applicationReadContext->dataValue_ = hardwareContext->dataValueIn();
     	applicationReadContext->statusCode_ = Success;
     }
 
@@ -236,7 +236,7 @@ namespace OpcUaPiXtendServer
     	}
 
         // write pixtend variable
-    	hardwareContext->dataValue(applicationWriteContext->dataValue_);
+    	hardwareContext->dataValueOut(applicationWriteContext->dataValue_);
     	applicationWriteContext->statusCode_ = Success;
     }
 

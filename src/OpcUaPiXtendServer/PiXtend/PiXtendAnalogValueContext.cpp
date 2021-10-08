@@ -26,8 +26,8 @@ namespace OpcUaPiXtendServer
     PiXtendAnalogValueContext::PiXtendAnalogValueContext(void)
     : PiXtendValueContext(ContextType::AnalogValue)
     {
-    	inputDataValue_ = OpcUaDataValue((double)0.0);
-    	outputDataValue_ = OpcUaDataValue((double)0.0);
+    	dataValueIn(OpcUaDataValue((double)0.0));
+    	dataValueOut(OpcUaDataValue((double)0.0));
     }
 
     PiXtendAnalogValueContext::~PiXtendAnalogValueContext(void)
@@ -55,7 +55,8 @@ namespace OpcUaPiXtendServer
 	PiXtendAnalogValueContext::dataValueToOutputStruct(void)
     {
     	double value;
-    	outputDataValue_.getValue(value);
+    	auto dataValue = dataValueOut();
+    	dataValue.getValue(value);
     	writeFunc()(value);
     }
 
@@ -64,18 +65,19 @@ namespace OpcUaPiXtendServer
     {
     	double value = readFunc()();
     	double oldValue;
-    	outputDataValue_.getValue(oldValue);
+    	auto oldDataValue = dataValueOut();
+    	oldDataValue.getValue(oldValue);
 
     	OpcUaDataValue dataValue(value);
 
     	// check if value changed
     	auto diff = oldValue - value;
     	if (diff > precision_ || diff < -precision_) {
-    		updateContext_.callEvents(dataValue);
+    		handleUpdateEvent(dataValue);
     	}
 
     	// set input value
-    	inputDataValue_ = OpcUaDataValue(value);
+    	dataValueIn(OpcUaDataValue(value));
     }
 
     void
