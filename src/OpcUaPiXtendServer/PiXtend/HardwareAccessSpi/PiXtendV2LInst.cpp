@@ -17,6 +17,9 @@
  */
 
 #include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendV2LInst.h"
+#include "OpcUaStackCore/Base/Log.h"
+
+using namespace OpcUaStackCore;
 
 namespace OpcUaPiXtendServer
 {
@@ -43,6 +46,32 @@ namespace OpcUaPiXtendServer
         Spi_SetupV2(0); // communication with microcontroller
         Spi_SetupV2(1); // communication with DAC (analog inputs/outputs)
 
+        // read first time - configuration
+        int32_t returnValue = Spi_AutoModeV2L(&spiOutputData_, &spiInputData_);
+        Spi_AutoModeDAC(&spiOutputDataDac_);
+
+        if (!spiHelper_.checkPixtendReturnValue(returnValue))
+        {
+            Log(Error, "communciation error in module v2l");
+            return false;
+        }
+
+        if (spiInputData_.byModelIn != model_)
+        {
+            Log(Error, "receive undefined model in module v2l")
+                .parameter("expected model", model_)
+                .parameter("received model", spiInputData_.byModelIn);
+            return false;
+        }
+
+        if (spiInputData_.byHardware != hardware_)
+        {
+            Log(Error, "different hardware versions in module v2l")
+                .parameter("expected hardware", hardware_)
+                .parameter("received hardware", spiInputData_.byHardware);
+            return false;
+        }
+
         return true;
     }
 
@@ -55,12 +84,49 @@ namespace OpcUaPiXtendServer
     void
  	PiXtendV2LInst::handleHardwareAccess(void)
     {
+        // cycle time in <ms>
+        delay(delayTime_);
+
         // transfer data
-        Spi_AutoModeV2L(&spiOutputData_, &spiInputData_);
+        int32_t returnValue = Spi_AutoModeV2L(&spiOutputData_, &spiInputData_);
         Spi_AutoModeDAC(&spiOutputDataDac_);
 
-        // delay
-        delay(100); // cycle time 100 ms
+        if (!spiHelper_.checkPixtendReturnValue(returnValue))
+        {
+            Log(Error, "communication error in module v2l");
+        }
+    }
+
+    // Status information
+
+    uint8_t
+    PiXtendV2LInst::firmware(void)
+    {
+        return spiInputData_.byFirmware;
+    }
+
+    uint8_t
+    PiXtendV2LInst::hardware(void)
+    {
+        return spiInputData_.byHardware;
+    }
+
+    uint8_t
+    PiXtendV2LInst::model(void)
+    {
+        return spiInputData_.byModelIn;
+    }
+
+    uint8_t
+    PiXtendV2LInst::ucStatus(void)
+    {
+        return spiInputData_.byUCState;
+    }
+
+    uint8_t
+    PiXtendV2LInst::ucWarning(void)
+    {
+        return spiInputData_.byUCWarnings;
     }
 
     // Inputs Analog
@@ -442,48 +508,52 @@ namespace OpcUaPiXtendServer
     void
     PiXtendV2LInst::gpio0(bool data)
     {
-
+        Log(Warning, "not implemented in module v2l");
     }
 
     bool
     PiXtendV2LInst::gpio0(void)
     {
+        Log(Warning, "not implemented in module v2l");
         return false;
     }
 
     void
     PiXtendV2LInst::gpio1(bool data)
     {
-
+        Log(Warning, "not implemented in module v2l");
     }
 
     bool
     PiXtendV2LInst::gpio1(void)
     {
+        Log(Warning, "not implemented in module v2l");
         return false;
     }
 
     void
     PiXtendV2LInst::gpio2(bool data)
     {
-
+        Log(Warning, "not implemented in module v2l");
     }
 
     bool
     PiXtendV2LInst::gpio2(void)
     {
+        Log(Warning, "not implemented in module v2l");
         return false;
     }
 
     void
     PiXtendV2LInst::gpio3(bool data)
     {
-
+        Log(Warning, "not implemented in module v2l");
     }
 
     bool
     PiXtendV2LInst::gpio3(void)
     {
+        Log(Warning, "not implemented in module v2l");
         return false;
     }
 
@@ -536,7 +606,7 @@ namespace OpcUaPiXtendServer
     void
     PiXtendV2LInst::resetSpiOutputData(PiXtendSpiOutputData& spiOutputData)
     {
-        spiOutputData.byModelOut = 76; // Set model as handshake, PiXtend V2 -L- = 76
+        spiOutputData.byModelOut = model_;
         spiOutputData.byUCMode = 0;
         spiOutputData.byUCCtrl0 = 0;
         spiOutputData.byUCCtrl1 = 0;

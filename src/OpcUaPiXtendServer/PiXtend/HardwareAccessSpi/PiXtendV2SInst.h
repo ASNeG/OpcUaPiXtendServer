@@ -42,6 +42,14 @@ namespace OpcUaPiXtendServer
         virtual bool shutdown(void) override;
         virtual void handleHardwareAccess(void) override;
 
+        // Status information
+
+        virtual uint8_t firmware(void) override;
+        virtual uint8_t hardware(void) override;
+        virtual uint8_t model(void) override;
+        virtual uint8_t ucStatus(void) override;
+        virtual uint8_t ucWarning(void) override;
+
         // Inputs Analog
 
         virtual double ai0(void) override;
@@ -99,6 +107,13 @@ namespace OpcUaPiXtendServer
         virtual bool gpio3(void) override;
 
       private:
+        // defines the model id: PiXtend V2 -S- = 83
+        const uint8_t model_ {83};
+        // defines the current hardware version 2.1 = 21
+        const uint8_t hardware_ {21};
+        // defines the delay time in <ms> - should be part of the configuration later
+        const uint32_t delayTime_ {100};
+
         PiXtendSpiHelper spiHelper_;
 
         using PiXtendSpiInputData = pixtInV2S;
