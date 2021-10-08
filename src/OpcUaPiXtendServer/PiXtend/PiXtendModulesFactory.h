@@ -23,46 +23,20 @@
 #include <string>
 #include <functional>
 
-#ifdef OPCUAPIXTENDSERVER_MODULE_V2S_HARDWARE_ACCESS
-    #ifdef OPCUAPIXTENDSERVER_ACCESS_SPI
-        #include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendV2SInst.h"
-    #else
-        #include "OpcUaPiXtendServer/PiXtend/PiXtendV2SDummy.h"
-    #endif
-#else
-    #include "OpcUaPiXtendServer/PiXtend/PiXtendV2SDummy.h"
-#endif
+#include "OpcUaPiXtendServer/PiXtend/PiXtendV2S.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendV2L.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendEIODO.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendEIOAO.h"
 
-#ifdef OPCUAPIXTENDSERVER_MODULE_V2L_HARDWARE_ACCESS
-    #ifdef OPCUAPIXTENDSERVER_ACCESS_SPI
-        #include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendV2LInst.h"
-    #else
-        #include "OpcUaPiXtendServer/PiXtend/PiXtendV2LDummy.h"
-    #endif
-#else
-    #include "OpcUaPiXtendServer/PiXtend/PiXtendV2LDummy.h"
+#ifdef OPTION_OPCUAPIXTENDSERVER_SPI_ON
+    #include "OpcUaPiXtendServer/ModuleSpi/PiXtendV2SInst.h"
+    #include "OpcUaPiXtendServer/ModuleSpi/PiXtendV2LInst.h"
+#elif defined OPTION_OPCUAPIXTENDSERVER_SPI_DUMMY
+    #include "OpcUaPiXtendServer/ModuleDummy/PiXtendV2SDummy.h"
+    #include "OpcUaPiXtendServer/ModuleDummy/PiXtendV2LDummy.h"
+    #include "OpcUaPiXtendServer/ModuleDummy/PiXtendEIOAODummy.h"
+    #include "OpcUaPiXtendServer/ModuleDummy/PiXtendEIODODummy.h"
 #endif
-
-#ifdef OPCUAPIXTENDSERVER_MODULE_EIOAO_HARDWARE_ACCESS
-    #ifdef OPCUAPIXTENDSERVER_ACCESS_SPI
-        #include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendEIOAOInst.h"
-    #else
-        #include "OpcUaPiXtendServer/PiXtend/PiXtendEIOAODummy.h"
-    #endif
-#else
-    #include "OpcUaPiXtendServer/PiXtend/PiXtendEIOAODummy.h"
-#endif
-
-#ifdef OPCUAPIXTENDSERVER_MODULE_EIODO_HARDWARE_ACCESS
-    #ifdef OPCUAPIXTENDSERVER_ACCESS_SPI
-        #include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendEIODOInst.h"
-    #else
-        #include "OpcUaPiXtendServer/PiXtend/PiXtendEIODODummy.h"
-    #endif
-#else
-    #include "OpcUaPiXtendServer/PiXtend/PiXtendEIODODummy.h"
-#endif
-
 
 namespace OpcUaPiXtendServer
 {

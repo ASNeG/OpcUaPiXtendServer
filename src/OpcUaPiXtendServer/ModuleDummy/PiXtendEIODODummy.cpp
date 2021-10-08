@@ -16,7 +16,7 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#include "OpcUaPiXtendServer/PiXtend/PiXtendEIODODummy.h"
+#include "OpcUaPiXtendServer/ModuleDummy/PiXtendEIODODummy.h"
 
 namespace OpcUaPiXtendServer
 {
