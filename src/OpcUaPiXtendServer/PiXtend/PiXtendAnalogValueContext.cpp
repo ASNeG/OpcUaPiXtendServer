@@ -63,6 +63,18 @@ namespace OpcUaPiXtendServer
 	PiXtendAnalogValueContext::inputStructToDataValue(void)
     {
     	double value = readFunc()();
+    	double oldValue;
+    	outputDataValue_.getValue(oldValue);
+
+    	OpcUaDataValue dataValue(value);
+
+    	// check if value changed
+    	auto diff = oldValue - value;
+    	if (diff > precision_ || diff < -precision_) {
+    		updateContext_.callEvents(dataValue);
+    	}
+
+    	// set input value
     	inputDataValue_ = OpcUaDataValue(value);
     }
 

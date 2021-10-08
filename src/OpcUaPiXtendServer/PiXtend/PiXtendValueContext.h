@@ -22,6 +22,7 @@
 #include <boost/shared_ptr.hpp>
 #include "OpcUaStackCore/Base/BaseClass.h"
 #include "OpcUaStackCore/BuildInTypes/OpcUaDataValue.h"
+#include "OpcUaPiXtendServer/PiXtend/UpdateContext.h"
 
 namespace OpcUaPiXtendServer
 {
@@ -30,6 +31,7 @@ namespace OpcUaPiXtendServer
 	: public OpcUaStackCore::BaseClass
     {
       public:
+    	using UpdateFunc = std::function<void (OpcUaStackCore::BaseClass::SPtr&, OpcUaStackCore::OpcUaDataValue& dataValue)>;
     	using SPtr = boost::shared_ptr<PiXtendValueContext>;
     	using Vec = std::vector<SPtr>;
 
@@ -47,6 +49,14 @@ namespace OpcUaPiXtendServer
         OpcUaStackCore::OpcUaDataValue dataValue(void);
         bool writeAccess(void);
         void writeAccess(bool writeAccess);
+        bool addMonitoredItem(
+        	OpcUaStackCore::OpcUaNodeId& id,
+    		UpdateElement::UpdateFunc updateFunc,
+    		OpcUaStackCore::BaseClass::SPtr& context
+    	);
+        bool delMonitoredItem(
+        	OpcUaStackCore::OpcUaNodeId& id
+        );
 
         virtual void dataValueToOutputStruct(void) = 0;
         virtual void inputStructToDataValue(void) = 0;
@@ -54,11 +64,11 @@ namespace OpcUaPiXtendServer
       protected:
         OpcUaStackCore::OpcUaDataValue inputDataValue_;
         OpcUaStackCore::OpcUaDataValue outputDataValue_;
+        UpdateContext updateContext_;
 
       private:
         ContextType contextType_;
         bool writeAccess_ = true;
-
     };
 
 }

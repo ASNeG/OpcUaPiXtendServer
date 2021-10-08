@@ -42,6 +42,7 @@ namespace OpcUaPiXtendServer
     void
 	PiXtendValueContext::dataValue(OpcUaDataValue& dataValue)
     {
+    	// set data value
     	outputDataValue_ = dataValue;
     }
 
@@ -50,6 +51,7 @@ namespace OpcUaPiXtendServer
     {
     	OpcUaDataValue dataValue;
 
+    	// get data value
     	dataValue = inputDataValue_;
 
     	return dataValue;
@@ -65,6 +67,26 @@ namespace OpcUaPiXtendServer
 	PiXtendValueContext::writeAccess(bool writeAccess)
     {
     	writeAccess_ = writeAccess;
+    }
+
+    bool
+	PiXtendValueContext::addMonitoredItem(
+    	OpcUaNodeId& id,
+		UpdateElement::UpdateFunc updateFunc,
+		OpcUaStackCore::BaseClass::SPtr& context
+	)
+    {
+    	return updateContext_.addContext(
+    		id, updateFunc, context
+    	);
+    }
+
+    bool
+	PiXtendValueContext::delMonitoredItem(
+    	OpcUaNodeId& id
+    )
+    {
+    	return updateContext_.delContext(id);;
     }
 
 }
