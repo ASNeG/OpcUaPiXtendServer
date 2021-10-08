@@ -17,6 +17,7 @@
  */
 
 #include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendSpiHelper.h"
+#include "OpcUaStackCore/Base/Log.h"
 
 namespace OpcUaPiXtendServer
 {
@@ -83,6 +84,33 @@ namespace OpcUaPiXtendServer
         else
         {
             return static_cast<uint16_t>(value * 1023);
+        }
+    }
+
+    bool
+    PiXtendSpiHelper::checkTrxValue(uint32_t trxValue)
+    {
+        switch (trxValue)
+        {
+            case 0:
+                // successfull
+                return true;
+            case (-1):
+                OpcUaStackCore::Log(OpcUaStackCore::Error,
+                    "crc data header error");
+                return false;
+            case (-2):
+                OpcUaStackCore::Log(OpcUaStackCore::Error,
+                    "model conflict");
+                return false;
+            case (-3):
+                OpcUaStackCore::Log(OpcUaStackCore::Error,
+                    "crc data error");
+                return false;
+            default:
+                OpcUaStackCore::Log(OpcUaStackCore::Error,
+                    "undefined return value");
+                return false;
         }
     }
 

@@ -40,6 +40,14 @@ namespace OpcUaPiXtendServer
         virtual bool startup(void) override;
         virtual bool shutdown(void) override;
 
+        // Status information
+
+        virtual uint8_t firmware(void) override;
+        virtual uint8_t hardware(void) override;
+        virtual uint8_t model(void) override;
+        virtual uint8_t ucStatus(void) override;
+        virtual uint8_t ucWarning(void) override;
+
         // Inputs Analog
 
         virtual double ai0(void) override;

@@ -42,6 +42,14 @@ namespace OpcUaPiXtendServer
         virtual bool startup(void) = 0;
         virtual bool shutdown(void) = 0;
 
+        // Status information
+
+        virtual uint8_t firmware(void) = 0;
+        virtual uint8_t hardware(void) = 0;
+        virtual uint8_t model(void) = 0;
+        virtual uint8_t ucStatus(void) = 0;
+        virtual uint8_t ucWarning(void) = 0;
+
         // Inputs Analog
 
         virtual double ai0(void) = 0;
