@@ -36,7 +36,11 @@ namespace OpcUaPiXtendServer
         double analog2Percent(uint16_t value);
         uint16_t percent2Analog(double value);
 
-        bool checkTrxValue(uint32_t trxValue);
+        /**
+         * @brief Checks the return value from the pixtend lib function Spi_AutoModeV2X.
+         * @return true if the returnValue contains success, otherwise false.
+         */
+        bool checkPixtendReturnValue(uint32_t pxitendReturnValue);
     };
 
 }
