@@ -16,7 +16,7 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#include "OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/PiXtendSpiHelper.h"
+#include "OpcUaPiXtendServer/ModuleSpi/PiXtendSpiHelper.h"
 #include "OpcUaStackCore/Base/Log.h"
 
 using namespace OpcUaStackCore;
