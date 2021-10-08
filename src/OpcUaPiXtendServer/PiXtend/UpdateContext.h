@@ -20,6 +20,7 @@
 #define __OpcUaPiXtendServer_UpdateContext_h__
 
 #include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
 #include "OpcUaStackCore/Base/BaseClass.h"
 #include "OpcUaStackCore/BuildInTypes/OpcUaDataValue.h"
 
@@ -31,9 +32,11 @@ namespace OpcUaPiXtendServer
 	  public:
 		using SPtr = boost::shared_ptr<UpdateElement>;
 		using UpdateFunc = std::function<void (OpcUaStackCore::OpcUaDataValue& dataValue, OpcUaStackCore::BaseClass::SPtr& context)>;
-		using Map = std::map<OpcUaStackCore::OpcUaNodeId, UpdateElement::SPtr>;
+		using Map = std::map<OpcUaStackCore::OpcUaNodeId, SPtr>;
+		using Vec = std::vector<SPtr>;
 
 		UpdateElement(void);
+		UpdateElement(UpdateFunc updateFunc, OpcUaStackCore::BaseClass::SPtr& context);
 		~UpdateElement(void);
 
 		void updateFunc(UpdateFunc updateFunc);
@@ -69,6 +72,7 @@ namespace OpcUaPiXtendServer
 		);
 
       private:
+        boost::mutex mutex_;
         UpdateElement::Map updateElementMap_;
     };
 
