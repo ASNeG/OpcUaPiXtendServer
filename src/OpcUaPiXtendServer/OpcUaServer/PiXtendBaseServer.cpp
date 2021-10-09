@@ -260,6 +260,10 @@ namespace OpcUaPiXtendServer
 			if (!baseNodeClass) return;
 
 			// set variable
+			Log(Debug, "update variable")
+			    .parameter("Name", nodeContext->serverVariable()->name())
+			    .parameter("NodeId", nodeContext->serverVariable()->nodeId())
+			    .parameter("Data", dataValue);
 			baseNodeClass->setValueSync(dataValue);
 		};
 
