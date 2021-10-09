@@ -191,6 +191,9 @@ namespace OpcUaPiXtendServer
     	ApplicationReadContext* applicationReadContext
 	)
     {
+	Log(Debug, "receive read request")
+	    .parameter("OpcUaNodeId", applicationReadContext->nodeId_);
+
     	// get node context
     	auto nodeContext = boost::static_pointer_cast<NodeContext>(applicationReadContext->applicationContext_);
     	if (!nodeContext) {
@@ -215,6 +218,10 @@ namespace OpcUaPiXtendServer
 		ApplicationWriteContext* applicationWriteContext
 	)
     {
+	Log(Debug, "receive write request")
+	    .parameter("OpcUaNodeId", applicationWriteContext->nodeId_)
+	    .parameter("OpcUaDataValue", applicationWriteContext->dataValue_);
+
        	// get node context
         auto nodeContext = boost::static_pointer_cast<NodeContext>(applicationWriteContext->applicationContext_);
         if (!nodeContext) {

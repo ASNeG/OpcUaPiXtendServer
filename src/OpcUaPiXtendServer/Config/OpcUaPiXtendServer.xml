@@ -25,6 +25,7 @@
             <Type>V2L</Type>
         </Module>
         
+	<!--
         <Module>
             <Name>DIO-1</Name>
             <Type>DO</Type>
@@ -41,7 +42,8 @@
           <Name>AIO-1</Name>
           <Type>AO</Type>
           <Address>0x01</Address>
-        </Module>
+	</Module>
+	-->
     </Modules>
 
 </OpcUaPiXtendServer>
