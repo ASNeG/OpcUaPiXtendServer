@@ -40,8 +40,18 @@ namespace OpcUaPiXtendServer
     }
 
     void
+    PiXtendValueContext::contextName(const std::string& contextName)
+    {
+        contextName_ = contextName;
+    }
+
+    void
 	PiXtendValueContext::dataValueIn(const OpcUaDataValue& dataValue)
     {
+	Log(Debug, "set input cache value")
+	    .parameter("ContextName", contextName_)
+	    .parameter("Data", dataValue);
+
     	// set data value
     	valueMutex_.lock();
     	inputDataValue_ = dataValue;
@@ -51,6 +61,10 @@ namespace OpcUaPiXtendServer
     void
 	PiXtendValueContext::dataValueOut(const OpcUaDataValue& dataValue)
     {
+	Log(Debug, "set output cache value")
+	    .parameter("ContextName", contextName_)
+	    .parameter("Data", dataValue);
+
     	// set data value
     	valueMutex_.lock();
     	outputDataValue_ = dataValue;
@@ -67,6 +81,9 @@ namespace OpcUaPiXtendServer
     	dataValue = inputDataValue_;
     	valueMutex_.unlock();
 
+	Log(Debug, "get input cache value")
+	    .parameter("ContextName", contextName_)
+	    .parameter("Data", dataValue);
     	return dataValue;
     }
 
@@ -80,6 +97,9 @@ namespace OpcUaPiXtendServer
     	dataValue = outputDataValue_;
     	valueMutex_.unlock();
 
+	Log(Debug, "get output cache value")
+	    .parameter("ContextName", contextName_)
+	    .parameter("Data", dataValue);
     	return dataValue;
     }
 
