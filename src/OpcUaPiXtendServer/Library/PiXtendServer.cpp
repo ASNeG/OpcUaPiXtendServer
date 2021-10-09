@@ -77,7 +77,8 @@ namespace OpcUaPiXtendServer
 			return false;
 		}
 
-		// create pixtend root object in opc ua information model
+	// create pixtend root object in opc ua information model
+	Log(Debug,  "create pixtend root object");
         if (!createPiXtendRootObject())
         {
 			Log(Error, "create pixtend folder error");
@@ -85,18 +86,21 @@ namespace OpcUaPiXtendServer
 		}
 
         // startup pixtend modules
+	Log(Debug, "startup pixtend modules");
         if (!startupPiXtend(controllerCfg)) {
         	Log(Error, "startup pixtend error");
         	return false;
         }
 
         // add configured opc ua server objects
+	Log(Debug, "startup pixtend server");
         if (!startupServer(controllerCfg)) {
         	Log(Error, "startup server error");
         	return false;
         }
 
         // startup pixtend loop
+	Log(Debug, "startup pixtend loop");
         if (!startupPiXtendLoop()) {
         	Log(Error, "startup pixtend loop error");
         	return false;
@@ -111,12 +115,15 @@ namespace OpcUaPiXtendServer
 		Log(Debug, "PiXtendServer::shutdown");
 
 		// shutdown pixtend loop
+		Log(Debug, "shutdown pixtend loop");
 		shutdownPiXtendLoop();
 
 		// shutdown server
+		Log(Debug, "shutdown pixtend server");
 		shutdownServer();
 
 		// shutdown pixtend
+		Log(Debug, "shutdown pixtend modules");
 		shutdownPiXtend();
 
 		return true;
@@ -536,6 +543,8 @@ namespace OpcUaPiXtendServer
 	void
 	PiXtendServer::piXtendLoop(void)
 	{
+		Log(Debug, "run pixtend loop");
+
 		// call v2s loop
 		if (piXtendV2S_) {
 			piXtendV2S_->loop();
