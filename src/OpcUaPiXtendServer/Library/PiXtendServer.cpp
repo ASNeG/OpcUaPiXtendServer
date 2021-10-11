@@ -531,6 +531,23 @@ namespace OpcUaPiXtendServer
 	bool
 	PiXtendServer::shutdownPiXtendLoop(void)
 	{
+		if (!strand_->running_in_this_thread()) {
+			// the function was not called by the strand
+
+			std::promise<void> promise;
+			std::future<void> future = promise.get_future();
+
+			strand_->dispatch(
+				[this, &promise]() {
+					shutdownPiXtendLoop();
+				    promise.set_value();
+			    }
+			);
+
+			future.wait();
+			return true;
+		}
+
 		// stop pixtend timer loop
 		if (pixtendTimerElement_.get() != nullptr) {
 			ioThread_->slotTimer()->stop(pixtendTimerElement_);
