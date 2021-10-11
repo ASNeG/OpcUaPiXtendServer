@@ -347,18 +347,12 @@ namespace OpcUaPiXtendServer
         }
 
         int32_t namespaceIndex = getNamespaceInfo.getNamespaceIndex(namespaceName_);
-        try
-        {
-            namespaceIndex_ = boost::numeric_cast<uint16_t>(namespaceIndex);
-        }
-        catch (boost::bad_numeric_cast& e)
-        {
-            Log(Error, "get namesapce index error")
-                .parameter("NamespaceName", namespaceName_)
-                .parameter("NamespaceIndex", namespaceIndex)
-                .parameter("Exception", e.what());
+        if (namespaceIndex < 0) {
+            Log(Error, "namespace not exist in opc ua information model")
+                 .parameter("NamespaceName", namespaceName_);
             return false;
         }
+        namespaceIndex_ = (uint16_t)namespaceIndex;
 
         return true;
     }
