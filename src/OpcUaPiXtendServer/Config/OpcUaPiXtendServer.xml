@@ -25,25 +25,29 @@
             <Type>V2L</Type>
         </Module>
         
-	<!--
-        <Module>
+        <Module Enable="OFF">
+            <Name>PiXtendV2S</Name>
+            <Type>V2S</Type>
+        </Module>
+        
+        <Module Enable="OFF">
             <Name>DIO-1</Name>
             <Type>DO</Type>
             <Address>0x01</Address>
         </Module>
         
-        <Module>
+        <Module Enable="OFF">
           <Name>DIO-2</Name>
           <Type>DO</Type>
           <Address>0x02</Address>
         </Module>
         
-        <Module>
+        <Module Enable="OFF">
           <Name>AIO-1</Name>
           <Type>AO</Type>
           <Address>0x01</Address>
 	</Module>
-	-->
+	
     </Modules>
 
 </OpcUaPiXtendServer>

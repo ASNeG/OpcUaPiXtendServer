@@ -110,16 +110,14 @@ namespace OpcUaPiXtendServer
     bool
     PiXtendServerControllerCfg::parse(Config* config)
     {
-        if (config == nullptr)
-        {
+        if (config == nullptr) {
             Log(Error, "parse cfg error - config is empty");
             return false;
         }
 
         // get CtrlModules element
         boost::optional<Config> childCtrlModules = config->getChild("Modules");
-        if (!childCtrlModules)
-        {
+        if (!childCtrlModules) {
             Log(Error, "parameter CtrlModules missing in controller configuration");
             return false;
         }
@@ -127,11 +125,15 @@ namespace OpcUaPiXtendServer
         std::vector<Config> configVec;
         childCtrlModules->getChilds("Module", configVec);
         configModules_.reserve(configVec.size());
-        for (Config cfgModule : configVec)
-        {
+        for (Config cfgModule : configVec) {
+        	// check if module configuration is enabled
+    		auto enable = cfgModule.getValue("<xmlattr>.Enable", "ON");
+    		boost::to_upper(enable);
+    		if (enable != "ON") continue;
+
+        	// parse module configuration
             PiXtendServerControllerCfgModule module;
-            if (!module.parse(&cfgModule))
-            {
+            if (!module.parse(&cfgModule)) {
                 Log(Error, "parse CtrlModules in controller configuration error");
                 return false;
             }
