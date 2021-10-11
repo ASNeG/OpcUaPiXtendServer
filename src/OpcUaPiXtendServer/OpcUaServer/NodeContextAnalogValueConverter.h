@@ -16,8 +16,8 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#ifndef __OpcUaPiXtendServer_    NodeContextAnalogValueConverter_h__
-#define __OpcUaPiXtendServer_    NodeContextAnalogValueConverter_h__
+#ifndef __OpcUaPiXtendServer_NodeContextAnalogValueConverter_h__
+#define __OpcUaPiXtendServer_NodeContextAnalogValueConverter_h__
 
 #include <boost/shared_ptr.hpp>
 

@@ -26,6 +26,111 @@ using namespace OpcUaStackCore;
 namespace OpcUaPiXtendServer
 {
 
+    // ##################################################################
+    //
+    // PiXtendServerControllerCfgNode class
+    //
+    // ##################################################################
+
+    PiXtendServerControllerCfgNode::PiXtendServerControllerCfgNode(void)
+    {
+    }
+
+    PiXtendServerControllerCfgNode::~PiXtendServerControllerCfgNode(void)
+    {
+    }
+
+    bool
+    PiXtendServerControllerCfgNode::parse(OpcUaStackCore::Config* config)
+    {
+        if (config == nullptr)
+        {
+            Log(Error, "parse PiXtendServerControllerCfgNode error - config is empty");
+            return false;
+        }
+
+        auto cfgNodeName = config->getChild("Node");
+        if (!cfgNodeName)
+        {
+            Log(Error, "PiXtendServerControllerCfgNode cannot get cfgNodeName in controller configuration");
+            return false;
+        }
+        nodeName_ = cfgNodeName->getValue();
+
+        auto cfgPinName = config->getChild("Pin");
+        if (!cfgPinName)
+        {
+            Log(Error, "PiXtendServerControllerCfgNode cannot get cfgPinName in controller configuration");
+            return false;
+        }
+        pinName_ = cfgPinName->getValue();
+
+        if (config->existChild("A"))
+        {
+            if (!config->existChild("B") || !config->existChild("C") || !config->existChild("D"))
+            {
+                Log(Error, "PiXtendServerControllerCfgNode unitConverter information are incomplete in controller configuration");
+                return false;
+            }
+
+            unitConverterExists_ = true;
+            config->getConfigParameter("A", unitConverterA_);
+            config->getConfigParameter("B", unitConverterB_);
+            config->getConfigParameter("C", unitConverterC_);
+            config->getConfigParameter("D", unitConverterD_);
+        }
+
+        return true;
+    }
+
+    std::string
+    PiXtendServerControllerCfgNode::nodeName(void)
+    {
+        return nodeName_;
+    }
+
+    std::string
+    PiXtendServerControllerCfgNode::pinName(void)
+    {
+        return pinName_;
+    }
+
+    bool
+    PiXtendServerControllerCfgNode::unitConverterExists(void)
+    {
+        return unitConverterExists_;
+    }
+
+    double
+    PiXtendServerControllerCfgNode::unitConverterA(void)
+    {
+        return unitConverterA_;
+    }
+
+    double
+    PiXtendServerControllerCfgNode::unitConverterB(void)
+    {
+        return unitConverterB_;
+    }
+
+    double
+    PiXtendServerControllerCfgNode::unitConverterC(void)
+    {
+        return unitConverterC_;
+    }
+
+    double
+    PiXtendServerControllerCfgNode::unitConverterD(void)
+    {
+        return unitConverterD_;
+    }
+
+    // ##################################################################
+    //
+    // PiXtendServerControllerCfgModule class
+    //
+    // ##################################################################
+
     PiXtendServerControllerCfgModule::PiXtendServerControllerCfgModule()
     {
 
@@ -70,10 +175,22 @@ namespace OpcUaPiXtendServer
         }
         moduleType_ = findModuleType->second;
 
-
         if (config->existChild("Address"))
         {
             config->getConfigParameter("Address", moduleAddress_);
+        }
+
+        std::vector<Config> configVec;
+        config->getChilds("unit", configVec);
+        nodes_.reserve(configVec.size());
+        for (Config cfgNode : configVec) {
+            PiXtendServerControllerCfgNode node;
+            if (!node.parse(&cfgNode))
+            {
+                Log(Error, "parse CtrlNodes in controller configuration error");
+                return false;
+            }
+            nodes_.push_back(node);
         }
 
         return true;
@@ -96,6 +213,12 @@ namespace OpcUaPiXtendServer
     {
         return moduleAddress_;
     }
+
+    // ##################################################################
+    //
+    // PiXtendServerControllerCfg class
+    //
+    // ##################################################################
 
     PiXtendServerControllerCfg::PiXtendServerControllerCfg()
     {

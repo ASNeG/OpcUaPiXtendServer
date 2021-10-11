@@ -158,6 +158,17 @@ namespace OpcUaPiXtendServer
         	nodeContext->hardwareContext(hardwareContext);
         	BaseClass::SPtr context = nodeContext;
         	serverVariable->applicationContext(context);
+
+            // check if unit converter information exists
+            if (nodePinConfig.unitConverterConfigSPtr_ != nullptr)
+            {
+                auto unitConverter = boost::make_shared<NodeContextAnalogValueConverter>(
+                            nodePinConfig.unitConverterConfigSPtr_->a_,
+                            nodePinConfig.unitConverterConfigSPtr_->b_,
+                            nodePinConfig.unitConverterConfigSPtr_->c_,
+                            nodePinConfig.unitConverterConfigSPtr_->d_);
+                nodeContext->analogValueConverter(unitConverter);
+            }
     	}
 
     	return true;

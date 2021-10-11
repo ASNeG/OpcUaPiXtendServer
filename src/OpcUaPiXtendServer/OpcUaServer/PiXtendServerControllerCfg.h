@@ -42,6 +42,36 @@ namespace OpcUaPiXtendServer
         { "do", ServerModule::DO }
     };
 
+    class PiXtendServerControllerCfgNode
+    {
+      public:
+        using Vec = std::vector<PiXtendServerControllerCfgNode>;
+
+        PiXtendServerControllerCfgNode(void);
+        ~PiXtendServerControllerCfgNode(void);
+
+        bool parse(OpcUaStackCore::Config* config);
+
+        std::string nodeName(void);
+        std::string pinName(void);
+
+        bool unitConverterExists(void);
+        double unitConverterA(void);
+        double unitConverterB(void);
+        double unitConverterC(void);
+        double unitConverterD(void);
+
+      private:
+        std::string nodeName_ {""};
+        std::string pinName_ {""};
+
+        bool unitConverterExists_ {false};
+        double unitConverterA_ {0.0};
+        double unitConverterB_ {0.0};
+        double unitConverterC_ {0.0};
+        double unitConverterD_ {0.0};
+    };
+
     class PiXtendServerControllerCfgModule
     {
       public:
@@ -54,10 +84,14 @@ namespace OpcUaPiXtendServer
         ServerModule moduleType(void);
         uint32_t moduleAddress(void);
 
+        PiXtendServerControllerCfgNode::Vec nodes(void);
+
       private:
         std::string moduleName_ {""};
         ServerModule moduleType_ {ServerModule::Unknown};
         uint32_t moduleAddress_ {0};
+
+        PiXtendServerControllerCfgNode::Vec nodes_;
     };
 
     class PiXtendServerControllerCfg
