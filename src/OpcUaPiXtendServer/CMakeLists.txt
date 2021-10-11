@@ -44,7 +44,7 @@ set(HardwareAccessLibs
     "" # hardware access for pc/dummy - no libs needed
 )
 
-if (${OPCUAPIXTENDSERVER_ACCESS_SPI})
+if (${OPTION_OPCUAPIXTENDSERVER_SPI} STREQUAL SPI_ON)
     set(HardwareAccessLibs
         pixtend
         wiringPi
@@ -54,9 +54,16 @@ if (${OPCUAPIXTENDSERVER_ACCESS_SPI})
         GLOB
         OpcUaPiXtendServer_PiXtendAccess_SRC
         ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/*.cpp
-        ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/HardwareAccessSpi/*.cpp
+        ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/ModuleSpi/*.cpp
     )
-else()
+elseif (${OPTION_OPCUAPIXTENDSERVER_SPI} STREQUAL SPI_DUMMY)
+    file(
+        GLOB
+        OpcUaPiXtendServer_PiXtendAccess_SRC
+        ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/*.cpp
+        ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/ModuleDummy/*.cpp
+    )
+else ()
     file(
         GLOB
         OpcUaPiXtendServer_PiXtendAccess_SRC
@@ -133,25 +140,13 @@ endif()
 #
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
-if (${OPCUAPIXTENDSERVER_MODULE_V2S_HARDWARE_ACCESS})
-    add_definitions(-DOPCUAPIXTENDSERVER_MODULE_V2S_HARDWARE_ACCESS)
-endif ()
-
-if (${OPCUAPIXTENDSERVER_MODULE_V2L_HARDWARE_ACCESS})
-    add_definitions(-DOPCUAPIXTENDSERVER_MODULE_V2L_HARDWARE_ACCESS)
-endif ()
-
-if (${OPCUAPIXTENDSERVER_MODULE_EIOAO_HARDWARE_ACCESS})
-    add_definitions(-DOPCUAPIXTENDSERVER_MODULE_EIOAO_HARDWARE_ACCESS)
-endif ()
-
-if (DEFINED ENV{OPCUAPIXTENDSERVER_MODULE_EIODO_HARDWARE_ACCESS})
-    add_definitions(-DOPCUAPIXTENDSERVER_MODULE_EIODO_HARDWARE_ACCESS)
-endif ()
-
-if (${OPCUAPIXTENDSERVER_ACCESS_SPI})
-    add_definitions(-DOPCUAPIXTENDSERVER_ACCESS_SPI)
-endif ()
+if (${OPTION_OPCUAPIXTENDSERVER_SPI} STREQUAL SPI_ON)
+    add_definitions(-DOPTION_OPCUAPIXTENDSERVER_SPI_ON)
+elseif (${OPTION_OPCUAPIXTENDSERVER_SPI} STREQUAL SPI_DUMMY)
+    add_definitions(-DOPTION_OPCUAPIXTENDSERVER_DUMMY)
+else ()
+    add_definitions(-DOPTION_OPCUAPIXTENDSERVER_SPI_OFF)
+endif()
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------

@@ -19,6 +19,9 @@
 #include <boost/make_shared.hpp>
 
 #include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
+#include "OpcUaStackCore/Base/Log.h"
+
+using namespace OpcUaStackCore;
 
 namespace OpcUaPiXtendServer
 {
@@ -34,56 +37,52 @@ namespace OpcUaPiXtendServer
     PiXtendV2S::SPtr
     PiXtendModulesFactory::createPiXtendV2S(const std::string& instanceName)
     {
-#ifdef OPCUAPIXTENDSERVER_MODULE_V2S_HARDWARE_ACCESS
-    #ifdef OPCUAPIXTENDSERVER_ACCESS_SPI
+#ifdef OPTION_OPCUAPIXTENDSERVER_SPI_ON
         return boost::make_shared<PiXtendV2SInst>(instanceName);
-    #else
+#elif defined OPTION_OPCUAPIXTENDSERVER_DUMMY
         return boost::make_shared<PiXtendV2SDummy>(instanceName);
-    #endif
 #else
-    return boost::make_shared<PiXtendV2SDummy>(instanceName);
+        Log(Error, "PiXtendModulesFactory cannot create module - module is undefined!")
+                .parameter("instanceName", instanceName);
+        return nullptr;
 #endif
     }
 
     PiXtendV2L::SPtr
     PiXtendModulesFactory::createPiXtendV2L(const std::string& instanceName)
     {
-#ifdef OPCUAPIXTENDSERVER_MODULE_V2L_HARDWARE_ACCESS
-    #ifdef OPCUAPIXTENDSERVER_ACCESS_SPI
+#ifdef OPTION_OPCUAPIXTENDSERVER_SPI_ON
         return boost::make_shared<PiXtendV2LInst>(instanceName);
-    #else
+#elif defined OPTION_OPCUAPIXTENDSERVER_DUMMY
         return boost::make_shared<PiXtendV2LDummy>(instanceName);
-    #endif
 #else
-    return boost::make_shared<PiXtendV2LDummy>(instanceName);
+        Log(Error, "PiXtendModulesFactory cannot create module - module is undefined!")
+                .parameter("instanceName", instanceName);
+        return nullptr;
 #endif
     }
 
     PiXtendEIOAO::SPtr
     PiXtendModulesFactory::createPiXtendEIOAO(const std::string& instanceName)
     {
-#ifdef OPCUAPIXTENDSERVER_MODULE_EIOAO_HARDWARE_ACCESS
-    #ifdef OPCUAPIXTENDSERVER_ACCESS_SPI
-        return boost::make_shared<PiXtendEIOAOInst>(instanceName);
-    #else
+#ifdef OPTION_OPCUAPIXTENDSERVER_DUMMY
         return boost::make_shared<PiXtendEIOAODummy>(instanceName);
-    #endif
 #else
-    return boost::make_shared<PiXtendEIOAODummy>(instanceName);
+        Log(Error, "PiXtendModulesFactory cannot create module - module is undefined!")
+                .parameter("instanceName", instanceName);
+        return nullptr;
 #endif
     }
 
     PiXtendEIODO::SPtr
     PiXtendModulesFactory::createPiXtendEIODO(const std::string& instanceName)
     {
-#ifdef OPCUAPIXTENDSERVER_MODULE_EIODO_HARDWARE_ACCESS
-    #ifdef OPCUAPIXTENDSERVER_ACCESS_SPI
-        return boost::make_shared<PiXtendEIODOInst>(instanceName);
-    #else
+#ifdef OPTION_OPCUAPIXTENDSERVER_DUMMY
         return boost::make_shared<PiXtendEIODODummy>(instanceName);
-    #endif
 #else
-    return boost::make_shared<PiXtendEIODODummy>(instanceName);
+        Log(Error, "PiXtendModulesFactory cannot create module - module is undefined!")
+                .parameter("instanceName", instanceName);
+        return nullptr;
 #endif
     }
 

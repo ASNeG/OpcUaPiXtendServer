@@ -32,6 +32,8 @@ usage()
    echo "--jobs, -j JOB_COUNT: sets the number of the jobs of make"
    echo ""
    echo "--build-type, -B BUILD_TYPE:  set the build types (Debug | Release). By default, it is Debug type"
+   echo ""
+   echo "--option-spi, -a OPTION_SPI:  set the spi feature (SPI_ON | SPI_OFF | SPI_DUMMY). By default, it is SPI_ON"
 }
 
 
@@ -92,7 +94,8 @@ build_local()
               -DOPCUASTACK_INSTALL_PREFIX="${STACK_PREFIX}" \
               -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
         	  -DGIT_COMMIT="${GIT_COMMIT}" \
-              -DGIT_BRANCH="${GIT_BRANCH}"
+              -DGIT_BRANCH="${GIT_BRANCH}" \
+              -DOPTION_OPCUAPIXTENDSERVER_SPI="${OPTION_SPI}"
         
         set +x
 	RESULT=$?
@@ -175,11 +178,12 @@ build_deb()
             -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
             -DGIT_COMMIT="${GIT_COMMIT}" \
             -DGIT_BRANCH="${GIT_BRANCH}" \
+            -DOPTION_OPCUAPIXTENDSERVER_SPI="${OPTION_SPI}" \
             "-DCPACK_BINARY_DEB=1" \
             "-DCPACK_BINARY_RPM=0" \
-	    "-DCPACK_BINARY_STGZ=0" \
-	    "-DCPACK_BINARY_TGZ=0" \
-	    "-DCPACK_BINARY_TZ=0" 
+            "-DCPACK_BINARY_STGZ=0" \
+            "-DCPACK_BINARY_TGZ=0" \
+            "-DCPACK_BINARY_TZ=0"
         RESULT=$?
         if [ ${RESULT} -ne 0 ] ;
         then
@@ -253,11 +257,12 @@ build_rpm()
             -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
             -DGIT_COMMIT="${GIT_COMMIT}" \
             -DGIT_BRANCH="${GIT_BRANCH}" \
+            -DOPTION_OPCUAPIXTENDSERVER_SPI="${OPTION_SPI}" \
             "-DCPACK_BINARY_DEB=0" \
             "-DCPACK_BINARY_RPM=1" \
-  	    "-DCPACK_BINARY_STGZ=0" \
+            "-DCPACK_BINARY_STGZ=0" \
      	    "-DCPACK_BINARY_TGZ=0" \
-	    "-DCPACK_BINARY_TZ=0"
+            "-DCPACK_BINARY_TZ=0"
         RESULT=$?
         if [ ${RESULT} -ne 0 ] ;
         then
@@ -322,7 +327,8 @@ build_tst()
 	     -DOPCUASTACK_INSTALL_PREFIX="${STACK_PREFIX}" \
          -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
          -DGIT_COMMIT="${GIT_COMMIT}" \
-         -DGIT_BRANCH="${GIT_BRANCH}"
+         -DGIT_BRANCH="${GIT_BRANCH}" \
+         -DOPTION_OPCUAPIXTENDSERVER_SPI="${OPTION_SPI}"
         RESULT=$?
         if [ ${RESULT} -ne 0 ] ;
         then
@@ -409,6 +415,7 @@ INSTALL_PREFIX="${HOME}/.ASNeG"
 STACK_PREFIX="/"
 JOBS=1
 BUILD_TYPE="Debug"
+OPTION_SPI="SPI_ON"
 GIT_COMMIT=`git rev-parse HEAD`
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
@@ -439,6 +446,11 @@ case $key in
     ;;
     -B|--build-type)
     BUILD_TYPE="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -a|--option-spi)
+    OPTION_SPI="$2"
     shift # past argument
     shift # past value
     ;;
