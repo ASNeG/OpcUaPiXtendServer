@@ -6,7 +6,7 @@ RUN mkdir /build
 WORKDIR /build
 
 # Build
-RUN cmake /tmp/src
+RUN cmake -DOPTION_OPCUAPIXTENDSERVER_SPI="${SPI_DUMMY}" /tmp/src
 RUN make
 RUN make install
 

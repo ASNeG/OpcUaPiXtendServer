@@ -33,7 +33,7 @@ usage()
    echo ""
    echo "--build-type, -B BUILD_TYPE:  set the build types (Debug | Release). By default, it is Debug type"
    echo ""
-   echo "--option-spi, -a OPTION_SPI:  set the spi feature (SPI_ON | SPI_OFF | SPI_DUMMY). By default, it is SPI_OFF"
+   echo "--option-spi, -a OPTION_SPI:  set the spi feature (SPI_ON | SPI_OFF | SPI_DUMMY). By default, it is SPI_ON"
 }
 
 
@@ -415,7 +415,7 @@ INSTALL_PREFIX="${HOME}/.ASNeG"
 STACK_PREFIX="/"
 JOBS=1
 BUILD_TYPE="Debug"
-OPTION_SPI="SPI_OFF"
+OPTION_SPI="SPI_ON"
 GIT_COMMIT=`git rev-parse HEAD`
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 

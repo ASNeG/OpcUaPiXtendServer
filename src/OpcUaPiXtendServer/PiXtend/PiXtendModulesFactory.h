@@ -31,7 +31,7 @@
 #ifdef OPTION_OPCUAPIXTENDSERVER_SPI_ON
     #include "OpcUaPiXtendServer/ModuleSpi/PiXtendV2SInst.h"
     #include "OpcUaPiXtendServer/ModuleSpi/PiXtendV2LInst.h"
-#elif defined OPTION_OPCUAPIXTENDSERVER_SPI_DUMMY
+#elif defined OPTION_OPCUAPIXTENDSERVER_DUMMY
     #include "OpcUaPiXtendServer/ModuleDummy/PiXtendV2SDummy.h"
     #include "OpcUaPiXtendServer/ModuleDummy/PiXtendV2LDummy.h"
     #include "OpcUaPiXtendServer/ModuleDummy/PiXtendEIOAODummy.h"

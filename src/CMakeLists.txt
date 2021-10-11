@@ -45,9 +45,9 @@ endif ()
 #
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
+set(OPTION_OPCUAPIXTENDSERVER_SPI "SPI_ON" CACHE STRING "SPI feature is activated.")
 set(OPTION_OPCUAPIXTENDSERVER_SPI "SPI_OFF" CACHE STRING "SPI feature is deactivated.")
 set(OPTION_OPCUAPIXTENDSERVER_SPI "SPI_DUMMY" CACHE STRING "SPI feature is deactivated, instead use dummy classes.")
-set(OPTION_OPCUAPIXTENDSERVER_SPI "SPI_ON" CACHE STRING "SPI feature is activated.")
 
 set_property(CACHE OPTION_OPCUAPIXTENDSERVER_SPI PROPERTY STRINGS SPI_OFF SPI_ON SPI_DUMMY)
 
