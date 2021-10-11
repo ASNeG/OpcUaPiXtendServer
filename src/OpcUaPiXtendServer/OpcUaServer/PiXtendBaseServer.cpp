@@ -285,6 +285,14 @@ namespace OpcUaPiXtendServer
 			updateFunc,
 			monitoredItemStartContext->applicationContext_
         );
+
+	// read pixtend variable
+	auto dataValue = hardwareContext->dataValueIn();
+	auto baseNodeClass = nodeContext->serverVariable()->baseNode().lock();
+	if (!baseNodeClass) return;
+
+	// set variable to opx ua node
+	baseNodeClass->setValueSync(dataValue);
 	}
 
 	void
