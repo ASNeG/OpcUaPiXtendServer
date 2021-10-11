@@ -26,8 +26,8 @@ namespace OpcUaPiXtendServer
     PiXtendByteValueContext::PiXtendByteValueContext(void)
     : PiXtendValueContext(ContextType::AnalogValue)
     {
-        dataValueIn(OpcUaDataValue(0));
-        dataValueOut(OpcUaDataValue(0));
+        dataValueIn(OpcUaDataValue((uint8_t)0));
+        dataValueOut(OpcUaDataValue((uint8_t)0));
     }
 
     PiXtendByteValueContext::~PiXtendByteValueContext(void)
