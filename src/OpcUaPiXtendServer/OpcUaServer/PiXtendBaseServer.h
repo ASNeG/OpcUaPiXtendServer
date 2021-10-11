@@ -47,6 +47,7 @@ namespace OpcUaPiXtendServer
 
         PiXtendBaseServer(
         	const std::string& typeName,
+            const std::string& namespaceName,
 			uint32_t typeNodeId
 		);
         virtual ~PiXtendBaseServer(void);
@@ -56,8 +57,6 @@ namespace OpcUaPiXtendServer
         	boost::shared_ptr<boost::asio::io_service::strand>& strand,
         	OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
             const std::string& instanceName,
-			const std::string& namespaceName,
-			uint16_t namespaceIndex,
 			const OpcUaStackCore::OpcUaNodeId& parentNodeId,
 			ContextIndex::SPtr& contextIndex
 		);
@@ -103,6 +102,8 @@ namespace OpcUaPiXtendServer
 		void receiveMonitoredItemStop(
 			OpcUaStackCore::ApplicationMonitoredItemStopContext* monitoredItemStopContext
 		);
+
+        bool findNamespace(void);
     };
 
 }

@@ -60,8 +60,6 @@ namespace OpcUaPiXtendServer
 		OpcUaStackServer::ApplicationServiceIf* applicationServiceIf_ = nullptr;
 		OpcUaStackServer::ApplicationInfo* applicationInfo_ = nullptr;
 
-		const std::string namespaceName_ = "http://ASNeG.de/PiXtend/";
-        uint16_t namespaceIndex_ = 0;
 		const OpcUaStackCore::OpcUaNodeId piXtendRootNodeId_ = OpcUaStackCore::OpcUaNodeId("PiXtend", 1);
 
 		ContextIndex::SPtr contextIndex_ = boost::make_shared<ContextIndex>();
@@ -94,7 +92,6 @@ namespace OpcUaPiXtendServer
         bool startupPiXtendEIOAO(const std::string& name, uint32_t address);
         bool startupPiXtendEIODO(const std::string& name, uint32_t address);
 
-		bool findNamespace(void);
 		bool createPiXtendRootObject(void);
 
 		bool startupPiXtendLoop(void);

@@ -16,6 +16,7 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
+#include <boost/numeric/conversion/cast.hpp>
 #include "OpcUaStackCore/BuildInTypes/OpcUaIdentifier.h"
 #include "OpcUaStackServer/ServiceSetApplication/CreateObjectInstance.h"
 #include "OpcUaStackServer/ServiceSetApplication/ForwardNodeSync.h"
@@ -23,6 +24,7 @@
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendBaseServer.h"
 #include "OpcUaPiXtendServer/OpcUaServer/NodeContext.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendValueContext.h"
+#include "OpcUaStackServer/ServiceSetApplication/GetNamespaceInfo.h"
 
 using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
@@ -32,9 +34,11 @@ namespace OpcUaPiXtendServer
 
     PiXtendBaseServer::PiXtendBaseServer(
     	const std::string& typeName,
+        const std::string& namespaceName,
 		uint32_t typeNodeId
 	)
     : typeName_(typeName)
+    , namespaceName_(namespaceName)
     , typeNodeId_(typeNodeId)
     {
     }
@@ -49,8 +53,6 @@ namespace OpcUaPiXtendServer
         boost::shared_ptr<boost::asio::io_service::strand>& strand,
 		OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
 		const std::string& instanceName,
-		const std::string& namespaceName,
-		uint16_t namespaceIndex,
 		const OpcUaStackCore::OpcUaNodeId& parentNodeId,
 		ContextIndex::SPtr& contextIndex
 	)
@@ -59,10 +61,15 @@ namespace OpcUaPiXtendServer
     	strand_ = strand;
     	applicationServiceIf_ = applicationServiceIf;
     	instanceName_ = instanceName;
-    	namespaceName_ = namespaceName;
-    	namespaceIndex_ = namespaceIndex;
     	parentNodeId_ = parentNodeId;
     	contextIndex_ = contextIndex;
+
+        // find namespace
+        if (!findNamespace())
+        {
+            Log(Error, "find namespace error");
+            return false;
+        }
 
     	// call specific startup handler
     	if (!handleStartup()) {
@@ -327,5 +334,27 @@ namespace OpcUaPiXtendServer
         	monitoredItemStopContext->nodeId_
         );
 	}
+
+    bool
+    PiXtendBaseServer::findNamespace(void)
+    {
+        // get namespace list
+        GetNamespaceInfo getNamespaceInfo;
+        if (!getNamespaceInfo.query(applicationServiceIf_)) {
+            Log(Error, "create namespace error")
+                    .parameter("NamespaceName", namespaceName_);
+            return false;
+        }
+
+        int32_t namespaceIndex = getNamespaceInfo.getNamespaceIndex(namespaceName_);
+        if (namespaceIndex < 0) {
+            Log(Error, "namespace not exist in opc ua information model")
+                 .parameter("NamespaceName", namespaceName_);
+            return false;
+        }
+        namespaceIndex_ = (uint16_t)namespaceIndex;
+
+        return true;
+    }
 
 }
