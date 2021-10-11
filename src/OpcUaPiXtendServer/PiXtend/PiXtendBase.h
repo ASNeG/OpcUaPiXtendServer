@@ -22,15 +22,18 @@
 #include <boost/shared_ptr.hpp>
 #include <string>
 #include <functional>
+#include <stdint.h>
 
 #include "OpcUaPiXtendServer/PiXtend/ContextIndex.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendDigitalValueContext.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendAnalogValueContext.h"
+#include "OpcUaPiXtendServer/PiXtend/PiXtendByteValueContext.h"
 
 #define PIXTEND_BASE_A_RF(CLASS, PIN) boost::bind(static_cast<double (CLASS::*)(void)>(&CLASS::PIN), this)
 #define PIXTEND_BASE_D_RF(CLASS, PIN) boost::bind(static_cast<bool (CLASS::*)(void)>(&CLASS::PIN), this)
 #define PIXTEND_BASE_A_WF(CLASS, PIN) boost::bind(static_cast<void (CLASS::*)(double)>(&CLASS::PIN), this, _1)
 #define PIXTEND_BASE_D_WF(CLASS, PIN) boost::bind(static_cast<void (CLASS::*)(bool)>(&CLASS::PIN), this, _1)
+#define PIXTEND_BASE_B_RF(CLASS, FUNC) boost::bind(static_cast<uint8_t (CLASS::*)(void)>(&CLASS::FUNC), this)
 
 #define PIXTEND_BASE_AI(CLASS, PIN) PiXtendAnalogValueContext::createContext( \
 		    PIXTEND_BASE_A_RF(CLASS, PIN), \
@@ -48,6 +51,10 @@
 		    PIXTEND_BASE_D_RF(CLASS, PIN), \
 			PIXTEND_BASE_D_WF(CLASS, PIN) \
 		)
+#define PIXTEND_BASE_BI(CLASS, FUNC) PiXtendByteValueContext::createContext( \
+            PIXTEND_BASE_B_RF(CLASS, FUNC), \
+            nullptr \
+        )
 
 namespace OpcUaPiXtendServer
 {
@@ -73,7 +80,7 @@ namespace OpcUaPiXtendServer
         );
         bool registerContext(const CfgElementVec& cfgElementVec);
 
-        virtual void handleHardwareAccess(void) {};
+        virtual void handleHardwareAccess(void) {}
         virtual void handleRegisterContext(void) = 0;
 
       private:
