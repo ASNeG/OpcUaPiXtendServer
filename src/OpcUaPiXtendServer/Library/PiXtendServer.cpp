@@ -518,7 +518,12 @@ namespace OpcUaPiXtendServer
 		pixtendLoopstrand_ = ioThread_->createStrand();
 
 		pixtendTimerElement_ = boost::make_shared<SlotTimerElement>();
-		pixtendTimerElement_->timeoutCallback([this](void) { piXtendLoop(); });
+		pixtendTimerElement_->timeoutCallback(
+			pixtendLoopstrand_,
+			[this](void) {
+			    piXtendLoop();
+		    }
+		);
 
 		Log(Debug, "start pixtend timer");
 		pixtendTimerElement_->expireTime(
