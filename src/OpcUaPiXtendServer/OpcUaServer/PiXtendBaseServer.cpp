@@ -252,6 +252,11 @@ namespace OpcUaPiXtendServer
 		OpcUaStackCore::ApplicationMonitoredItemStartContext* monitoredItemStartContext
 	)
 	{
+		// handle only the first start monitored item request for one node
+		if (!monitoredItemStartContext->firstMonitoredItem_) {
+			return;
+		}
+
 		// update function to write data value to node
 		auto updateFunc = [this](OpcUaDataValue& dataValue, BaseClass::SPtr& context) {
 			// get opc ua node base node class
@@ -300,6 +305,11 @@ namespace OpcUaPiXtendServer
 		OpcUaStackCore::ApplicationMonitoredItemStopContext* monitoredItemStopContext
 	)
 	{
+		// handle only the last stop monitored item request for one node
+		if (!monitoredItemStopContext->lastMonitoredItem_) {
+			return;
+		}
+
        	// get node context
         auto nodeContext = boost::static_pointer_cast<NodeContext>(monitoredItemStopContext->applicationContext_);
         if (!nodeContext) {

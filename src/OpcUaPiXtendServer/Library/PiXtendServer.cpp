@@ -518,7 +518,12 @@ namespace OpcUaPiXtendServer
 		pixtendLoopstrand_ = ioThread_->createStrand();
 
 		pixtendTimerElement_ = boost::make_shared<SlotTimerElement>();
-		pixtendTimerElement_->timeoutCallback([this](void) { piXtendLoop(); });
+		pixtendTimerElement_->timeoutCallback(
+			pixtendLoopstrand_,
+			[this](void) {
+			    piXtendLoop();
+		    }
+		);
 
 		Log(Debug, "start pixtend timer");
 		pixtendTimerElement_->expireTime(
@@ -531,6 +536,23 @@ namespace OpcUaPiXtendServer
 	bool
 	PiXtendServer::shutdownPiXtendLoop(void)
 	{
+		if (!pixtendLoopstrand_->running_in_this_thread()) {
+			// the function was not called by the strand
+
+			std::promise<void> promise;
+			std::future<void> future = promise.get_future();
+
+			pixtendLoopstrand_->dispatch(
+				[this, &promise]() {
+					shutdownPiXtendLoop();
+				    promise.set_value();
+			    }
+			);
+
+			future.wait();
+			return true;
+		}
+
 		// stop pixtend timer loop
 		if (pixtendTimerElement_.get() != nullptr) {
 			ioThread_->slotTimer()->stop(pixtendTimerElement_);
