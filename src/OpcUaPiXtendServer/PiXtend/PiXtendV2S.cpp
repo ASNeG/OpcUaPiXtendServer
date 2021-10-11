@@ -44,8 +44,8 @@ namespace OpcUaPiXtendServer
 			{ "AI1", V2S_AI(ai1)},
 
     		// analog outputs
-       		{ "AO0", V2S_AI(ao0)},
-    		{ "AO1", V2S_AI(ao1)},
+            { "AO0", V2S_AO(ao0)},
+            { "AO1", V2S_AO(ao1)},
 
     		// digital inputs
 			{ "DI0", V2S_DI(di0)},
