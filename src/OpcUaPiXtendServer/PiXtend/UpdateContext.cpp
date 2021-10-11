@@ -122,7 +122,7 @@ namespace OpcUaPiXtendServer
     		auto updateElement = boost::make_shared<UpdateElement>(updateFunc, context);
     		updateElementVec.push_back(updateElement);
     	}
-    	mutex_.lock();
+    	mutex_.unlock();
 
     	// call update functions
     	for (auto updateElement : updateElementVec) {

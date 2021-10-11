@@ -84,6 +84,7 @@ namespace OpcUaPiXtendServer
     	}
 
     	// add new context to context index
+	piXtendValueContext->contextName(contextName);
     	BaseClass::SPtr context = piXtendValueContext;
     	contextIndex_->registerContext(contextName, context);
 

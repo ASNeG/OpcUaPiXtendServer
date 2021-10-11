@@ -29,7 +29,7 @@ namespace OpcUaPiXtendServer
 {
 
     class PiXtendValueContext
-	: public OpcUaStackCore::BaseClass
+    : public OpcUaStackCore::BaseClass
     {
       public:
     	using SPtr = boost::shared_ptr<PiXtendValueContext>;
@@ -44,6 +44,7 @@ namespace OpcUaPiXtendServer
         virtual ~PiXtendValueContext(void);
 
         PiXtendValueContext::ContextType contextType(void);
+	void contextName(const std::string& contextName);
 
         void dataValueIn(const OpcUaStackCore::OpcUaDataValue& dataValue);
         void dataValueOut(const OpcUaStackCore::OpcUaDataValue& dataValue);
@@ -66,6 +67,7 @@ namespace OpcUaPiXtendServer
 
       private:
         ContextType contextType_;
+	std::string contextName_ = "";
         bool writeAccess_ = true;
 
         boost::mutex valueMutex_;

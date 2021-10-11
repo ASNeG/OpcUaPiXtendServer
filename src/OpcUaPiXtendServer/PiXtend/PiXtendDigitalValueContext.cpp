@@ -61,7 +61,7 @@ namespace OpcUaPiXtendServer
     {
     	bool value = readFunc()();
     	bool oldValue;
-    	auto oldDataValue = dataValueOut();
+    	auto oldDataValue = dataValueIn();
     	oldDataValue.getValue(oldValue);
 
     	OpcUaDataValue dataValue(value);
