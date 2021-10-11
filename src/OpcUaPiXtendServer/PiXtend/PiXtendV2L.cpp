@@ -22,7 +22,7 @@
 #define V2L_AO(PIN_NAME) PIXTEND_BASE_AO(PiXtendV2L, PIN_NAME)
 #define V2L_DI(PIN_NAME) PIXTEND_BASE_DI(PiXtendV2L, PIN_NAME)
 #define V2L_DO(PIN_NAME) PIXTEND_BASE_DO(PiXtendV2L, PIN_NAME)
-
+#define V2L_BI(FUNC_NAME) PIXTEND_BASE_BI(PiXtendV2L, FUNC_NAME)
 
 namespace OpcUaPiXtendServer
 {
@@ -88,7 +88,14 @@ namespace OpcUaPiXtendServer
 			{ "RELAY1", V2L_DO(relay1)},
 			{ "RELAY2", V2L_DO(relay2)},
 			{ "RELAY3", V2L_DO(relay3)},
-     	});
+
+            // status inputs
+            { "Firmware", V2L_BI(firmware) },
+            { "Hardware", V2L_BI(hardware) },
+            { "Model", V2L_BI(model) },
+            { "Status", V2L_BI(ucStatus) },
+            { "Warning", V2L_BI(ucWarning) }
+        });
      }
 
 }
