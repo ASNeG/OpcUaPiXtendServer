@@ -536,7 +536,7 @@ namespace OpcUaPiXtendServer
 	bool
 	PiXtendServer::shutdownPiXtendLoop(void)
 	{
-		if (!strand_->running_in_this_thread()) {
+		if (!pixtendLoopstrand_->running_in_this_thread()) {
 			// the function was not called by the strand
 
 			std::promise<void> promise;
