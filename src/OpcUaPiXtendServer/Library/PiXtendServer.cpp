@@ -70,15 +70,8 @@ namespace OpcUaPiXtendServer
             return false;
         }
 
-		// find namespace
-        if (!findNamespace())
-        {
-			Log(Error, "find namespace error");
-			return false;
-		}
-
-	// create pixtend root object in opc ua information model
-	Log(Debug,  "create pixtend root object");
+        // create pixtend root object in opc ua information model
+        Log(Debug,  "create pixtend root object");
         if (!createPiXtendRootObject())
         {
 			Log(Error, "create pixtend folder error");
@@ -86,21 +79,21 @@ namespace OpcUaPiXtendServer
 		}
 
         // startup pixtend modules
-	Log(Debug, "startup pixtend modules");
+        Log(Debug, "startup pixtend modules");
         if (!startupPiXtend(controllerCfg)) {
         	Log(Error, "startup pixtend error");
         	return false;
         }
 
         // add configured opc ua server objects
-	Log(Debug, "startup pixtend server");
+        Log(Debug, "startup pixtend server");
         if (!startupServer(controllerCfg)) {
         	Log(Error, "startup server error");
         	return false;
         }
 
         // startup pixtend loop
-	Log(Debug, "startup pixtend loop");
+        Log(Debug, "startup pixtend loop");
         if (!startupPiXtendLoop()) {
         	Log(Error, "startup pixtend loop error");
         	return false;
@@ -390,8 +383,6 @@ namespace OpcUaPiXtendServer
 			strand_,
             applicationServiceIf_,
             name,
-            namespaceName_,
-            namespaceIndex_,
             piXtendRootNodeId_,
 			contextIndex_
         );
@@ -413,8 +404,6 @@ namespace OpcUaPiXtendServer
         	strand_,
             applicationServiceIf_,
             name,
-            namespaceName_,
-            namespaceIndex_,
             piXtendRootNodeId_,
 			contextIndex_
         );
@@ -437,8 +426,6 @@ namespace OpcUaPiXtendServer
         	strand_,
             applicationServiceIf_,
             name,
-            namespaceName_,
-            namespaceIndex_,
             piXtendRootNodeId_,
 			contextIndex_
         );
@@ -461,8 +448,6 @@ namespace OpcUaPiXtendServer
         	strand_,
             applicationServiceIf_,
             name,
-            namespaceName_,
-            namespaceIndex_,
             piXtendRootNodeId_,
 			contextIndex_
         );
@@ -485,27 +470,6 @@ namespace OpcUaPiXtendServer
 		);
 
 		if (!createNodeInstance.query(applicationServiceIf_)) {
-			return false;
-		}
-
-		return true;
-	}
-
-	bool
-	PiXtendServer::findNamespace(void)
-	{
-		// get namespace list
-		GetNamespaceInfo getNamespaceInfo;
-		if (!getNamespaceInfo.query(applicationServiceIf_)) {
-			Log(Error, "create namespace error")
-				.parameter("NamespaceName", namespaceName_);
-			return false;
-		}
-
-        namespaceIndex_ = getNamespaceInfo.getNamespaceIndex(namespaceName_); // FIXME: cast from int32 to uint16!!
-		if (namespaceIndex_ == -1) {
-			Log(Error, "get namesapce index error")
-				.parameter("NamespaceName", namespaceName_);
 			return false;
 		}
 

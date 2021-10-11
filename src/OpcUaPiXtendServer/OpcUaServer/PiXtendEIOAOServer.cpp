@@ -22,7 +22,7 @@ namespace OpcUaPiXtendServer
 {
 
     PiXtendEIOAOServer::PiXtendEIOAOServer(uint32_t moduleAddress)
-    : PiXtendBaseServer("PiXtendEIOAO", 1005)
+    : PiXtendBaseServer("PiXtendEIOAO", "http://ASNeG.de/PiXtend/", 1005)
     , moduleAddress_(moduleAddress)
     {
     }

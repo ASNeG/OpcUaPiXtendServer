@@ -27,7 +27,7 @@ namespace OpcUaPiXtendServer
 {
 
     PiXtendV2LServer::PiXtendV2LServer(void)
-    : PiXtendBaseServer("PiXtendV2L", 1003)
+    : PiXtendBaseServer("PiXtendV2L", "http://ASNeG.de/PiXtend/", 1003)
     {
     }
 
