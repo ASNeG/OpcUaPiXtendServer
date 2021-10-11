@@ -542,7 +542,7 @@ namespace OpcUaPiXtendServer
 			std::promise<void> promise;
 			std::future<void> future = promise.get_future();
 
-			strand_->dispatch(
+			pixtendLoopstrand_->dispatch(
 				[this, &promise]() {
 					shutdownPiXtendLoop();
 				    promise.set_value();
