@@ -175,9 +175,7 @@ namespace OpcUaPiXtendServer
                 Log(Error, "parse CtrlNodes in controller configuration error");
                 return false;
             }
-            unitConversionConfigMap_.insert(
-                        std::make_pair<std::string, UnitConversionConfig::SPtr>(
-                            unitConv->nodeName(), unitConv));
+            unitConversionConfigMap_.insert(std::make_pair(unitConv->nodeName(), unitConv));
         }
 
         Log(Debug, "new Module")
