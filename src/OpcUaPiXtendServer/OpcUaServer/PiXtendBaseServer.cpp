@@ -288,12 +288,6 @@ namespace OpcUaPiXtendServer
         // write pixtend variable
         hardwareContext->dataValueOut(unitDataValue);
     	applicationWriteContext->statusCode_ = Success;
-
-        Log(Debug, "write variable")
-            .parameter("Name", nodeContext->serverVariable()->name())
-            .parameter("NodeId", nodeContext->serverVariable()->nodeId())
-            .parameter("Data", applicationWriteContext->dataValue_)
-            .parameter("UnitData", unitDataValue);
     }
 
 	void
