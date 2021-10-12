@@ -42,6 +42,33 @@ namespace OpcUaPiXtendServer
         { "do", ServerModule::DO }
     };
 
+    class UnitConversionConfig
+    {
+      public:
+        using SPtr = boost::shared_ptr<UnitConversionConfig>;
+        using Map = std::unordered_map<std::string /*NodeName*/, UnitConversionConfig::SPtr>;
+
+        UnitConversionConfig(void);
+        ~UnitConversionConfig(void);
+
+        bool parse(OpcUaStackCore::Config* config);
+
+        std::string nodeName(void);
+
+        double a(void);
+        double b(void);
+        double c(void);
+        double d(void);
+
+      private:
+        std::string nodeName_ {""};
+
+        double a_ {0.0};
+        double b_ {0.0};
+        double c_ {0.0};
+        double d_ {0.0};
+    };
+
     class PiXtendServerControllerCfgModule
     {
       public:
@@ -54,10 +81,14 @@ namespace OpcUaPiXtendServer
         ServerModule moduleType(void);
         uint32_t moduleAddress(void);
 
+        UnitConversionConfig::Map unitConversionConfigMap(void);
+
       private:
         std::string moduleName_ {""};
         ServerModule moduleType_ {ServerModule::Unknown};
         uint32_t moduleAddress_ {0};
+
+        UnitConversionConfig::Map unitConversionConfigMap_;
     };
 
     class PiXtendServerControllerCfg

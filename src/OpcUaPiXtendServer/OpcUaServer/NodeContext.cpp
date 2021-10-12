@@ -55,4 +55,16 @@ namespace OpcUaPiXtendServer
     	return hardwareContext_;
     }
 
+    void
+    NodeContext::unitConverterContext(UnitConverterContext::SPtr unitConverterContext)
+    {
+        unitConverterContext_ = unitConverterContext;
+    }
+
+    UnitConverterContext::SPtr
+    NodeContext::unitConverterContext(void)
+    {
+        return unitConverterContext_;
+    }
+
 }

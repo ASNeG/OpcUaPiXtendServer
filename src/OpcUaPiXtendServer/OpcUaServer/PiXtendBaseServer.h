@@ -25,6 +25,7 @@
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaStackServer/StandardObjectType/ObjectBase.h"
 #include "OpcUaPiXtendServer/PiXtend/ContextIndex.h"
+#include "OpcUaPiXtendServer/OpcUaServer/PiXtendServerControllerCfg.h"
 
 namespace OpcUaPiXtendServer
 {
@@ -58,7 +59,8 @@ namespace OpcUaPiXtendServer
         	OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
             const std::string& instanceName,
 			const OpcUaStackCore::OpcUaNodeId& parentNodeId,
-			ContextIndex::SPtr& contextIndex
+            ContextIndex::SPtr& contextIndex,
+            const UnitConversionConfig::Map& unitConversionConfigMap
 		);
         bool shutdown(void);
 
@@ -84,7 +86,8 @@ namespace OpcUaPiXtendServer
         bool createObjectInstance(void);
 
         bool createNodeContext(
-        	const NodePinConfig::Vec& nodePinConfigVec
+            const NodePinConfig::Vec& nodePinConfigVec,
+            const UnitConversionConfig::Map& unitConversionConfigMap
 		);
 
         bool registerServiceFunctions(void);

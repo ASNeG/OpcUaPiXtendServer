@@ -22,6 +22,7 @@
 #include <boost/shared_ptr.hpp>
 #include "OpcUaStackCore/Base/BaseClass.h"
 #include "OpcUaStackServer/StandardVariableType/ServerVariables.h"
+#include "OpcUaPiXtendServer/OpcUaServer/UnitConverterContext.h"
 
 namespace OpcUaPiXtendServer
 {
@@ -40,10 +41,13 @@ namespace OpcUaPiXtendServer
         OpcUaStackServer::ServerVariable::SPtr& serverVariable(void);
         void hardwareContext(BaseClass::SPtr& hardwareContext);
         BaseClass::SPtr hardwareContext(void);
+        void unitConverterContext(UnitConverterContext::SPtr analogValueConverter);
+        UnitConverterContext::SPtr unitConverterContext(void);
 
       private:
         OpcUaStackServer::ServerVariable::SPtr serverVariable_ = nullptr;
         OpcUaStackCore::BaseClass::SPtr hardwareContext_ = nullptr;
+        UnitConverterContext::SPtr unitConverterContext_ = nullptr;
     };
 
 }

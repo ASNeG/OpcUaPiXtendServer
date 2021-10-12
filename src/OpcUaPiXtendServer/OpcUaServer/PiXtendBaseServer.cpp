@@ -54,7 +54,8 @@ namespace OpcUaPiXtendServer
 		OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
 		const std::string& instanceName,
 		const OpcUaStackCore::OpcUaNodeId& parentNodeId,
-		ContextIndex::SPtr& contextIndex
+        ContextIndex::SPtr& contextIndex,
+        const UnitConversionConfig::Map& unitConversionConfigMap
 	)
     {
     	ioThread_ = ioThread;
@@ -77,7 +78,7 @@ namespace OpcUaPiXtendServer
     	}
 
     	// create node context
-    	createNodeContext(nodePinConfigVec_);
+        createNodeContext(nodePinConfigVec_, unitConversionConfigMap);
 
     	// create object instance in information model
     	if (!createObjectInstance()) {
@@ -135,7 +136,8 @@ namespace OpcUaPiXtendServer
     }
 
     bool PiXtendBaseServer::createNodeContext(
-     	const NodePinConfig::Vec& nodePinConfigVec
+        const NodePinConfig::Vec& nodePinConfigVec,
+        const UnitConversionConfig::Map& unitConversionConfigMap
 	)
     {
     	for (auto nodePinConfig : nodePinConfigVec) {
@@ -158,6 +160,29 @@ namespace OpcUaPiXtendServer
         	nodeContext->hardwareContext(hardwareContext);
         	BaseClass::SPtr context = nodeContext;
         	serverVariable->applicationContext(context);
+
+            Log(Debug, "create NodeContext")
+                    .parameter("NodeName", nodePinConfig.nodeName_)
+                    .parameter("ContextName", contextName);
+
+            // check if unit converter information exists
+            auto unitConversionConfig = unitConversionConfigMap.find(nodePinConfig.nodeName_);
+            if (unitConversionConfig != unitConversionConfigMap.end())
+            {
+                UnitConverterContext::SPtr unitConverter = boost::make_shared<UnitConverterContext>(
+                            unitConversionConfig->second->a(),
+                            unitConversionConfig->second->b(),
+                            unitConversionConfig->second->c(),
+                            unitConversionConfig->second->d());
+                nodeContext->unitConverterContext(unitConverter);
+
+                Log(Debug, "create UnitConverterContext")
+                        .parameter("NodeName", nodePinConfig.nodeName_)
+                        .parameter("A", unitConversionConfig->second->a())
+                        .parameter("B", unitConversionConfig->second->b())
+                        .parameter("C", unitConversionConfig->second->c())
+                        .parameter("D", unitConversionConfig->second->d());
+            }
     	}
 
     	return true;
@@ -198,26 +223,31 @@ namespace OpcUaPiXtendServer
     	ApplicationReadContext* applicationReadContext
 	)
     {
-	Log(Debug, "receive read request")
-	    .parameter("OpcUaNodeId", applicationReadContext->nodeId_);
+         Log(Debug, "receive read request")
+            .parameter("OpcUaNodeId", applicationReadContext->nodeId_);
 
     	// get node context
-    	auto nodeContext = boost::static_pointer_cast<NodeContext>(applicationReadContext->applicationContext_);
+        auto nodeContext = boost::static_pointer_cast<NodeContext>(applicationReadContext->applicationContext_);
     	if (!nodeContext) {
        		applicationReadContext->statusCode_ = BadUnexpectedError;
         	return;
     	}
 
     	// get hardware context
-    	auto hardwareContext = boost::static_pointer_cast<PiXtendValueContext>(nodeContext->hardwareContext());
+        auto hardwareContext = boost::static_pointer_cast<PiXtendValueContext>(nodeContext->hardwareContext());
     	if (!hardwareContext) {
        		applicationReadContext->statusCode_ = BadUnexpectedError;
         	return;
     	}
 
-    	// read pixtend variable
-    	applicationReadContext->dataValue_ = hardwareContext->dataValueIn();
-    	applicationReadContext->statusCode_ = Success;
+        // read pixtend variable
+        applicationReadContext->dataValue_ = hardwareContext->dataValueIn();
+        applicationReadContext->statusCode_ = Success;
+
+        // check unict converter context
+        if (nodeContext->unitConverterContext() != nullptr) {
+            nodeContext->unitConverterContext()->output(applicationReadContext->dataValue_);
+        }
     }
 
     void
@@ -225,9 +255,9 @@ namespace OpcUaPiXtendServer
 		ApplicationWriteContext* applicationWriteContext
 	)
     {
-	Log(Debug, "receive write request")
-	    .parameter("OpcUaNodeId", applicationWriteContext->nodeId_)
-	    .parameter("OpcUaDataValue", applicationWriteContext->dataValue_);
+        Log(Debug, "receive write request")
+            .parameter("OpcUaNodeId", applicationWriteContext->nodeId_)
+            .parameter("OpcUaDataValue", applicationWriteContext->dataValue_);
 
        	// get node context
         auto nodeContext = boost::static_pointer_cast<NodeContext>(applicationWriteContext->applicationContext_);
@@ -249,9 +279,21 @@ namespace OpcUaPiXtendServer
     		return;
     	}
 
+        // check unict converter context
+        OpcUaDataValue unitDataValue = applicationWriteContext->dataValue_;
+        if (nodeContext->unitConverterContext() != nullptr) {
+            nodeContext->unitConverterContext()->input(unitDataValue);
+        }
+
         // write pixtend variable
-    	hardwareContext->dataValueOut(applicationWriteContext->dataValue_);
+        hardwareContext->dataValueOut(unitDataValue);
     	applicationWriteContext->statusCode_ = Success;
+
+        Log(Debug, "write variable")
+            .parameter("Name", nodeContext->serverVariable()->name())
+            .parameter("NodeId", nodeContext->serverVariable()->nodeId())
+            .parameter("Data", applicationWriteContext->dataValue_)
+            .parameter("UnitData", unitDataValue);
     }
 
 	void
@@ -264,19 +306,26 @@ namespace OpcUaPiXtendServer
 			return;
 		}
 
-		// update function to write data value to node
+        // update function to write data value to node
 		auto updateFunc = [this](OpcUaDataValue& dataValue, BaseClass::SPtr& context) {
-			// get opc ua node base node class
+            // get opc ua node base node class
 			auto nodeContext = boost::static_pointer_cast<NodeContext>(context);
 			auto baseNodeClass = nodeContext->serverVariable()->baseNode().lock();
 			if (!baseNodeClass) return;
+
+            // check unict converter context
+            OpcUaDataValue unitDataValue = dataValue;
+            if (nodeContext->unitConverterContext() != nullptr) {
+                nodeContext->unitConverterContext()->output(unitDataValue);
+            }
 
 			// set variable
 			Log(Debug, "update variable")
 			    .parameter("Name", nodeContext->serverVariable()->name())
 			    .parameter("NodeId", nodeContext->serverVariable()->nodeId())
-			    .parameter("Data", dataValue);
-			baseNodeClass->setValueSync(dataValue);
+                .parameter("Data", dataValue)
+                .parameter("UnitData", unitDataValue);
+            baseNodeClass->setValueSync(unitDataValue);
 		};
 
        	// get node context
@@ -298,13 +347,18 @@ namespace OpcUaPiXtendServer
 			monitoredItemStartContext->applicationContext_
         );
 
-	// read pixtend variable
-	auto dataValue = hardwareContext->dataValueIn();
-	auto baseNodeClass = nodeContext->serverVariable()->baseNode().lock();
-	if (!baseNodeClass) return;
+        // read pixtend variable
+        auto dataValue = hardwareContext->dataValueIn();
+        auto baseNodeClass = nodeContext->serverVariable()->baseNode().lock();
+        if (!baseNodeClass) return;
 
-	// set variable to opx ua node
-	baseNodeClass->setValueSync(dataValue);
+        // check unict converter context
+        if (nodeContext->unitConverterContext() != nullptr) {
+            nodeContext->unitConverterContext()->output(dataValue);
+        }
+
+        // set variable to opx ua node
+        baseNodeClass->setValueSync(dataValue);
 	}
 
 	void
