@@ -34,6 +34,24 @@ namespace OpcUaPiXtendServer
     }
 
     bool
+    UnitConverterContext::input(OpcUaStackCore::OpcUaDataValue& dataValue)
+    {
+        double nodeValue {0.0};
+        double percent {0.0};
+
+        if (!dataValue.getValue(nodeValue)) {
+            return false;
+        }
+
+        if (!input(nodeValue, percent)) {
+            return false;
+        }
+
+        dataValue.setValue(percent);
+        return true;
+    }
+
+    bool
     UnitConverterContext::input(double nodeValue, double& percent)
     {
         // Formula: Y = (A + BX) / (C + DX)
@@ -41,6 +59,24 @@ namespace OpcUaPiXtendServer
         // X: Node variable
 
         percent = (a_ + b_ * nodeValue) / (c_ + d_ * nodeValue);
+        return true;
+    }
+
+    bool
+    UnitConverterContext::output(OpcUaStackCore::OpcUaDataValue& dataValue)
+    {
+        double nodeValue {0.0};
+        double percent {0.0};
+
+        if (!dataValue.getValue(percent)) {
+            return false;
+        }
+
+        if (!output(percent, nodeValue)) {
+            return false;
+        }
+
+        dataValue.setValue(nodeValue);
         return true;
     }
 

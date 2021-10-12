@@ -20,6 +20,7 @@
 #define __OpcUaPiXtendServer_UnitConverterContext_h__
 
 #include <boost/shared_ptr.hpp>
+#include "OpcUaStackCore/BuildInTypes/OpcUaDataValue.h"
 
 namespace OpcUaPiXtendServer
 {
@@ -47,6 +48,9 @@ namespace OpcUaPiXtendServer
          * @return true by success otherwise false.
          */
         bool output(double percent, double& nodeValue);
+
+        bool input(OpcUaStackCore::OpcUaDataValue& dataValue);
+        bool output(OpcUaStackCore::OpcUaDataValue& dataValue);
 
     private:
         double a_ {0.0};

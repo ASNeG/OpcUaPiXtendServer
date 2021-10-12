@@ -223,26 +223,31 @@ namespace OpcUaPiXtendServer
     	ApplicationReadContext* applicationReadContext
 	)
     {
-	Log(Debug, "receive read request")
-	    .parameter("OpcUaNodeId", applicationReadContext->nodeId_);
+         Log(Debug, "receive read request")
+            .parameter("OpcUaNodeId", applicationReadContext->nodeId_);
 
     	// get node context
-    	auto nodeContext = boost::static_pointer_cast<NodeContext>(applicationReadContext->applicationContext_);
+        auto nodeContext = boost::static_pointer_cast<NodeContext>(applicationReadContext->applicationContext_);
     	if (!nodeContext) {
        		applicationReadContext->statusCode_ = BadUnexpectedError;
         	return;
     	}
 
     	// get hardware context
-    	auto hardwareContext = boost::static_pointer_cast<PiXtendValueContext>(nodeContext->hardwareContext());
+        auto hardwareContext = boost::static_pointer_cast<PiXtendValueContext>(nodeContext->hardwareContext());
     	if (!hardwareContext) {
        		applicationReadContext->statusCode_ = BadUnexpectedError;
         	return;
     	}
 
-    	// read pixtend variable
-    	applicationReadContext->dataValue_ = hardwareContext->dataValueIn();
-    	applicationReadContext->statusCode_ = Success;
+        // read pixtend variable
+        applicationReadContext->dataValue_ = hardwareContext->dataValueIn();
+        applicationReadContext->statusCode_ = Success;
+
+        // check unict converter context
+        if (nodeContext->unitConverterContext() != nullptr) {
+            nodeContext->unitConverterContext()->output(applicationReadContext->dataValue_);
+        }
     }
 
     void
@@ -250,9 +255,9 @@ namespace OpcUaPiXtendServer
 		ApplicationWriteContext* applicationWriteContext
 	)
     {
-	Log(Debug, "receive write request")
-	    .parameter("OpcUaNodeId", applicationWriteContext->nodeId_)
-	    .parameter("OpcUaDataValue", applicationWriteContext->dataValue_);
+        Log(Debug, "receive write request")
+            .parameter("OpcUaNodeId", applicationWriteContext->nodeId_)
+            .parameter("OpcUaDataValue", applicationWriteContext->dataValue_);
 
        	// get node context
         auto nodeContext = boost::static_pointer_cast<NodeContext>(applicationWriteContext->applicationContext_);
@@ -274,9 +279,21 @@ namespace OpcUaPiXtendServer
     		return;
     	}
 
+        // check unict converter context
+        OpcUaDataValue unitDataValue = applicationWriteContext->dataValue_;
+        if (nodeContext->unitConverterContext() != nullptr) {
+            nodeContext->unitConverterContext()->input(unitDataValue);
+        }
+
         // write pixtend variable
-    	hardwareContext->dataValueOut(applicationWriteContext->dataValue_);
+        hardwareContext->dataValueOut(unitDataValue);
     	applicationWriteContext->statusCode_ = Success;
+
+        Log(Debug, "write variable")
+            .parameter("Name", nodeContext->serverVariable()->name())
+            .parameter("NodeId", nodeContext->serverVariable()->nodeId())
+            .parameter("Data", applicationWriteContext->dataValue_)
+            .parameter("UnitData", unitDataValue);
     }
 
 	void
@@ -289,19 +306,26 @@ namespace OpcUaPiXtendServer
 			return;
 		}
 
-		// update function to write data value to node
+        // update function to write data value to node
 		auto updateFunc = [this](OpcUaDataValue& dataValue, BaseClass::SPtr& context) {
-			// get opc ua node base node class
+            // get opc ua node base node class
 			auto nodeContext = boost::static_pointer_cast<NodeContext>(context);
 			auto baseNodeClass = nodeContext->serverVariable()->baseNode().lock();
 			if (!baseNodeClass) return;
+
+            // check unict converter context
+            OpcUaDataValue unitDataValue = dataValue;
+            if (nodeContext->unitConverterContext() != nullptr) {
+                nodeContext->unitConverterContext()->output(unitDataValue);
+            }
 
 			// set variable
 			Log(Debug, "update variable")
 			    .parameter("Name", nodeContext->serverVariable()->name())
 			    .parameter("NodeId", nodeContext->serverVariable()->nodeId())
-			    .parameter("Data", dataValue);
-			baseNodeClass->setValueSync(dataValue);
+                .parameter("Data", dataValue)
+                .parameter("UnitData", unitDataValue);
+            baseNodeClass->setValueSync(unitDataValue);
 		};
 
        	// get node context

@@ -17,7 +17,6 @@
  */
 
 #include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/make_shared.hpp>
 
 #include "OpcUaStackCore/Base/os.h"
@@ -65,28 +64,24 @@ namespace OpcUaPiXtendServer
             return false;
         }
 
-        std::string strA = config->getValue("A", "");
-        std::string strB = config->getValue("B", "");
-        std::string strC = config->getValue("C", "");
-        std::string strD = config->getValue("D", "");
+        bool rc = true;
+        rc = rc && config->getConfigParameter("A", a_);
+        rc = rc && config->getConfigParameter("B", b_);
+        rc = rc && config->getConfigParameter("C", c_);
+        rc = rc && config->getConfigParameter("D", d_);
 
-        try {
-            a_ = boost::lexical_cast<double>(strA);
-            b_ = boost::lexical_cast<double>(strB);
-            c_ = boost::lexical_cast<double>(strC);
-            d_ = boost::lexical_cast<double>(strD);
-        } catch (boost::bad_lexical_cast& e) {
+        if (!rc) {
             Log(Error, "UnitConversionConfig unitConverter cannot handle configuration parameter")
                     .parameter("Node", nodeName_)
-                    .parameter("A", strA).parameter("B", strB)
-                    .parameter("C", strC).parameter("D", strD);
+                    .parameter("A", a_).parameter("B", b_)
+                    .parameter("C", c_).parameter("D", d_);
             return false;
         }
 
         Log(Debug, "new UnitConversionConfig")
                 .parameter("Node", nodeName_)
-                .parameter("A", strA).parameter("B", strB)
-                .parameter("C", strC).parameter("D", strD);
+                .parameter("A", a_).parameter("B", b_)
+                .parameter("C", c_).parameter("D", d_);
 
         return true;
     }
@@ -181,7 +176,7 @@ namespace OpcUaPiXtendServer
                 return false;
             }
             unitConversionConfigMap_.insert(
-                        std::pair<std::string, UnitConversionConfig::SPtr>(
+                        std::make_pair<std::string, UnitConversionConfig::SPtr>(
                             unitConv->nodeName(), unitConv));
         }
 
