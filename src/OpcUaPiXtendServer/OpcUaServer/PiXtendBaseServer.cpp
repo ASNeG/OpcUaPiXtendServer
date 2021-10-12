@@ -54,7 +54,8 @@ namespace OpcUaPiXtendServer
 		OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
 		const std::string& instanceName,
 		const OpcUaStackCore::OpcUaNodeId& parentNodeId,
-		ContextIndex::SPtr& contextIndex
+        ContextIndex::SPtr& contextIndex,
+        const UnitConversionConfig::Map& unitConversionConfigMap
 	)
     {
     	ioThread_ = ioThread;
@@ -77,7 +78,7 @@ namespace OpcUaPiXtendServer
     	}
 
     	// create node context
-    	createNodeContext(nodePinConfigVec_);
+        createNodeContext(nodePinConfigVec_, unitConversionConfigMap);
 
     	// create object instance in information model
     	if (!createObjectInstance()) {
@@ -135,7 +136,8 @@ namespace OpcUaPiXtendServer
     }
 
     bool PiXtendBaseServer::createNodeContext(
-     	const NodePinConfig::Vec& nodePinConfigVec
+        const NodePinConfig::Vec& nodePinConfigVec,
+        const UnitConversionConfig::Map& unitConversionConfigMap
 	)
     {
     	for (auto nodePinConfig : nodePinConfigVec) {
@@ -159,15 +161,27 @@ namespace OpcUaPiXtendServer
         	BaseClass::SPtr context = nodeContext;
         	serverVariable->applicationContext(context);
 
+            Log(Debug, "create NodeContext")
+                    .parameter("NodeName", nodePinConfig.nodeName_)
+                    .parameter("ContextName", contextName);
+
             // check if unit converter information exists
-            if (nodePinConfig.unitConverterConfigSPtr_ != nullptr)
+            auto unitConversionConfig = unitConversionConfigMap.find(nodePinConfig.nodeName_);
+            if (unitConversionConfig != unitConversionConfigMap.end())
             {
-                auto unitConverter = boost::make_shared<NodeContextAnalogValueConverter>(
-                            nodePinConfig.unitConverterConfigSPtr_->a_,
-                            nodePinConfig.unitConverterConfigSPtr_->b_,
-                            nodePinConfig.unitConverterConfigSPtr_->c_,
-                            nodePinConfig.unitConverterConfigSPtr_->d_);
-                nodeContext->analogValueConverter(unitConverter);
+                UnitConverterContext::SPtr unitConverter = boost::make_shared<UnitConverterContext>(
+                            unitConversionConfig->second->a(),
+                            unitConversionConfig->second->b(),
+                            unitConversionConfig->second->c(),
+                            unitConversionConfig->second->d());
+                nodeContext->unitConverterContext(unitConverter);
+
+                Log(Debug, "create UnitConverterContext")
+                        .parameter("NodeName", nodePinConfig.nodeName_)
+                        .parameter("A", unitConversionConfig->second->a())
+                        .parameter("B", unitConversionConfig->second->b())
+                        .parameter("C", unitConversionConfig->second->c())
+                        .parameter("D", unitConversionConfig->second->d());
             }
     	}
 

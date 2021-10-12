@@ -16,12 +16,12 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#include "OpcUaPiXtendServer/OpcUaServer/NodeContextAnalogValueConverter.h"
+#include "OpcUaPiXtendServer/OpcUaServer/UnitConverterContext.h"
 
 namespace OpcUaPiXtendServer
 {
 
-    NodeContextAnalogValueConverter::NodeContextAnalogValueConverter(double a, double b, double c, double d)
+    UnitConverterContext::UnitConverterContext(double a, double b, double c, double d)
     : a_(a)
     , b_(b)
     , c_(c)
@@ -29,12 +29,12 @@ namespace OpcUaPiXtendServer
     {
     }
 
-    NodeContextAnalogValueConverter::~NodeContextAnalogValueConverter(void)
+    UnitConverterContext::~UnitConverterContext(void)
     {
     }
 
     bool
-    NodeContextAnalogValueConverter::encode(double nodeValue, double& percent)
+    UnitConverterContext::input(double nodeValue, double& percent)
     {
         // Formula: Y = (A + BX) / (C + DX)
         // Y: Percent from PIN
@@ -45,7 +45,7 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-    NodeContextAnalogValueConverter::decode(double percent, double& nodeValue)
+    UnitConverterContext::output(double percent, double& nodeValue)
     {
         // Formula: X = (CY - A) / (B - DY)
         // Y: Percent from PIN

@@ -80,10 +80,10 @@ namespace OpcUaPiXtendServer
 
 		bool startupPiXtend(PiXtendServerControllerCfg& cfg);
 		bool shutdownPiXtend(void);
-        bool startupServerV2S(const std::string& name);
-        bool startupServerV2L(const std::string& name);
-        bool startupServerEIOAO(const std::string& name, uint32_t address);
-        bool startupServerEIODO(const std::string& name, uint32_t address);
+        bool startupServerV2S(const std::string& name, const UnitConversionConfig::Map& unitConversionConfigMap);
+        bool startupServerV2L(const std::string& name, const UnitConversionConfig::Map& unitConversionConfigMap);
+        bool startupServerEIOAO(const std::string& name, const UnitConversionConfig::Map& unitConversionConfigMap, uint32_t address);
+        bool startupServerEIODO(const std::string& name, const UnitConversionConfig::Map& unitConversionConfigMap, uint32_t address);
 
         bool startupServer(PiXtendServerControllerCfg& cfg);
         bool shutdownServer(void);

@@ -25,49 +25,17 @@
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaStackServer/StandardObjectType/ObjectBase.h"
 #include "OpcUaPiXtendServer/PiXtend/ContextIndex.h"
+#include "OpcUaPiXtendServer/OpcUaServer/PiXtendServerControllerCfg.h"
 
 namespace OpcUaPiXtendServer
 {
-
-    class UnitConverterConfig {
-      public:
-        using SPtr = boost::shared_ptr<UnitConverterConfig>;
-
-        UnitConverterConfig(double a, double b, double c, double d)
-        : a_(a)
-        , b_(b)
-        , c_(c)
-        , d_(d)
-        {}
-        ~UnitConverterConfig(void) = default;
-
-        double a_ {0.0};
-        double b_ {0.0};
-        double c_ {0.0};
-        double d_ {0.0};
-    };
 
 	class NodePinConfig {
 	  public:
 		using Vec = std::vector<NodePinConfig>;
 
-        NodePinConfig(std::string nodeName, std::string pinName)
-        : nodeName_(nodeName)
-        , pinName_(pinName)
-        {}
-
-        NodePinConfig(std::string nodeName, std::string pinName, double a, double b, double c, double d)
-        : nodeName_(nodeName)
-        , pinName_(pinName)
-        , unitConverterConfigSPtr_(boost::make_shared<UnitConverterConfig>(a, b, c, d))
-        {}
-
-        ~NodePinConfig(void) = default;
-
 		std::string nodeName_;
 		std::string pinName_;
-
-        UnitConverterConfig::SPtr unitConverterConfigSPtr_ {nullptr};
 	};
 
     class PiXtendBaseServer
@@ -91,7 +59,8 @@ namespace OpcUaPiXtendServer
         	OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
             const std::string& instanceName,
 			const OpcUaStackCore::OpcUaNodeId& parentNodeId,
-			ContextIndex::SPtr& contextIndex
+            ContextIndex::SPtr& contextIndex,
+            const UnitConversionConfig::Map& unitConversionConfigMap
 		);
         bool shutdown(void);
 
@@ -117,7 +86,8 @@ namespace OpcUaPiXtendServer
         bool createObjectInstance(void);
 
         bool createNodeContext(
-        	const NodePinConfig::Vec& nodePinConfigVec
+            const NodePinConfig::Vec& nodePinConfigVec,
+            const UnitConversionConfig::Map& unitConversionConfigMap
 		);
 
         bool registerServiceFunctions(void);

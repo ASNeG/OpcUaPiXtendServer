@@ -16,21 +16,21 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#ifndef __OpcUaPiXtendServer_NodeContextAnalogValueConverter_h__
-#define __OpcUaPiXtendServer_NodeContextAnalogValueConverter_h__
+#ifndef __OpcUaPiXtendServer_UnitConverterContext_h__
+#define __OpcUaPiXtendServer_UnitConverterContext_h__
 
 #include <boost/shared_ptr.hpp>
 
 namespace OpcUaPiXtendServer
 {
 
-    class     NodeContextAnalogValueConverter
+    class     UnitConverterContext
     {
       public:
-        using SPtr = boost::shared_ptr<NodeContextAnalogValueConverter>;
+        using SPtr = boost::shared_ptr<UnitConverterContext>;
 
-        NodeContextAnalogValueConverter(double a, double b, double c, double d);
-        virtual ~NodeContextAnalogValueConverter(void);
+        UnitConverterContext(double a, double b, double c, double d);
+        virtual ~UnitConverterContext(void);
 
         /**
          * @brief Formula: Y = (A + BX) / (C + DX)
@@ -38,7 +38,7 @@ namespace OpcUaPiXtendServer
          *        X: Node variable
          * @return true by success otherwise false.
          */
-        bool encode(double nodeValue, double& percent);
+        bool input(double nodeValue, double& percent);
 
         /**
          * @brief Formula: X = (CY - A) / (B - DY)
@@ -46,7 +46,7 @@ namespace OpcUaPiXtendServer
          *        X: Node variable
          * @return true by success otherwise false.
          */
-        bool decode(double percent, double& nodeValue);
+        bool output(double percent, double& nodeValue);
 
     private:
         double a_ {0.0};

@@ -42,34 +42,31 @@ namespace OpcUaPiXtendServer
         { "do", ServerModule::DO }
     };
 
-    class PiXtendServerControllerCfgNode
+    class UnitConversionConfig
     {
       public:
-        using Vec = std::vector<PiXtendServerControllerCfgNode>;
+        using SPtr = boost::shared_ptr<UnitConversionConfig>;
+        using Map = std::unordered_map<std::string /*NodeName*/, UnitConversionConfig::SPtr>;
 
-        PiXtendServerControllerCfgNode(void);
-        ~PiXtendServerControllerCfgNode(void);
+        UnitConversionConfig(void);
+        ~UnitConversionConfig(void);
 
         bool parse(OpcUaStackCore::Config* config);
 
         std::string nodeName(void);
-        std::string pinName(void);
 
-        bool unitConverterExists(void);
-        double unitConverterA(void);
-        double unitConverterB(void);
-        double unitConverterC(void);
-        double unitConverterD(void);
+        double a(void);
+        double b(void);
+        double c(void);
+        double d(void);
 
       private:
         std::string nodeName_ {""};
-        std::string pinName_ {""};
 
-        bool unitConverterExists_ {false};
-        double unitConverterA_ {0.0};
-        double unitConverterB_ {0.0};
-        double unitConverterC_ {0.0};
-        double unitConverterD_ {0.0};
+        double a_ {0.0};
+        double b_ {0.0};
+        double c_ {0.0};
+        double d_ {0.0};
     };
 
     class PiXtendServerControllerCfgModule
@@ -84,14 +81,14 @@ namespace OpcUaPiXtendServer
         ServerModule moduleType(void);
         uint32_t moduleAddress(void);
 
-        PiXtendServerControllerCfgNode::Vec nodes(void);
+        UnitConversionConfig::Map unitConversionConfigMap(void);
 
       private:
         std::string moduleName_ {""};
         ServerModule moduleType_ {ServerModule::Unknown};
         uint32_t moduleAddress_ {0};
 
-        PiXtendServerControllerCfgNode::Vec nodes_;
+        UnitConversionConfig::Map unitConversionConfigMap_;
     };
 
     class PiXtendServerControllerCfg

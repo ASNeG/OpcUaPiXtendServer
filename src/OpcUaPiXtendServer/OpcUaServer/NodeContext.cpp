@@ -56,15 +56,15 @@ namespace OpcUaPiXtendServer
     }
 
     void
-    NodeContext::analogValueConverter(NodeContextAnalogValueConverter::SPtr analogValueConverter)
+    NodeContext::unitConverterContext(UnitConverterContext::SPtr unitConverterContext)
     {
-        analogValueConverter_ = analogValueConverter;
+        unitConverterContext_ = unitConverterContext;
     }
 
-    NodeContextAnalogValueConverter::SPtr
-    NodeContext::analogValueConverter(void)
+    UnitConverterContext::SPtr
+    NodeContext::unitConverterContext(void)
     {
-        return analogValueConverter_;
+        return unitConverterContext_;
     }
 
 }

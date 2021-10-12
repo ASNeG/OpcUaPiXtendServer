@@ -17,6 +17,9 @@
  */
 
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/make_shared.hpp>
+
 #include "OpcUaStackCore/Base/os.h"
 #include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendServerControllerCfg.h"
@@ -28,101 +31,94 @@ namespace OpcUaPiXtendServer
 
     // ##################################################################
     //
-    // PiXtendServerControllerCfgNode class
+    // UnitConversionConfig class
     //
     // ##################################################################
 
-    PiXtendServerControllerCfgNode::PiXtendServerControllerCfgNode(void)
+    UnitConversionConfig::UnitConversionConfig(void)
     {
     }
 
-    PiXtendServerControllerCfgNode::~PiXtendServerControllerCfgNode(void)
+    UnitConversionConfig::~UnitConversionConfig(void)
     {
     }
 
     bool
-    PiXtendServerControllerCfgNode::parse(OpcUaStackCore::Config* config)
+    UnitConversionConfig::parse(OpcUaStackCore::Config* config)
     {
-        if (config == nullptr)
-        {
-            Log(Error, "parse PiXtendServerControllerCfgNode error - config is empty");
+        if (config == nullptr) {
+            Log(Error, "parse UnitConversionConfig error - config is empty");
             return false;
         }
 
         auto cfgNodeName = config->getChild("Node");
-        if (!cfgNodeName)
-        {
-            Log(Error, "PiXtendServerControllerCfgNode cannot get cfgNodeName in controller configuration");
+        if (!cfgNodeName) {
+            Log(Error, "UnitConversionConfig cannot get cfgNodeName in controller configuration");
             return false;
         }
         nodeName_ = cfgNodeName->getValue();
+        nodeName_ += "_Variable"; // add sufix
 
-        auto cfgPinName = config->getChild("Pin");
-        if (!cfgPinName)
-        {
-            Log(Error, "PiXtendServerControllerCfgNode cannot get cfgPinName in controller configuration");
+        if (!config->existChild("A") || !config->existChild("B") ||
+            !config->existChild("C") || !config->existChild("D")) {
+            Log(Error, "UnitConversionConfig unitConverter information are incomplete in controller configuration");
             return false;
         }
-        pinName_ = cfgPinName->getValue();
 
-        if (config->existChild("A"))
-        {
-            if (!config->existChild("B") || !config->existChild("C") || !config->existChild("D"))
-            {
-                Log(Error, "PiXtendServerControllerCfgNode unitConverter information are incomplete in controller configuration");
-                return false;
-            }
+        std::string strA = config->getValue("A", "");
+        std::string strB = config->getValue("B", "");
+        std::string strC = config->getValue("C", "");
+        std::string strD = config->getValue("D", "");
 
-            unitConverterExists_ = true;
-            config->getConfigParameter("A", unitConverterA_);
-            config->getConfigParameter("B", unitConverterB_);
-            config->getConfigParameter("C", unitConverterC_);
-            config->getConfigParameter("D", unitConverterD_);
+        try {
+            a_ = boost::lexical_cast<double>(strA);
+            b_ = boost::lexical_cast<double>(strB);
+            c_ = boost::lexical_cast<double>(strC);
+            d_ = boost::lexical_cast<double>(strD);
+        } catch (boost::bad_lexical_cast& e) {
+            Log(Error, "UnitConversionConfig unitConverter cannot handle configuration parameter")
+                    .parameter("Node", nodeName_)
+                    .parameter("A", strA).parameter("B", strB)
+                    .parameter("C", strC).parameter("D", strD);
+            return false;
         }
+
+        Log(Debug, "new UnitConversionConfig")
+                .parameter("Node", nodeName_)
+                .parameter("A", strA).parameter("B", strB)
+                .parameter("C", strC).parameter("D", strD);
 
         return true;
     }
 
     std::string
-    PiXtendServerControllerCfgNode::nodeName(void)
+    UnitConversionConfig::nodeName(void)
     {
         return nodeName_;
     }
 
-    std::string
-    PiXtendServerControllerCfgNode::pinName(void)
+    double
+    UnitConversionConfig::a(void)
     {
-        return pinName_;
-    }
-
-    bool
-    PiXtendServerControllerCfgNode::unitConverterExists(void)
-    {
-        return unitConverterExists_;
+        return a_;
     }
 
     double
-    PiXtendServerControllerCfgNode::unitConverterA(void)
+    UnitConversionConfig::b(void)
     {
-        return unitConverterA_;
+        return b_;
     }
 
     double
-    PiXtendServerControllerCfgNode::unitConverterB(void)
+    UnitConversionConfig::c(void)
     {
-        return unitConverterB_;
+        return c_;
     }
 
     double
-    PiXtendServerControllerCfgNode::unitConverterC(void)
+    UnitConversionConfig::d(void)
     {
-        return unitConverterC_;
-    }
-
-    double
-    PiXtendServerControllerCfgNode::unitConverterD(void)
-    {
-        return unitConverterD_;
+        return d_;
     }
 
     // ##################################################################
@@ -144,54 +140,55 @@ namespace OpcUaPiXtendServer
     bool
     PiXtendServerControllerCfgModule::parse(Config* config)
     {
-        if (config == nullptr)
-        {
+        if (config == nullptr) {
             Log(Error, "parse PiXtendServerControllerCfgModule error - config is empty");
             return false;
         }
 
         auto cfgName = config->getChild("Name");
-        if (!cfgName)
-        {
+        if (!cfgName) {
             Log(Error, "PiXtendServerControllerCfgModule cannot get cfgName in controller configuration");
             return false;
         }
         moduleName_ = cfgName->getValue();
 
         auto cfgType = config->getChild("Type");
-        if (!cfgType)
-        {
+        if (!cfgType) {
             Log(Error, "PiXtendServerControllerCfgModule cannot get cfgType in controller configuration");
             return false;
         }
         std::string strModuleType = cfgType->getValue();
         boost::algorithm::to_lower(strModuleType);
         auto findModuleType = MapType2ServerModule.find(strModuleType);
-        if (findModuleType == MapType2ServerModule.end())
-        {
+        if (findModuleType == MapType2ServerModule.end()) {
             Log(Error, "PiXtendServerControllerCfgModule undefined cfgType in controller configuration")
                     .parameter("Name", moduleName());
             return false;
         }
         moduleType_ = findModuleType->second;
 
-        if (config->existChild("Address"))
-        {
+        if (config->existChild("Address")) {
             config->getConfigParameter("Address", moduleAddress_);
         }
 
         std::vector<Config> configVec;
-        config->getChilds("unit", configVec);
-        nodes_.reserve(configVec.size());
+        config->getChilds("UnitConv", configVec);
+        unitConversionConfigMap_.reserve(configVec.size());
         for (Config cfgNode : configVec) {
-            PiXtendServerControllerCfgNode node;
-            if (!node.parse(&cfgNode))
-            {
+            UnitConversionConfig::SPtr unitConv = boost::make_shared<UnitConversionConfig>();
+            if (!unitConv->parse(&cfgNode)) {
                 Log(Error, "parse CtrlNodes in controller configuration error");
                 return false;
             }
-            nodes_.push_back(node);
+            unitConversionConfigMap_.insert(
+                        std::pair<std::string, UnitConversionConfig::SPtr>(
+                            unitConv->nodeName(), unitConv));
         }
+
+        Log(Debug, "new Module")
+                .parameter("Name", moduleName_)
+                .parameter("Type", strModuleType)
+                .parameter("Address", moduleAddress_);
 
         return true;
     }
@@ -212,6 +209,12 @@ namespace OpcUaPiXtendServer
     PiXtendServerControllerCfgModule::moduleAddress(void)
     {
         return moduleAddress_;
+    }
+
+    UnitConversionConfig::Map
+    PiXtendServerControllerCfgModule::unitConversionConfigMap(void)
+    {
+        return unitConversionConfigMap_;
     }
 
     // ##################################################################

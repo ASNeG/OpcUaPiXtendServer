@@ -290,7 +290,8 @@ namespace OpcUaPiXtendServer
 	    	switch (module.moduleType()) {
 	    		case ServerModule::V2S:
 	    		{
-	    			if (!startupServerV2S(module.moduleName())) {
+                    if (!startupServerV2S(module.moduleName(),
+                                          module.unitConversionConfigMap())) {
 	    				Log(Error, "cannot create v2s server module");
 	    				return false;
 	    			}
@@ -298,7 +299,8 @@ namespace OpcUaPiXtendServer
 	    		}
 	    		case ServerModule::V2L:
 	            {
-	                if (!startupServerV2L(module.moduleName())) {
+                    if (!startupServerV2L(module.moduleName(),
+                                          module.unitConversionConfigMap())) {
 	                    Log(Error, "cannot create v2l server module");
 	                    return false;
 	                }
@@ -306,7 +308,9 @@ namespace OpcUaPiXtendServer
 	            }
 	    		case ServerModule::AO:
 	            {
-	                if (!startupServerEIOAO(module.moduleName(), module.moduleAddress())) {
+                    if (!startupServerEIOAO(module.moduleName(),
+                                            module.unitConversionConfigMap(),
+                                            module.moduleAddress())) {
 	                    Log(Error, "cannot create ao server module");
 	                    return false;
 	                }
@@ -314,8 +318,9 @@ namespace OpcUaPiXtendServer
 	            }
 	    		case ServerModule::DO:
 	            {
-	                if (!startupServerEIODO(module.moduleName(), module.moduleAddress()))
-	                {
+                    if (!startupServerEIODO(module.moduleName(),
+                                            module.unitConversionConfigMap(),
+                                            module.moduleAddress())) {
 	                    Log(Error, "cannot create do server module");
 	                    return false;
 	                }
@@ -368,7 +373,8 @@ namespace OpcUaPiXtendServer
 	}
 
     bool
-    PiXtendServer::startupServerV2S(const std::string& name)
+    PiXtendServer::startupServerV2S(const std::string& name,
+                                    const UnitConversionConfig::Map& unitConversionConfigMap)
     {
         if (piXtendV2SServer_ != nullptr)
         {
@@ -384,12 +390,14 @@ namespace OpcUaPiXtendServer
             applicationServiceIf_,
             name,
             piXtendRootNodeId_,
-			contextIndex_
+            contextIndex_,
+            unitConversionConfigMap
         );
     }
 
     bool
-    PiXtendServer::startupServerV2L(const std::string& name)
+    PiXtendServer::startupServerV2L(const std::string& name,
+                                    const UnitConversionConfig::Map& unitConversionConfigMap)
     {
         if (piXtendV2LServer_ != nullptr)
         {
@@ -405,12 +413,15 @@ namespace OpcUaPiXtendServer
             applicationServiceIf_,
             name,
             piXtendRootNodeId_,
-			contextIndex_
+            contextIndex_,
+            unitConversionConfigMap
         );
     }
 
     bool
-    PiXtendServer::startupServerEIOAO(const std::string& name, uint32_t address)
+    PiXtendServer::startupServerEIOAO(const std::string& name,
+                                      const UnitConversionConfig::Map& unitConversionConfigMap,
+                                      uint32_t address)
     {
         if (piXtendEIOAOServerMap_.find(address) != piXtendEIOAOServerMap_.end())
         {
@@ -427,12 +438,15 @@ namespace OpcUaPiXtendServer
             applicationServiceIf_,
             name,
             piXtendRootNodeId_,
-			contextIndex_
+            contextIndex_,
+            unitConversionConfigMap
         );
     }
 
     bool
-    PiXtendServer::startupServerEIODO(const std::string& name, uint32_t address)
+    PiXtendServer::startupServerEIODO(const std::string& name,
+                                      const UnitConversionConfig::Map& unitConversionConfigMap,
+                                      uint32_t address)
     {
         if (piXtendEIODOServerMap_.find(address) != piXtendEIODOServerMap_.end())
         {
@@ -449,7 +463,8 @@ namespace OpcUaPiXtendServer
             applicationServiceIf_,
             name,
             piXtendRootNodeId_,
-			contextIndex_
+            contextIndex_,
+            unitConversionConfigMap
         );
     }
 
