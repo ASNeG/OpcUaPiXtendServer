@@ -17,6 +17,9 @@
  */
 
 #include "OpcUaPiXtendServer/OpcUaServer/UnitConverterContext.h"
+#include "OpcUaStackCore/Base/Log.h"
+
+using namespace OpcUaStackCore;
 
 namespace OpcUaPiXtendServer
 {
@@ -58,7 +61,13 @@ namespace OpcUaPiXtendServer
         // Y: Percent from PIN
         // X: Node variable
 
-        percent = (a_ + b_ * nodeValue) / (c_ + d_ * nodeValue);
+        double n = (c_ + d_ * nodeValue);
+        if (n == 0) {
+            Log(Error, "UnitConverterContext::input - found division by 0");
+            return false;
+        }
+
+        percent = (a_ + b_ * nodeValue) / n;
         return true;
     }
 
@@ -87,7 +96,13 @@ namespace OpcUaPiXtendServer
         // Y: Percent from PIN
         // X: Node variable
 
-        nodeValue = ((-a_) + c_ * percent) / (b_ - d_ * percent);
+        double n = (b_ - d_ * percent);
+        if (n == 0) {
+            Log(Error, "UnitConverterContext::output - found division by 0");
+            return false;
+        }
+
+        nodeValue = ((-a_) + c_ * percent) / n;
         return true;
     }
 
