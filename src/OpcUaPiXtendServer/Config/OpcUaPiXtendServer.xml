@@ -23,13 +23,9 @@
         <Module Enable="ON">
             <Name>PiXtendV2L</Name>
             <Type>V2L</Type>
-            <UnitConv>
-                <Node>AO_AO1</Node>
-                <A>0</A>
-                <B>0</B>
-                <C>0</C>
-                <D>0</D>
-            </UnitConv>
+            
+            <UnitConv><Node>AO_AO1</Node><A>0</A><B>1.0</B><C>1.0</C><D>0</D></UnitConv>
+            
         </Module>
         
         <Module Enable="OFF">
@@ -52,7 +48,7 @@
         <Module Enable="OFF">
           <Name>AIO-1</Name>
           <Type>AO</Type>
-          <Address>0x01</Address>
+          <Address>0x03</Address>
 	</Module>
 	
     </Modules>
