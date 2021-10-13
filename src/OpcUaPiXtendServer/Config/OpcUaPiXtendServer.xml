@@ -20,7 +20,7 @@
 <OpcUaPiXtendServer Name="TestTags" xmlns="http://ASNeG/OpcUaPiXtendServer.xsd">
 
     <Modules>
-        <Module Enable="ON">
+        <Module Enable="1">
             <Name>PiXtendV2L</Name>
             <Type>V2L</Type>
             
@@ -28,29 +28,29 @@
             
         </Module>
         
-        <Module Enable="OFF">
+        <Module Enable="0">
             <Name>PiXtendV2S</Name>
             <Type>V2S</Type>
         </Module>
         
-        <Module Enable="OFF">
+        <Module Enable="0">
             <Name>PiXtendV2S</Name>
             <Type>V2S</Type>
         </Module>
         
-        <Module Enable="OFF">
+        <Module Enable="0">
             <Name>DIO-1</Name>
             <Type>DO</Type>
             <Address>0x01</Address>
         </Module>
         
-        <Module Enable="OFF">
+        <Module Enable="0">
           <Name>DIO-2</Name>
           <Type>DO</Type>
           <Address>0x02</Address>
         </Module>
         
-        <Module Enable="OFF">
+        <Module Enable="0">
           <Name>AIO-1</Name>
           <Type>AO</Type>
           <Address>0x03</Address>
