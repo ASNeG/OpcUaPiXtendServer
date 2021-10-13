@@ -256,7 +256,6 @@ namespace OpcUaPiXtendServer
 
         std::vector<Config> configVec;
         childCtrlModules->getChilds("Module", configVec);
-        configModules_.reserve(configVec.size());
         for (Config cfgModule : configVec) {
         	// parse module configuration
             PiXtendServerControllerCfgModule module;
