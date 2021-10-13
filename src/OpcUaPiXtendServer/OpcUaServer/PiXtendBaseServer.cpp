@@ -38,8 +38,8 @@ namespace OpcUaPiXtendServer
 		uint32_t typeNodeId
 	)
     : typeName_(typeName)
-    , namespaceName_(namespaceName)
     , typeNodeId_(typeNodeId)
+    , namespaceName_(namespaceName)
     {
     }
 
@@ -146,7 +146,8 @@ namespace OpcUaPiXtendServer
         	serverVariables().registerServerVariable(serverVariable);
 
         	// find context
-        	auto contextName = instanceName_ + "." + nodePinConfig.pinName_;
+            auto instanceName = (!nodePinConfig.instanceName_.empty()) ? nodePinConfig.instanceName_ : instanceName_;
+            auto contextName = instanceName + "." + nodePinConfig.pinName_;
         	auto hardwareContext = contextIndex_->getContext(contextName);
         	if (hardwareContext.get() == nullptr) {
         		Log(Error, "context not exist in context index")
