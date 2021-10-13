@@ -34,8 +34,17 @@ namespace OpcUaPiXtendServer
 	  public:
 		using Vec = std::vector<NodePinConfig>;
 
-		std::string nodeName_;
-		std::string pinName_;
+        NodePinConfig(std::string nodeName, std::string pinName, std::string instanceName = "")
+        : nodeName_(nodeName)
+        , pinName_(pinName)
+        , instanceName_(instanceName)
+        {
+        }
+        ~NodePinConfig(void) = default;
+
+        std::string nodeName_;
+        std::string pinName_;
+        std::string instanceName_;
 	};
 
     class PiXtendBaseServer
