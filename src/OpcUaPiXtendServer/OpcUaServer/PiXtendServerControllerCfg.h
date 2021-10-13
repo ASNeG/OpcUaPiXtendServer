@@ -77,6 +77,7 @@ namespace OpcUaPiXtendServer
 
         bool parse(OpcUaStackCore::Config* config);
 
+        bool enable(void);
         std::string moduleName(void);
         ServerModule moduleType(void);
         uint32_t moduleAddress(void);
@@ -84,6 +85,7 @@ namespace OpcUaPiXtendServer
         UnitConversionConfig::Map unitConversionConfigMap(void);
 
       private:
+        bool enable_ {true};
         std::string moduleName_ {""};
         ServerModule moduleType_ {ServerModule::Unknown};
         uint32_t moduleAddress_ {0};

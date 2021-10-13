@@ -147,6 +147,13 @@ namespace OpcUaPiXtendServer
         }
         moduleName_ = cfgName->getValue();
 
+        if (config->existChild("<xmlattr>.Enable")) {
+            config->getConfigParameter("<xmlattr>.Enable", enable_);
+        }
+        if (!enable_) {
+            return true;
+        }
+
         auto cfgType = config->getChild("Type");
         if (!cfgType) {
             Log(Error, "PiXtendServerControllerCfgModule cannot get cfgType in controller configuration");
@@ -184,6 +191,12 @@ namespace OpcUaPiXtendServer
                 .parameter("Address", moduleAddress_);
 
         return true;
+    }
+
+    bool
+    PiXtendServerControllerCfgModule::enable(void)
+    {
+        return enable_;
     }
 
     std::string
@@ -243,20 +256,19 @@ namespace OpcUaPiXtendServer
 
         std::vector<Config> configVec;
         childCtrlModules->getChilds("Module", configVec);
-        configModules_.reserve(configVec.size());
         for (Config cfgModule : configVec) {
-        	// check if module configuration is enabled
-    		auto enable = cfgModule.getValue("<xmlattr>.Enable", "ON");
-    		boost::to_upper(enable);
-    		if (enable != "ON") continue;
-
         	// parse module configuration
             PiXtendServerControllerCfgModule module;
             if (!module.parse(&cfgModule)) {
                 Log(Error, "parse CtrlModules in controller configuration error");
                 return false;
             }
-            configModules_.push_back(module);
+            if (module.enable()) {
+                configModules_.push_back(module);
+            } else {
+                Log(Debug, "module is not enabled")
+                        .parameter("Name", module.moduleName());
+            }
         }
 
         return true;
