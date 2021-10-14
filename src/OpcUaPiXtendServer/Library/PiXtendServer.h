@@ -49,7 +49,8 @@ namespace OpcUaPiXtendServer
 			boost::shared_ptr<boost::asio::io_service::strand> strand,
 			OpcUaStackServer::ApplicationServiceIf* applicationServiceIf,
 			OpcUaStackServer::ApplicationInfo* applicationInfo,
-			OpcUaStackCore::Config& config
+            OpcUaStackCore::Config& config,
+            ContextIndex::SPtr contextIndexSPtr
 		);
 		bool shutdown(void);
 
@@ -62,7 +63,7 @@ namespace OpcUaPiXtendServer
 
 		const OpcUaStackCore::OpcUaNodeId piXtendRootNodeId_ = OpcUaStackCore::OpcUaNodeId("PiXtend", 1);
 
-		ContextIndex::SPtr contextIndex_ = boost::make_shared<ContextIndex>();
+        ContextIndex::SPtr contextIndex_ = nullptr;
 
         PiXtendV2S::SPtr piXtendV2S_ {nullptr};
         PiXtendV2L::SPtr piXtendV2L_ {nullptr};

@@ -51,7 +51,8 @@ namespace OpcUaPiXtendServer
 		boost::shared_ptr<boost::asio::io_service::strand> strand,
 		ApplicationServiceIf* applicationServiceIf,
 		ApplicationInfo* applicationInfo,
-		OpcUaStackCore::Config& config
+        OpcUaStackCore::Config& config,
+        ContextIndex::SPtr contextIndexSPtr
 	)
 	{
 		Log(Debug, "PiXtendServer::startup");
@@ -60,6 +61,7 @@ namespace OpcUaPiXtendServer
 		strand_ = strand;
 		applicationServiceIf_ = applicationServiceIf;
 		applicationInfo_ = applicationInfo;
+        contextIndex_ = contextIndexSPtr;
 
 		// parse pixtend configuration
         PiXtendServerControllerCfg controllerCfg;

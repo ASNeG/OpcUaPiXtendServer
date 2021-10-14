@@ -19,6 +19,7 @@
 #include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaStackCore/Base/ConfigXml.h"
 #include "OpcUaPiXtendServer/Library/Library.h"
+#include "OpcUaPiXtendServer/PiXtend/ContextIndex.h"
 #include "OpcUaStackServer/ServiceSetApplication/ApplicationService.h"
 #include "OpcUaStackServer/ServiceSetApplication/NodeReferenceApplication.h"
 #include <iostream>
@@ -66,13 +67,17 @@ namespace OpcUaPiXtendServer
 			return false;
 		}
 
+        // create global context index
+        ContextIndex::SPtr contextIndexSPtr = boost::make_shared<ContextIndex>();
+
 		// startup piXtend application
 		auto result = piXtendServer_.startup(
 			messageBusThread,
 			messageBusStrand,
 			&service(),
 			applicationInfo(),
-			*piXtendServerConfig
+            *piXtendServerConfig,
+            contextIndexSPtr
 		);
 		if (!result) {
 			Log(Error, "init pixtend server error");
