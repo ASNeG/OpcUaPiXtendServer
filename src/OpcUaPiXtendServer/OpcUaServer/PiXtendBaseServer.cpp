@@ -169,7 +169,7 @@ namespace OpcUaPiXtendServer
                         .parameter("HardwareContext", contextName);
             } else if (nodePinConfig.value_ != nullptr) {
                 // set valueContext
-                nodeContext->valueContext(nodePinConfig.value_);
+                nodeContext->value(nodePinConfig.value_);
 
                 Log(Debug, "new NodeContext")
                         .parameter("NodeName", nodePinConfig.nodeName_)
@@ -231,8 +231,20 @@ namespace OpcUaPiXtendServer
                         .parameter("ModulName", instanceName_);
                     return false;
                 }
-            } else if (!nodeContext->valueContext()->isNull()) {
-                // TODO: Use variable in node context to set variable in opc ua information model
+            } else if (!nodeContext->value()->isNull()) {
+                // read pixtend variable
+                OpcUaDataValue dataValue;
+                nodeContext->value()->copyTo(*dataValue.variant().get());
+                auto baseNodeClass = nodeContext->serverVariable()->baseNode().lock();
+                if (!baseNodeClass) return false;
+
+                // check unit converter context
+                if (nodeContext->unitConverterContext() != nullptr) {
+                    nodeContext->unitConverterContext()->output(dataValue);
+                }
+
+                // set variable to opx ua node
+                baseNodeClass->setValueSync(dataValue);
             }
     	}
 
@@ -367,7 +379,7 @@ namespace OpcUaPiXtendServer
         auto baseNodeClass = nodeContext->serverVariable()->baseNode().lock();
         if (!baseNodeClass) return;
 
-        // check unict converter context
+        // check unit converter context
         if (nodeContext->unitConverterContext() != nullptr) {
             nodeContext->unitConverterContext()->output(dataValue);
         }

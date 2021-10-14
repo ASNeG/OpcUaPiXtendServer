@@ -69,15 +69,15 @@ namespace OpcUaPiXtendServer
     }
 
     void
-    NodeContext::valueContext(OpcUaVariant::SPtr valueContext)
+    NodeContext::value(OpcUaVariant::SPtr value)
     {
-        valueContext_ = valueContext;
+        value_ = value;
     }
 
     OpcUaVariant::SPtr
-    NodeContext::valueContext(void)
+    NodeContext::value(void)
     {
-        return valueContext_;
+        return value_;
     }
 
 }

@@ -44,14 +44,14 @@ namespace OpcUaPiXtendServer
         BaseClass::SPtr hardwareContext(void);
         void unitConverterContext(UnitConverterContext::SPtr analogValueConverter);
         UnitConverterContext::SPtr unitConverterContext(void);
-        void valueContext(OpcUaStackCore::OpcUaVariant::SPtr valueContext);
-        OpcUaStackCore::OpcUaVariant::SPtr valueContext(void);
+        void value(OpcUaStackCore::OpcUaVariant::SPtr value);
+        OpcUaStackCore::OpcUaVariant::SPtr value(void);
 
       private:
         OpcUaStackServer::ServerVariable::SPtr serverVariable_ = nullptr;
         OpcUaStackCore::BaseClass::SPtr hardwareContext_ = nullptr;
         UnitConverterContext::SPtr unitConverterContext_ = nullptr;
-        OpcUaStackCore::OpcUaVariant::SPtr valueContext_ = nullptr;
+        OpcUaStackCore::OpcUaVariant::SPtr value_ = nullptr;
     };
 
 }
