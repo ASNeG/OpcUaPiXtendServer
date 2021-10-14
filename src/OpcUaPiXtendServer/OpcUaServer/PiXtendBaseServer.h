@@ -22,6 +22,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
+#include "OpcUaStackCore/BuildInTypes/OpcUaVariant.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaStackServer/StandardObjectType/ObjectBase.h"
 #include "OpcUaPiXtendServer/PiXtend/ContextIndex.h"
@@ -34,10 +35,13 @@ namespace OpcUaPiXtendServer
 	  public:
 		using Vec = std::vector<NodePinConfig>;
 
-        NodePinConfig(std::string nodeName, std::string pinName, std::string instanceName = "")
+        NodePinConfig(std::string nodeName, std::string pinName,
+                      std::string instanceName = "",
+                      OpcUaStackCore::OpcUaVariant::SPtr value = nullptr)
         : nodeName_(nodeName)
         , pinName_(pinName)
         , instanceName_(instanceName)
+        , value_(value)
         {
         }
         ~NodePinConfig(void) = default;
@@ -45,6 +49,7 @@ namespace OpcUaPiXtendServer
         std::string nodeName_;
         std::string pinName_;
         std::string instanceName_;
+        OpcUaStackCore::OpcUaVariant::SPtr value_;
 	};
 
     class PiXtendBaseServer
