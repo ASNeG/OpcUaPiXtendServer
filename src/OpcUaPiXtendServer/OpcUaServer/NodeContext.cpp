@@ -18,6 +18,7 @@
 
 #include "OpcUaPiXtendServer/OpcUaServer/NodeContext.h"
 
+using namespace OpcUaStackCore;
 using namespace OpcUaStackServer;
 
 namespace OpcUaPiXtendServer
@@ -65,6 +66,18 @@ namespace OpcUaPiXtendServer
     NodeContext::unitConverterContext(void)
     {
         return unitConverterContext_;
+    }
+
+    void
+    NodeContext::valueContext(OpcUaVariant::SPtr valueContext)
+    {
+        valueContext_ = valueContext;
+    }
+
+    OpcUaVariant::SPtr
+    NodeContext::valueContext(void)
+    {
+        return valueContext_;
     }
 
 }

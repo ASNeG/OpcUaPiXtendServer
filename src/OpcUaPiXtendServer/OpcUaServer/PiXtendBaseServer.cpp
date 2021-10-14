@@ -145,31 +145,48 @@ namespace OpcUaPiXtendServer
            	auto serverVariable = boost::make_shared<ServerVariable>(nodePinConfig.nodeName_);
         	serverVariables().registerServerVariable(serverVariable);
 
-        	// find context
-            auto instanceName = (!nodePinConfig.instanceName_.empty()) ? nodePinConfig.instanceName_ : instanceName_;
-            auto contextName = instanceName + "." + nodePinConfig.pinName_;
-        	auto hardwareContext = contextIndex_->getContext(contextName);
-        	if (hardwareContext.get() == nullptr) {
-        		Log(Error, "context not exist in context index")
-        			.parameter("ContextName", contextName);
-        		return false;
-        	}
+            // create nodeContext
+            auto nodeContext = boost::make_shared<NodeContext>();
+            nodeContext->serverVariable(serverVariable);
 
-        	// create node context
-        	auto nodeContext = boost::make_shared<NodeContext>();
-        	nodeContext->serverVariable(serverVariable);
-        	nodeContext->hardwareContext(hardwareContext);
-        	BaseClass::SPtr context = nodeContext;
-        	serverVariable->applicationContext(context);
+            // set hardwareContext or valueContext
+            if (!nodePinConfig.pinName_.empty()) {
+                // find hardwareContext
+                auto instanceName = (!nodePinConfig.instanceName_.empty())
+                                        ? nodePinConfig.instanceName_
+                                        : instanceName_;
+                auto contextName = instanceName + "." + nodePinConfig.pinName_;
+                auto hardwareContext = contextIndex_->getContext(contextName);
+                if (hardwareContext.get() == nullptr) {
+                    Log(Error, "context not exist in context index")
+                        .parameter("ContextName", contextName);
+                    return false;
+                }
+                nodeContext->hardwareContext(hardwareContext);
 
-            Log(Debug, "create NodeContext")
-                    .parameter("NodeName", nodePinConfig.nodeName_)
-                    .parameter("ContextName", contextName);
+                Log(Debug, "new NodeContext")
+                        .parameter("NodeName", nodePinConfig.nodeName_)
+                        .parameter("HardwareContext", contextName);
+            } else if (nodePinConfig.value_ != nullptr) {
+                // set valueContext
+                nodeContext->valueContext(nodePinConfig.value_);
+
+                Log(Debug, "new NodeContext")
+                        .parameter("NodeName", nodePinConfig.nodeName_)
+                        .parameter("ValueContextType", nodePinConfig.value_->variantType());
+            } else {
+                Log(Error, "nodeContext does not contain any hardwareContext or valueContext")
+                        .parameter("NodeName", nodePinConfig.nodeName_);
+                continue;
+            }
+
+            // add nodeContext to serverVariable
+            BaseClass::SPtr context = nodeContext;
+            serverVariable->applicationContext(context);
 
             // check if unit converter information exists
             auto unitConversionConfig = unitConversionConfigMap.find(nodePinConfig.nodeName_);
-            if (unitConversionConfig != unitConversionConfigMap.end())
-            {
+            if (unitConversionConfig != unitConversionConfigMap.end()) {
                 UnitConverterContext::SPtr unitConverter = boost::make_shared<UnitConverterContext>(
                             unitConversionConfig->second->a(),
                             unitConversionConfig->second->b(),
@@ -177,7 +194,7 @@ namespace OpcUaPiXtendServer
                             unitConversionConfig->second->d());
                 nodeContext->unitConverterContext(unitConverter);
 
-                Log(Debug, "create UnitConverterContext")
+                Log(Debug, "add UnitConverterContext")
                         .parameter("NodeName", nodePinConfig.nodeName_)
                         .parameter("A", unitConversionConfig->second->a())
                         .parameter("B", unitConversionConfig->second->b())
@@ -196,24 +213,27 @@ namespace OpcUaPiXtendServer
     	for (auto serverVariable : serverVariables().serverVariableMap()) {
     		auto variable = serverVariable.second;
     		auto applicationContext = variable->applicationContext();
-    		if (applicationContext.get() == nullptr) continue;
+            if (applicationContext.get() == nullptr) continue;
     		auto nodeContext = boost::static_pointer_cast<NodeContext>(applicationContext);
 
-    		// register service functions
-    		RegisterForwardNode registerForwardNode(variable->nodeId());
-    		registerForwardNode.addApplicationContext(applicationContext);
-    		registerForwardNode.setReadCallback(boost::bind(&PiXtendBaseServer::readValue, this, _1));
-    		registerForwardNode.setWriteCallback(boost::bind(&PiXtendBaseServer::writeValue, this, _1));
-    		registerForwardNode.setMonitoredItemStartCallback(boost::bind(&PiXtendBaseServer::receiveMonotoredItemStart, this, _1));
-    		registerForwardNode.setMonitoredItemStopCallback(boost::bind(&PiXtendBaseServer::receiveMonitoredItemStop, this, _1));
-    		if (!registerForwardNode.query(applicationServiceIf_, true)) {
-    		    Log(Error, "register forward node response error")
-    			    .parameter("NodeId", variable->nodeId())
-					.parameter("NodeName", serverVariable.first)
-					.parameter("ModulName", instanceName_);
-    			return false;
-
-    		}
+            if (nodeContext->hardwareContext() != nullptr) {
+                // register service functions
+                RegisterForwardNode registerForwardNode(variable->nodeId());
+                registerForwardNode.addApplicationContext(applicationContext);
+                registerForwardNode.setReadCallback(boost::bind(&PiXtendBaseServer::readValue, this, _1));
+                registerForwardNode.setWriteCallback(boost::bind(&PiXtendBaseServer::writeValue, this, _1));
+                registerForwardNode.setMonitoredItemStartCallback(boost::bind(&PiXtendBaseServer::receiveMonotoredItemStart, this, _1));
+                registerForwardNode.setMonitoredItemStopCallback(boost::bind(&PiXtendBaseServer::receiveMonitoredItemStop, this, _1));
+                if (!registerForwardNode.query(applicationServiceIf_, true)) {
+                    Log(Error, "register forward node response error")
+                        .parameter("NodeId", variable->nodeId())
+                        .parameter("NodeName", serverVariable.first)
+                        .parameter("ModulName", instanceName_);
+                    return false;
+                }
+            } else if (!nodeContext->valueContext()->isNull()) {
+                // TODO: Use variable in node context to set variable in opc ua information model
+            }
     	}
 
     	return true;
