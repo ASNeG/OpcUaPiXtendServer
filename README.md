@@ -26,7 +26,7 @@ In order to compile and install the OpcUaPiXtendServer from the source code, you
 - OpenSSL >= 1.0.0
 
 **Operation System** <br>
-You can download the base image of the operation system from the pixtend website. <br>  
+Rasbian is used as the operation system. You can download the base image of the operation system from the pixtend website. <br>  
 https://www.pixtend.de/files/downloads/PiXtend_Image_Basic_V2_1_7_0.zip
 
 **Install OpcUaStack:**
@@ -65,9 +65,45 @@ $ sh build.sh -t local -s ~/.ASNeG -a SPI_DUMMY
 ```
 
 
-Configuration
--------------
+Hardware Configuration
+----------------------
 
+The used hardware module must be specified in the configuratuion module `<INTALL_DIR>/.ASNeG/etc/OpcUaStack/OpcUaPiXtendServer/OpcUaPiXtendServer.xml`. The following hardware modules can be used.
+
+- PiXtend V2L
+- PiXtend V2S
+
+
+**PiXtendV2L**
+Example Configuration:
+```
+<?xml version="1.0" encoding="utf-8"?>
+<OpcUaPiXtendServer Name="TestTags" xmlns="http://ASNeG/OpcUaPiXtendServer.xsd">
+
+    <Modules>
+        <Module Enable="1">
+            <Name>PiXtendV2S</Name>
+            <Type>V2S</Type>
+        </Module>
+    </Modules>
+</OpcUaPiXtendServer>
+```
+
+**PiXtend V2S**
+Example Configuration:
+<?xml version="1.0" encoding="utf-8"?>
+<OpcUaPiXtendServer Name="TestTags" xmlns="http://ASNeG/OpcUaPiXtendServer.xsd">
+
+    <Modules>
+        <Module Enable="1">
+            <Name>PiXtendV2L</Name>
+            <Type>V2L</Type>
+        </Module>
+    </Modules>
+</OpcUaPiXtendServer>
+
+OPC UA Server Configuration
+---------------------------
 
 OPC UA Server starten
 ---------------------
