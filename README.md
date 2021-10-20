@@ -94,6 +94,19 @@ Example Configuration:
 </OpcUaPiXtendServer>
 ```
 
+The OPC UA server provides the configured object in the information model as follows.
+```
+Root
+ |- Object
+      |- PiXtend
+           |- PixTendV2S
+              |- AI       (AI0-AI1 Read)
+              |- AO       (AO0-AO1 Read/Write)
+              |- DI       (DI0-DI7 Read)
+              |- DO       (DO0-DO3 Read/Write)
+              |- RELAY    (RELAY0-RELAY4 Read/Write)
+```
+
 **PiXtend V2S**
 
 Example Configuration:
@@ -107,6 +120,19 @@ Example Configuration:
         </Module>
     </Modules>
 </OpcUaPiXtendServer>
+```
+
+The OPC UA server provides the configured object in the information model as follows.
+```
+Root
+ |- Object
+      |- PiXtend
+           |- PixTendV2L
+              |- AI       (AI0-AI5 Read)
+              |- AO       (AO0-AO1 Read/Write)
+              |- DI       (DI0-DI15 Read)
+              |- DO       (DO0-DO11 Read/Write)
+              |- RELAY    (RELAY0-RELAY4 Read/Write)
 ```
 
 OPC UA Server Configuration
