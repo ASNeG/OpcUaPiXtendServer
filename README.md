@@ -146,8 +146,8 @@ Start OPC UA Server
 
 To start the OPC UA Server, the following commands must be executed.
 ```
-$ set PATH=%PATH%;${HOME}/.ASNeG/usr/lib/
-$ set PATH=%PATH%;${HOME}/.ASNeG/usr/bin/
+$ export PATH=${PATH}:${HOME}/.ASNeG/usr/bin
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOME}/.ASNeG/usr/lib
 $ OpcUaServer4 ${HOME}/.ASNeG/etc/OpcUaStack/OpcUaPiXtendServer/OpcUaServer.xml
 ```
 
