@@ -25,6 +25,10 @@ configure_file(
     "${PROJECT_BINARY_DIR}/OpcUaPiXtendServer.service"
 )
 
+find_library(MODBUS_LIB modbus)
+message(STATUS "Modbus Library")
+message(STATUS "  ${MODBUS_LIB}")
+
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 #
@@ -103,6 +107,7 @@ target_link_libraries(
     OpcUaPiXtendServer
     ${pthread}
     PiXtendAccess
+    ${MODBUS_LIB}
     ${OPCUASTACK_LIBRARY_CORE}
     ${OPCUASTACK_LIBRARY_CLIENT}
     ${OPCUASTACK_LIBRARY_SERVER}
