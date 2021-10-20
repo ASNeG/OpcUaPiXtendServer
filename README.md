@@ -97,7 +97,7 @@ Example Configuration:
 **PiXtend V2S**
 
 Example Configuration:
-``
+```
 <?xml version="1.0" encoding="utf-8"?>
 <OpcUaPiXtendServer Name="TestTags" xmlns="http://ASNeG/OpcUaPiXtendServer.xsd">
     <Modules>
@@ -125,6 +125,6 @@ $ set PATH=%PATH%;${HOME}/.ASNeG/usr/bin/
 $ OpcUaServer4 ${HOME}/.ASNeG/etc/OpcUaStack/OpcUaPiXtendServer/OpcUaServer.xml
 ```
 
-The OPC UA Server open the port 8898. To connect to the OPC UA Server by a OPC UA Client the client mus used the Endpoint Url opc.tcp://<HOSTNAME>:8898.
+The OPC UA Server opens the port 8898. To connect to the OPC UA Server by a OPC UA Client the client must used the Endpoint Url opc.tcp://<HOSTNAME>:8898.
 
 
