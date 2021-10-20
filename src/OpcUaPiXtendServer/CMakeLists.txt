@@ -96,6 +96,7 @@ file(
     OpcUaPiXtendServer_SRC 
     ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Library/*.cpp
     ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/OpcUaServer/*.cpp
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/ModuleUSB/*.cpp
 )
 
 add_library(
