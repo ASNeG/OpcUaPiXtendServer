@@ -47,6 +47,9 @@ $ git checkout origin/Release4 -b Release4
 $ sh build.sh -t local
 ```
 
+The OPC UA Server has now installed in the directory ${HOME}/.ASNeG/
+
+
 **Install OpcUaPiXtendServer:**
 1. Clone OpcUaPiXtendServer repository 
 ```
@@ -59,6 +62,8 @@ $ cd OpcUaPiXtendServer
 $ sh build.sh -t local -s ~/.ASNeG
 ```
 
+The PiXtend Server Library has now installed in the directory ${HOME}/.ASNeG/
+
 You can test the OpcUaPiXtendServer on the PC. In this case the SPI interface (for PiXtend V2S and PiXtend V2L access) is not available and the hardware access is replaced by a dummy server. Use the following command.
 ```
 $ sh build.sh -t local -s ~/.ASNeG -a SPI_DUMMY
@@ -68,18 +73,18 @@ $ sh build.sh -t local -s ~/.ASNeG -a SPI_DUMMY
 Hardware Configuration
 ----------------------
 
-The used hardware module must be specified in the configuratuion module `<INTALL_DIR>/.ASNeG/etc/OpcUaStack/OpcUaPiXtendServer/OpcUaPiXtendServer.xml`. The following hardware modules can be used.
+The used hardware module must be specified in the configuratuion file `${HOME}/.ASNeG/etc/OpcUaStack/OpcUaPiXtendServer/OpcUaPiXtendServer.xml`. The following hardware modules can be used.
 
 - PiXtend V2L
 - PiXtend V2S
 
 
 **PiXtendV2L**
+
 Example Configuration:
 ```
 <?xml version="1.0" encoding="utf-8"?>
 <OpcUaPiXtendServer Name="TestTags" xmlns="http://ASNeG/OpcUaPiXtendServer.xsd">
-
     <Modules>
         <Module Enable="1">
             <Name>PiXtendV2S</Name>
@@ -90,10 +95,11 @@ Example Configuration:
 ```
 
 **PiXtend V2S**
+
 Example Configuration:
+``
 <?xml version="1.0" encoding="utf-8"?>
 <OpcUaPiXtendServer Name="TestTags" xmlns="http://ASNeG/OpcUaPiXtendServer.xsd">
-
     <Modules>
         <Module Enable="1">
             <Name>PiXtendV2L</Name>
@@ -101,9 +107,24 @@ Example Configuration:
         </Module>
     </Modules>
 </OpcUaPiXtendServer>
+```
 
 OPC UA Server Configuration
 ---------------------------
 
-OPC UA Server starten
----------------------
+The OPC UA configuration is in the file `${HOME}/.ASNeG/etc/OpcUaStack/OpcUaPiXtendServer/OpcUaServer.xml`.
+
+
+start OPC UA Server 
+-------------------
+
+To start the opc ua server you mus run the following commands.
+```
+$ set PATH=%PATH%;${HOME}/.ASNeG/usr/lib/
+$ set PATH=%PATH%;${HOME}/.ASNeG/usr/bin/
+$ OpcUaServer4 ${HOME}/.ASNeG/etc/OpcUaStack/OpcUaPiXtendServer/OpcUaServer.xml
+```
+
+The OPC UA Server open the port 8898. To connect to the OPC UA Server by a OPC UA Client the client mus used the Endpoint Url opc.tcp://<HOSTNAME>:8898.
+
+
