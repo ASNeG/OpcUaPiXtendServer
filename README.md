@@ -79,7 +79,7 @@ The used hardware module must be specified in the configuratuion file `${HOME}/.
 - PiXtend V2S
 
 
-**PiXtendV2L**
+**PiXtendV2S**
 
 Example Configuration:
 ```
@@ -94,7 +94,7 @@ Example Configuration:
 </OpcUaPiXtendServer>
 ```
 
-The OPC UA server provides the configured object in the information model as follows.
+The OPC UA Server provides the configured object in the information model as follows.
 ```
 Root
  |- Object
@@ -107,7 +107,7 @@ Root
               |- RELAY    (RELAY0-RELAY4 Read/Write)
 ```
 
-**PiXtend V2S**
+**PiXtend V2L**
 
 Example Configuration:
 ```
@@ -122,7 +122,7 @@ Example Configuration:
 </OpcUaPiXtendServer>
 ```
 
-The OPC UA server provides the configured object in the information model as follows.
+The OPC UA Server provides the configured object in the information model as follows.
 ```
 Root
  |- Object
@@ -141,10 +141,10 @@ OPC UA Server Configuration
 The OPC UA configuration is in the file `${HOME}/.ASNeG/etc/OpcUaStack/OpcUaPiXtendServer/OpcUaServer.xml`.
 
 
-start OPC UA Server 
+Start OPC UA Server 
 -------------------
 
-To start the opc ua server you mus run the following commands.
+To start the OPC UA Server, the following commands must be executed.
 ```
 $ set PATH=%PATH%;${HOME}/.ASNeG/usr/lib/
 $ set PATH=%PATH%;${HOME}/.ASNeG/usr/bin/
