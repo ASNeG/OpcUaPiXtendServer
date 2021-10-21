@@ -17,12 +17,12 @@
  */
 
 #include <boost/make_shared.hpp>
+#include <OpcUaPiXtendServer/ModuleEIO/PiXtendEIODOUSBInst.h>
 
 #include "OpcUaPiXtendServer/Factory/PiXtendModulesFactory.h"
 #include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaPiXtendServer/ModuleDummy/PiXtendEIOAODummy.h"
 #include "OpcUaPiXtendServer/ModuleDummy/PiXtendEIODODummy.h"
-#include "OpcUaPiXtendServer/ModuleUSB/PiXtendEIODOUSBInst.h"
 
 #ifdef OPTION_OPCUAPIXTENDSERVER_SPI_ON
     #include "OpcUaPiXtendServer/ModuleSpi/PiXtendV2SInst.h"

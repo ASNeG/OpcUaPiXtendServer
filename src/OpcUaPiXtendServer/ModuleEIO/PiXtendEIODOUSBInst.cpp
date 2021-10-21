@@ -16,7 +16,7 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#include "OpcUaPiXtendServer/ModuleUSB/PiXtendEIODOUSBInst.h"
+#include "OpcUaPiXtendServer/ModuleEIO/PiXtendEIODOUSBInst.h"
 #include "OpcUaStackCore/Base/Log.h"
 
 using namespace OpcUaStackCore;

@@ -23,7 +23,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "OpcUaPiXtendServer/ModuleUSB/DeviceAccess.h"
+#include <OpcUaPiXtendServer/ModuleEIO/DeviceAccess.h>
 
 namespace OpcUaPiXtendServer
 {

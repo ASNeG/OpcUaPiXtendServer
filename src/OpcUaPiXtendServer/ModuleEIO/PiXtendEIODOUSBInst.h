@@ -20,8 +20,8 @@
 #define __OpcUaPiXtendServer_PiXtendEIODOUSBInst_h__
 
 #include <boost/shared_ptr.hpp>
+#include "OpcUaPiXtendServer/ModuleEIO/USBAccess.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendEIODO.h"
-#include "OpcUaPiXtendServer/ModuleUSB/USBAccess.h"
 
 namespace OpcUaPiXtendServer
 {

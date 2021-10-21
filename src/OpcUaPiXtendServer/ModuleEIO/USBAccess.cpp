@@ -16,7 +16,7 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#include "OpcUaPiXtendServer/ModuleUSB/USBAccess.h"
+#include <OpcUaPiXtendServer/ModuleEIO/USBAccess.h>
 #include "OpcUaStackCore/Base/Log.h"
 
 using namespace OpcUaStackCore;
