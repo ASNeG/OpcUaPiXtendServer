@@ -38,7 +38,7 @@
             <Type>V2S</Type>
         </Module>
         
-        <Module Enable="0">
+        <Module Enable="1">
             <Name>DIO-1</Name>
             <Type>DO</Type>
             <Address>0x01</Address>
