@@ -28,16 +28,6 @@
 #include "OpcUaPiXtendServer/PiXtend/PiXtendEIODO.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendEIOAO.h"
 
-#ifdef OPTION_OPCUAPIXTENDSERVER_SPI_ON
-    #include "OpcUaPiXtendServer/ModuleSpi/PiXtendV2SInst.h"
-    #include "OpcUaPiXtendServer/ModuleSpi/PiXtendV2LInst.h"
-#elif defined OPTION_OPCUAPIXTENDSERVER_DUMMY
-    #include "OpcUaPiXtendServer/ModuleDummy/PiXtendV2SDummy.h"
-    #include "OpcUaPiXtendServer/ModuleDummy/PiXtendV2LDummy.h"
-    #include "OpcUaPiXtendServer/ModuleDummy/PiXtendEIOAODummy.h"
-    #include "OpcUaPiXtendServer/ModuleDummy/PiXtendEIODODummy.h"
-#endif
-
 namespace OpcUaPiXtendServer
 {
 
@@ -52,7 +42,10 @@ namespace OpcUaPiXtendServer
         static PiXtendV2S::SPtr createPiXtendV2S(const std::string& instanceName);
         static PiXtendV2L::SPtr createPiXtendV2L(const std::string& instanceName);
         static PiXtendEIOAO::SPtr createPiXtendEIOAO(const std::string& instanceName);
-        static PiXtendEIODO::SPtr createPiXtendEIODO(const std::string& instanceName);
+        static PiXtendEIODO::SPtr createPiXtendEIODO(
+        	const std::string& type,
+			const std::string& instanceName
+		);
     };
 
 }

@@ -245,7 +245,7 @@ namespace OpcUaPiXtendServer
     bool
 	PiXtendServer::startupPiXtendEIODO(const std::string& name, uint32_t address)
     {
-		auto piXtendEIODO = PiXtendModulesFactory::createPiXtendEIODO(name);
+		auto piXtendEIODO = PiXtendModulesFactory::createPiXtendEIODO("USB", name);
         if (piXtendEIODO == nullptr) {
             Log(Error, "cannot create module eIO DO")
                 .parameter("ModuleName", name);

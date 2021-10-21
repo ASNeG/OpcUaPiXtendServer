@@ -23,7 +23,7 @@ namespace OpcUaPiXtendServer
     PiXtendToolModuleEIODO::PiXtendToolModuleEIODO(const std::string& name, ModuleAddress moduleAddress)
     : PiXtendToolModule()
     {
-        pixtendSPtr_ = PiXtendModulesFactory::createPiXtendEIODO(name);
+        pixtendSPtr_ = PiXtendModulesFactory::createPiXtendEIODO("USB", name);
 
         if (pixtendSPtr_ != nullptr && moduleAddress.first)
         {
