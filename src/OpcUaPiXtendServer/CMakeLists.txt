@@ -48,48 +48,51 @@ set(HardwareAccessLibs
     "" # hardware access for pc/dummy - no libs needed
 )
 
+file(
+	GLOB
+    OpcUaPiXtendServer_PiXtendAccess_SRC
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/*.cpp
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/ModuleUSB/*.cpp
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/ModuleDummy/PiXtendEIOAODummy.cpp
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/ModuleDummy/PiXtendEIODODummy.cpp
+)
+
+file(
+    GLOB
+    OpcUaPiXtendServer_PiXtendAccess_SPI_SRC
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/ModuleSpi/*.cpp
+)
+
+file(
+    GLOB
+    OpcUaPiXtendServer_PiXtendAccess_SPI_DUMMY_SRC
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/ModuleDummy/PiXtendV2LDummy.cpp
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/ModuleDummy/PiXtendV2SDummy.cpp
+)
+
 if (${OPTION_OPCUAPIXTENDSERVER_SPI} STREQUAL SPI_ON)
     set(HardwareAccessLibs
         pixtend
         wiringPi
     )
-
-    file(
-        GLOB
-        OpcUaPiXtendServer_PiXtendAccess_SRC
-        ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/*.cpp
-        ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/ModuleSpi/*.cpp
-    )
+    
+    add_library(
+    	PiXtendAccess STATIC
+    	${OpcUaPiXtendServer_PiXtendAccess_SRC}
+    	${OpcUaPiXtendServer_PiXtendAccess_SPI_SRC}
+	)
 elseif (${OPTION_OPCUAPIXTENDSERVER_SPI} STREQUAL SPI_DUMMY)
-    file(
-        GLOB
-        OpcUaPiXtendServer_PiXtendAccess_SRC
-        ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/*.cpp
-        ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/ModuleDummy/*.cpp
+    add_library(
+    	PiXtendAccess STATIC
+    	${OpcUaPiXtendServer_PiXtendAccess_SRC}
+    	${OpcUaPiXtendServer_PiXtendAccess_SPI_DUMMY_SRC}
     )
 else ()
-    file(
-        GLOB
-        OpcUaPiXtendServer_PiXtendAccess_SRC
-        ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/*.cpp
+    add_library(
+    	PiXtendAccess STATIC
+    	${OpcUaPiXtendServer_PiXtendAccess_SRC}
     )
 endif()
-
-add_library(
-    PiXtendAccess STATIC
-    ${OpcUaPiXtendServer_PiXtendAccess_SRC}
-)
-
-file(
-    GLOB 
-    OpcUaPiXtendServer_PiXtendTool_SRC 
-    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Tools/PiXtendTool*.cpp
-)
-
-add_library(
-    PiXtendTool STATIC
-    ${OpcUaPiXtendServer_PiXtendTool_SRC}
-)
 
 file(
     GLOB 
@@ -117,15 +120,27 @@ target_link_libraries(
     ${HardwareAccessLibs}
 )
 
+file(
+    GLOB 
+    OpcUaPiXtendServer_PiXtendTool_SRC 
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Tools/PiXtendTool*.cpp
+)
+
+add_library(
+    PiXtendTool STATIC
+    ${OpcUaPiXtendServer_PiXtendTool_SRC}
+)
+
 add_executable( 
-    pixtendOpcUa
+    pixtendClient
     ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Tools/pixtend.cpp
 )
 
 target_link_libraries(
-    pixtendOpcUa
+    pixtendClient
     PiXtendTool
     PiXtendAccess
+    ${MODBUS_LIB}
     ${OPCUASTACK_LIBRARY_CORE}
     ${Boost_LIBRARIES}
     ${HardwareAccessLibs}
@@ -149,7 +164,7 @@ endif()
 if (${OPTION_OPCUAPIXTENDSERVER_SPI} STREQUAL SPI_ON)
     add_definitions(-DOPTION_OPCUAPIXTENDSERVER_SPI_ON)
 elseif (${OPTION_OPCUAPIXTENDSERVER_SPI} STREQUAL SPI_DUMMY)
-    add_definitions(-DOPTION_OPCUAPIXTENDSERVER_DUMMY)
+    add_definitions(-DOPTION_OPCUAPIXTENDSERVER_SPI_DUMMY)
 else ()
     add_definitions(-DOPTION_OPCUAPIXTENDSERVER_SPI_OFF)
 endif()
@@ -164,7 +179,7 @@ endif()
 
 file (GLOB CONFIG_FILES ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Config/*.xml)
 install(TARGETS OpcUaPiXtendServer DESTINATION ${INSTALL_PREFIX}/lib)
-install(TARGETS pixtendOpcUa DESTINATION ${INSTALL_PREFIX}/bin)
+install(TARGETS pixtendClient DESTINATION ${INSTALL_PREFIX}/bin)
 
 if (WIN32)
     install(FILES ${CONFIG_FILES} DESTINATION ${INSTALL_PREFIX}/../etc/OpcUaStack/OpcUaPiXtendServer) 
