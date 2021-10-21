@@ -19,8 +19,8 @@
 #ifndef __OpcUaPiXtendServer_PiXtendToolModuleEIOAO_h__
 #define __OpcUaPiXtendServer_PiXtendToolModuleEIOAO_h__
 
+#include "OpcUaPiXtendServer/PiXtend/PiXtendEIOAO.h"
 #include "OpcUaPiXtendServer/Tools/PiXtendToolModule.h"
-#include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
 
 namespace OpcUaPiXtendServer
 {

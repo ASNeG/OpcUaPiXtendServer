@@ -18,7 +18,7 @@
 
 #include <boost/make_shared.hpp>
 
-#include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
+#include "OpcUaPiXtendServer/Factory/PiXtendModulesFactory.h"
 #include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaPiXtendServer/ModuleDummy/PiXtendEIOAODummy.h"
 #include "OpcUaPiXtendServer/ModuleDummy/PiXtendEIODODummy.h"

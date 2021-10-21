@@ -37,7 +37,6 @@
 #include <iostream>
 #include <functional>
 
-#include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
 #include "OpcUaPiXtendServer/Tools/PiXtendToolConfig.h"
 #include "OpcUaPiXtendServer/Tools/PiXtendToolModuleV2S.h"
 #include "OpcUaPiXtendServer/Tools/PiXtendToolModuleV2L.h"

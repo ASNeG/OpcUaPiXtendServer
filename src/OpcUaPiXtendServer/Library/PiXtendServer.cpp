@@ -21,7 +21,7 @@
 #include "OpcUaStackServer/ServiceSetApplication/CreateNodeInstance.h"
 
 #include "OpcUaPiXtendServer/Library/PiXtendServer.h"
-#include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
+#include "OpcUaPiXtendServer/Factory/PiXtendModulesFactory.h"
 
 
 using namespace OpcUaStackCore;

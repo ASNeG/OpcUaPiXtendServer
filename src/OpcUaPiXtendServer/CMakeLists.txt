@@ -51,6 +51,7 @@ set(HardwareAccessLibs
 file(
 	GLOB
     OpcUaPiXtendServer_PiXtendAccess_SRC
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Factory/*.cpp
     ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/PiXtend/*.cpp
     ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/ModuleUSB/*.cpp
     ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/ModuleDummy/PiXtendEIOAODummy.cpp
