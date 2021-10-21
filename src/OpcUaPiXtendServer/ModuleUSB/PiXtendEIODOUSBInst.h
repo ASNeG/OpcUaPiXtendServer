@@ -19,10 +19,9 @@
 #ifndef __OpcUaPiXtendServer_PiXtendEIODOUSBInst_h__
 #define __OpcUaPiXtendServer_PiXtendEIODOUSBInst_h__
 
-#include "modbus/modbus.h"
-
 #include <boost/shared_ptr.hpp>
 #include "OpcUaPiXtendServer/PiXtend/PiXtendEIODO.h"
+#include "OpcUaPiXtendServer/ModuleUSB/USBAccess.h"
 
 namespace OpcUaPiXtendServer
 {

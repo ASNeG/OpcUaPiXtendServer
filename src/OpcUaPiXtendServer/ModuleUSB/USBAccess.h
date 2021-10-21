@@ -23,10 +23,13 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include "OpcUaPiXtendServer/ModuleUSB/DeviceAccess.h"
+
 namespace OpcUaPiXtendServer
 {
 
     class USBAccess
+	: public DeviceAccess
     {
       public:
         using SPtr = boost::shared_ptr<USBAccess>;
@@ -40,14 +43,14 @@ namespace OpcUaPiXtendServer
         void dataBit(int dataBit);
         void stopBit(int stopBit);
 
-        bool open(void);
-        bool close(void);
+        virtual bool open(void) override;
+        virtual bool close(void) override;
 
-        bool setSlave(uint32_t deviceAddress);
+        virtual bool setSlave(uint32_t deviceAddress) override;
 
-        bool writeDititalOut(uint8_t numberPins, bool* pins);
-        bool readDigitalOut(uint8_t numberPins, bool* pins);
-        bool readDigitalIn(uint8_t numberPins, bool* pins);
+        virtual bool writeDititalOut(uint8_t numberPins, bool* pins) override;
+        virtual bool readDigitalOut(uint8_t numberPins, bool* pins) override;
+        virtual bool readDigitalIn(uint8_t numberPins, bool* pins) override;
 
       private:
         std::string device_ = "/dev/ttyUSB0";
