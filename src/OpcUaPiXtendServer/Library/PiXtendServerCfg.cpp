@@ -18,10 +18,10 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/make_shared.hpp>
+#include <OpcUaPiXtendServer/Library/PiXtendServerCfg.h>
 
 #include "OpcUaStackCore/Base/os.h"
 #include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaPiXtendServer/OpcUaServer/PiXtendServerControllerCfg.h"
 
 using namespace OpcUaStackCore;
 
@@ -118,31 +118,31 @@ namespace OpcUaPiXtendServer
 
     // ##################################################################
     //
-    // PiXtendServerControllerCfgModule class
+    // PiXtendServerCfgModule class
     //
     // ##################################################################
 
-    PiXtendServerControllerCfgModule::PiXtendServerControllerCfgModule()
+    PiXtendServerCfgModule::PiXtendServerCfgModule()
     {
 
     }
 
-    PiXtendServerControllerCfgModule::~PiXtendServerControllerCfgModule()
+    PiXtendServerCfgModule::~PiXtendServerCfgModule()
     {
 
     }
 
     bool
-    PiXtendServerControllerCfgModule::parse(Config* config)
+    PiXtendServerCfgModule::parse(Config* config)
     {
         if (config == nullptr) {
-            Log(Error, "parse PiXtendServerControllerCfgModule error - config is empty");
+            Log(Error, "parse PiXtendServerCfgModule error - config is empty");
             return false;
         }
 
         auto cfgName = config->getChild("Name");
         if (!cfgName) {
-            Log(Error, "PiXtendServerControllerCfgModule cannot get cfgName in controller configuration");
+            Log(Error, "PiXtendServerCfgModule cannot get cfgName in controller configuration");
             return false;
         }
         moduleName_ = cfgName->getValue();
@@ -156,14 +156,14 @@ namespace OpcUaPiXtendServer
 
         auto cfgType = config->getChild("Type");
         if (!cfgType) {
-            Log(Error, "PiXtendServerControllerCfgModule cannot get cfgType in controller configuration");
+            Log(Error, "PiXtendServerCfgModule cannot get cfgType in controller configuration");
             return false;
         }
         std::string strModuleType = cfgType->getValue();
         boost::algorithm::to_lower(strModuleType);
         auto findModuleType = MapType2ServerModule.find(strModuleType);
         if (findModuleType == MapType2ServerModule.end()) {
-            Log(Error, "PiXtendServerControllerCfgModule undefined cfgType in controller configuration")
+            Log(Error, "PiXtendServerCfgModule undefined cfgType in controller configuration")
                     .parameter("Name", moduleName());
             return false;
         }
@@ -194,53 +194,53 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-    PiXtendServerControllerCfgModule::enable(void)
+    PiXtendServerCfgModule::enable(void)
     {
         return enable_;
     }
 
     std::string
-    PiXtendServerControllerCfgModule::moduleName(void)
+    PiXtendServerCfgModule::moduleName(void)
     {
         return moduleName_;
     }
 
     ServerModule
-    PiXtendServerControllerCfgModule::moduleType(void)
+    PiXtendServerCfgModule::moduleType(void)
     {
         return moduleType_;
     }
 
     uint32_t
-    PiXtendServerControllerCfgModule::moduleAddress(void)
+    PiXtendServerCfgModule::moduleAddress(void)
     {
         return moduleAddress_;
     }
 
     UnitConversionConfig::Map
-    PiXtendServerControllerCfgModule::unitConversionConfigMap(void)
+    PiXtendServerCfgModule::unitConversionConfigMap(void)
     {
         return unitConversionConfigMap_;
     }
 
     // ##################################################################
     //
-    // PiXtendServerControllerCfg class
+    // PiXtendServerCfg class
     //
     // ##################################################################
 
-    PiXtendServerControllerCfg::PiXtendServerControllerCfg()
+    PiXtendServerCfg::PiXtendServerCfg()
     {
 
     }
 
-    PiXtendServerControllerCfg::~PiXtendServerControllerCfg()
+    PiXtendServerCfg::~PiXtendServerCfg()
     {
 
     }
 
     bool
-    PiXtendServerControllerCfg::parse(Config* config)
+    PiXtendServerCfg::parse(Config* config)
     {
         if (config == nullptr) {
             Log(Error, "parse cfg error - config is empty");
@@ -258,7 +258,7 @@ namespace OpcUaPiXtendServer
         childCtrlModules->getChilds("Module", configVec);
         for (Config cfgModule : configVec) {
         	// parse module configuration
-            PiXtendServerControllerCfgModule module;
+            PiXtendServerCfgModule module;
             if (!module.parse(&cfgModule)) {
                 Log(Error, "parse CtrlModules in controller configuration error");
                 return false;
@@ -274,8 +274,8 @@ namespace OpcUaPiXtendServer
         return true;
     }
 
-    std::vector<PiXtendServerControllerCfgModule>&
-    PiXtendServerControllerCfg::configModules(void)
+    std::vector<PiXtendServerCfgModule>&
+    PiXtendServerCfg::configModules(void)
     {
         return configModules_;
     }

@@ -64,7 +64,7 @@ namespace OpcUaPiXtendServer
         contextIndex_ = contextIndexSPtr;
 
 		// parse pixtend configuration
-        PiXtendServerControllerCfg controllerCfg;
+        PiXtendServerCfg controllerCfg;
         if (!controllerCfg.parse(&config))
         {
             Log(Error, "parse controller configuration error")
@@ -125,7 +125,7 @@ namespace OpcUaPiXtendServer
 	}
 
 	bool
-	PiXtendServer::startupPiXtend(PiXtendServerControllerCfg& cfg)
+	PiXtendServer::startupPiXtend(PiXtendServerCfg& cfg)
 	{
 	    for (auto module: cfg.configModules()) {
 	    	switch (module.moduleType()) {
@@ -286,7 +286,7 @@ namespace OpcUaPiXtendServer
 
 
 	bool
-	PiXtendServer::startupServer(PiXtendServerControllerCfg& cfg)
+	PiXtendServer::startupServer(PiXtendServerCfg& cfg)
 	{
 	    for (auto module: cfg.configModules()) {
 

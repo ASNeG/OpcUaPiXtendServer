@@ -24,6 +24,7 @@
 #include "OpcUaStackCore/BuildInTypes/OpcUaNodeId.h"
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaStackServer/Application/ApplicationInfo.h"
+#include "OpcUaPiXtendServer/Library/PiXtendServerCfg.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2S.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2L.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendEIODO.h"
@@ -32,7 +33,6 @@
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2LServer.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendEIODOServer.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendEIOAOServer.h"
-#include "OpcUaPiXtendServer/OpcUaServer/PiXtendServerControllerCfg.h"
 
 namespace OpcUaPiXtendServer
 {
@@ -79,14 +79,14 @@ namespace OpcUaPiXtendServer
 		uint32_t pixtendTimerInterval_ = 200;
 		OpcUaStackCore::SlotTimerElement::SPtr pixtendTimerElement_ = nullptr;
 
-		bool startupPiXtend(PiXtendServerControllerCfg& cfg);
+		bool startupPiXtend(PiXtendServerCfg& cfg);
 		bool shutdownPiXtend(void);
         bool startupServerV2S(const std::string& name, const UnitConverterContext::Map& unitConverterContextMap);
         bool startupServerV2L(const std::string& name, const UnitConverterContext::Map& unitConverterContextMap);
         bool startupServerEIOAO(const std::string& name, const UnitConverterContext::Map& unitConverterContextMap, uint32_t address);
         bool startupServerEIODO(const std::string& name, const UnitConverterContext::Map& unitConverterContextMap, uint32_t address);
 
-        bool startupServer(PiXtendServerControllerCfg& cfg);
+        bool startupServer(PiXtendServerCfg& cfg);
         bool shutdownServer(void);
         bool startupPiXtendV2S(const std::string& name);
         bool startupPiXtendV2L(const std::string& name);

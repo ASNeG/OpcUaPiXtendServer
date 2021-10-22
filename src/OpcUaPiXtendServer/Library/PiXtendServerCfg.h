@@ -16,8 +16,8 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#ifndef __OpcUaPiXtendServer_PiXtendServerControllerCfg_h__
-#define __OpcUaPiXtendServer_PiXtendServerControllerCfg_h__
+#ifndef __OpcUaPiXtendServer_PiXtendServerCfg_h__
+#define __OpcUaPiXtendServer_PiXtendServerCfg_h__
 
 #include <boost/shared_ptr.hpp>
 #include <unordered_map>
@@ -69,11 +69,11 @@ namespace OpcUaPiXtendServer
         double d_ {0.0};
     };
 
-    class PiXtendServerControllerCfgModule
+    class PiXtendServerCfgModule
     {
       public:
-        PiXtendServerControllerCfgModule(void);
-        ~PiXtendServerControllerCfgModule(void);
+        PiXtendServerCfgModule(void);
+        ~PiXtendServerCfgModule(void);
 
         bool parse(OpcUaStackCore::Config* config);
 
@@ -93,21 +93,21 @@ namespace OpcUaPiXtendServer
         UnitConversionConfig::Map unitConversionConfigMap_;
     };
 
-    class PiXtendServerControllerCfg
+    class PiXtendServerCfg
     {
       public:
 
-        using SPtr = boost::shared_ptr<PiXtendServerControllerCfg>;
+        using SPtr = boost::shared_ptr<PiXtendServerCfg>;
 
-        PiXtendServerControllerCfg(void);
-        ~PiXtendServerControllerCfg(void);
+        PiXtendServerCfg(void);
+        ~PiXtendServerCfg(void);
 
         bool parse(OpcUaStackCore::Config* config);
 
-        std::vector<PiXtendServerControllerCfgModule>& configModules(void);
+        std::vector<PiXtendServerCfgModule>& configModules(void);
 
       private:
-        std::vector<PiXtendServerControllerCfgModule> configModules_;
+        std::vector<PiXtendServerCfgModule> configModules_;
     };
 
 }
