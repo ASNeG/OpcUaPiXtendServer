@@ -18,15 +18,126 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/make_shared.hpp>
+#include <OpcUaPiXtendServer/Library/PiXtendServerCfg.h>
 
 #include "OpcUaStackCore/Base/os.h"
 #include "OpcUaStackCore/Base/Log.h"
-#include "OpcUaPiXtendServer/OpcUaServer/PiXtendServerControllerCfg.h"
 
 using namespace OpcUaStackCore;
 
 namespace OpcUaPiXtendServer
 {
+
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	//
+	// USBCfg
+	//
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	USBCfg::USBCfg(void)
+	{
+	}
+
+	USBCfg::~USBCfg(void)
+	{
+	}
+
+	bool
+	USBCfg::parse(Config* config)
+	{
+		// check parameter
+        if (config == nullptr) {
+            Log(Error, "parse UnitConversionConfig error - config is empty");
+            return false;
+        }
+
+        // parse USB element (optional)
+        auto usbChild = config->getChild("USB");
+        if (!usbChild) {
+            return true;
+        }
+
+        // parse device element
+        auto deviceElement = usbChild->getValue("<xmlattr>.Device");
+        if (!deviceElement) {
+            Log(Error, "Device attribute not exist in USB element");
+            return false;
+        }
+        device_ = *deviceElement;
+
+        // parse baud element
+        if (!usbChild->getConfigParameter("<xmlattr>.Baud", baud_)) {
+            Log(Error, "Baud attribute not exist in USB element");
+            return false;
+        }
+
+        // parse patity
+        auto parityElement = usbChild->getValue("<xmlattr>.Parity");
+        if (!parityElement) {
+            Log(Error, "Parity attribute not exist in USB element");
+            return false;
+        }
+        if (*parityElement == "N") { // None
+        	parity_ = 'N';
+        }
+        else if (*parityElement == "E") { // Even
+        	parity_ = 'E';
+        }
+        else if (*parityElement == "O") { // Odd
+        	parity_ = 'O';
+        }
+        else {
+            Log(Error, "Parity attribute invalid USB element")
+            	.parameter("Parity", *parityElement);
+             return false;
+        }
+
+        // parse data bit element
+        if (!usbChild->getConfigParameter("<xmlattr>.DataBit", dataBit_)) {
+            Log(Error, "DataBit attribute not exist in USB element");
+            return false;
+        }
+
+        // parse stop bit element
+        if (!usbChild->getConfigParameter("<xmlattr>.StopBit", stopBit_)) {
+            Log(Error, "StopBit attribute not exist in USB element");
+            return false;
+        }
+
+		return true;
+	}
+
+
+	std::string
+	USBCfg::device(void)
+	{
+		return device_;
+	}
+
+	uint32_t
+	USBCfg::baud(void)
+	{
+		return baud_;
+	}
+
+	char
+	USBCfg::parity(void)
+	{
+		return parity_;
+	}
+
+	uint8_t
+	USBCfg::dataBit()
+	{
+		return dataBit_;
+	}
+
+	uint8_t
+	USBCfg::stopBit()
+	{
+		return stopBit_;
+	}
 
     // ##################################################################
     //
@@ -43,7 +154,7 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-    UnitConversionConfig::parse(OpcUaStackCore::Config* config)
+    UnitConversionConfig::parse(Config* config)
     {
         if (config == nullptr) {
             Log(Error, "parse UnitConversionConfig error - config is empty");
@@ -118,129 +229,144 @@ namespace OpcUaPiXtendServer
 
     // ##################################################################
     //
-    // PiXtendServerControllerCfgModule class
+    // PiXtendServerCfgModule class
     //
     // ##################################################################
 
-    PiXtendServerControllerCfgModule::PiXtendServerControllerCfgModule()
+    PiXtendServerCfgModule::PiXtendServerCfgModule()
     {
 
     }
 
-    PiXtendServerControllerCfgModule::~PiXtendServerControllerCfgModule()
+    PiXtendServerCfgModule::~PiXtendServerCfgModule()
     {
 
     }
 
     bool
-    PiXtendServerControllerCfgModule::parse(Config* config)
+    PiXtendServerCfgModule::parse(Config* config)
     {
         if (config == nullptr) {
-            Log(Error, "parse PiXtendServerControllerCfgModule error - config is empty");
+            Log(Error, "parse PiXtendServerCfgModule error - config is empty");
             return false;
         }
 
-        auto cfgName = config->getChild("Name");
-        if (!cfgName) {
-            Log(Error, "PiXtendServerControllerCfgModule cannot get cfgName in controller configuration");
+        // parse modul name
+        auto moduleName = config->getValue("Name");
+        if (!moduleName) {
+            Log(Error, "Name element not exist in module configuration");
             return false;
         }
-        moduleName_ = cfgName->getValue();
+        moduleName_ = *moduleName;
 
-        if (config->existChild("<xmlattr>.Enable")) {
-            config->getConfigParameter("<xmlattr>.Enable", enable_);
-        }
+        // parse enable flag (optional)
+        config->getConfigParameter("<xmlattr>.Enable", enable_, "0");
         if (!enable_) {
             return true;
         }
 
-        auto cfgType = config->getChild("Type");
-        if (!cfgType) {
-            Log(Error, "PiXtendServerControllerCfgModule cannot get cfgType in controller configuration");
+        // parse module type
+        auto moduleType = config->getValue("Type");
+        if (!moduleType) {
+            Log(Error, "Type element not exist in module configuration")
+            	.parameter("ModuleName", moduleName_);
             return false;
         }
-        std::string strModuleType = cfgType->getValue();
-        boost::algorithm::to_lower(strModuleType);
-        auto findModuleType = MapType2ServerModule.find(strModuleType);
+        std::string moduleTypeStr = boost::algorithm::to_lower_copy(*moduleType);
+        auto findModuleType = MapType2ServerModule.find(moduleTypeStr);
         if (findModuleType == MapType2ServerModule.end()) {
-            Log(Error, "PiXtendServerControllerCfgModule undefined cfgType in controller configuration")
-                    .parameter("Name", moduleName());
+            Log(Error, "Type element invalid in module configuration")
+                    .parameter("ModuleName", moduleName_)
+					.parameter("ModuleType", *moduleType);
             return false;
         }
         moduleType_ = findModuleType->second;
 
-        if (config->existChild("Address")) {
-            config->getConfigParameter("Address", moduleAddress_);
-        }
+        // parse module address (optional)
+        config->getConfigParameter("Address", moduleAddress_, "0");
 
+        // parse module unit conversions
         std::vector<Config> configVec;
         config->getChilds("UnitConv", configVec);
         unitConversionConfigMap_.reserve(configVec.size());
         for (Config cfgNode : configVec) {
             UnitConversionConfig::SPtr unitConv = boost::make_shared<UnitConversionConfig>();
             if (!unitConv->parse(&cfgNode)) {
-                Log(Error, "parse CtrlNodes in controller configuration error");
+                Log(Error, "UnitConv element invalid in module configuration")
+                    .parameter("ModuleName", moduleName_);
                 return false;
             }
             unitConversionConfigMap_.insert(std::make_pair(unitConv->nodeName(), unitConv));
         }
 
-        Log(Debug, "new Module")
-                .parameter("Name", moduleName_)
-                .parameter("Type", strModuleType)
-                .parameter("Address", moduleAddress_);
+        // parse USB information (optional)
+        auto usbCfg = boost::make_shared<USBCfg>();
+        if (!usbCfg->parse(config)) {
+            Log(Error, "USB element invalid in module configuration")
+				.parameter("ModuleName", moduleName_);
+            return false;
+        }
+        if (!usbCfg->device().empty()) {
+        	usbCfg_ = usbCfg;
+        }
 
         return true;
     }
 
     bool
-    PiXtendServerControllerCfgModule::enable(void)
+    PiXtendServerCfgModule::enable(void)
     {
         return enable_;
     }
 
     std::string
-    PiXtendServerControllerCfgModule::moduleName(void)
+    PiXtendServerCfgModule::moduleName(void)
     {
         return moduleName_;
     }
 
     ServerModule
-    PiXtendServerControllerCfgModule::moduleType(void)
+    PiXtendServerCfgModule::moduleType(void)
     {
         return moduleType_;
     }
 
     uint32_t
-    PiXtendServerControllerCfgModule::moduleAddress(void)
+    PiXtendServerCfgModule::moduleAddress(void)
     {
         return moduleAddress_;
     }
 
+    USBCfg::SPtr
+	PiXtendServerCfgModule::usbCfg(void)
+    {
+    	return usbCfg_;
+    }
+
     UnitConversionConfig::Map
-    PiXtendServerControllerCfgModule::unitConversionConfigMap(void)
+    PiXtendServerCfgModule::unitConversionConfigMap(void)
     {
         return unitConversionConfigMap_;
     }
 
     // ##################################################################
     //
-    // PiXtendServerControllerCfg class
+    // PiXtendServerCfg class
     //
     // ##################################################################
 
-    PiXtendServerControllerCfg::PiXtendServerControllerCfg()
+    PiXtendServerCfg::PiXtendServerCfg()
     {
 
     }
 
-    PiXtendServerControllerCfg::~PiXtendServerControllerCfg()
+    PiXtendServerCfg::~PiXtendServerCfg()
     {
 
     }
 
     bool
-    PiXtendServerControllerCfg::parse(Config* config)
+    PiXtendServerCfg::parse(Config* config)
     {
         if (config == nullptr) {
             Log(Error, "parse cfg error - config is empty");
@@ -258,7 +384,7 @@ namespace OpcUaPiXtendServer
         childCtrlModules->getChilds("Module", configVec);
         for (Config cfgModule : configVec) {
         	// parse module configuration
-            PiXtendServerControllerCfgModule module;
+            PiXtendServerCfgModule module;
             if (!module.parse(&cfgModule)) {
                 Log(Error, "parse CtrlModules in controller configuration error");
                 return false;
@@ -274,8 +400,8 @@ namespace OpcUaPiXtendServer
         return true;
     }
 
-    std::vector<PiXtendServerControllerCfgModule>&
-    PiXtendServerControllerCfg::configModules(void)
+    std::vector<PiXtendServerCfgModule>&
+    PiXtendServerCfg::configModules(void)
     {
         return configModules_;
     }

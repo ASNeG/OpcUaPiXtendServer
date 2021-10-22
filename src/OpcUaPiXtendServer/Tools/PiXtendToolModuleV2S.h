@@ -19,8 +19,8 @@
 #ifndef __OpcUaPiXtendServer_PiXtendToolModuleV2S_h__
 #define __OpcUaPiXtendServer_PiXtendToolModuleV2S_h__
 
+#include "OpcUaPiXtendServer/PiXtend/PiXtendV2S.h"
 #include "OpcUaPiXtendServer/Tools/PiXtendToolModule.h"
-#include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
 
 namespace OpcUaPiXtendServer
 {

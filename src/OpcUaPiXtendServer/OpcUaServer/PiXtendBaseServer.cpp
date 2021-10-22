@@ -55,7 +55,7 @@ namespace OpcUaPiXtendServer
 		const std::string& instanceName,
 		const OpcUaStackCore::OpcUaNodeId& parentNodeId,
         ContextIndex::SPtr& contextIndex,
-        const UnitConversionConfig::Map& unitConversionConfigMap
+		const UnitConverterContext::Map& unitConverterContextMap
 	)
     {
     	ioThread_ = ioThread;
@@ -78,7 +78,7 @@ namespace OpcUaPiXtendServer
     	}
 
     	// create node context
-        createNodeContext(nodePinConfigVec_, unitConversionConfigMap);
+        createNodeContext(nodePinConfigVec_, unitConverterContextMap);
 
     	// create object instance in information model
     	if (!createObjectInstance()) {
@@ -137,7 +137,7 @@ namespace OpcUaPiXtendServer
 
     bool PiXtendBaseServer::createNodeContext(
         const NodePinConfig::Vec& nodePinConfigVec,
-        const UnitConversionConfig::Map& unitConversionConfigMap
+		const UnitConverterContext::Map& unitConverterContextMap
 	)
     {
     	for (auto nodePinConfig : nodePinConfigVec) {
@@ -185,21 +185,16 @@ namespace OpcUaPiXtendServer
             serverVariable->applicationContext(context);
 
             // check if unit converter information exists
-            auto unitConversionConfig = unitConversionConfigMap.find(nodePinConfig.nodeName_);
-            if (unitConversionConfig != unitConversionConfigMap.end()) {
-                UnitConverterContext::SPtr unitConverter = boost::make_shared<UnitConverterContext>(
-                            unitConversionConfig->second->a(),
-                            unitConversionConfig->second->b(),
-                            unitConversionConfig->second->c(),
-                            unitConversionConfig->second->d());
-                nodeContext->unitConverterContext(unitConverter);
+            auto unitConverterContext = unitConverterContextMap.find(nodePinConfig.nodeName_);
+            if (unitConverterContext != unitConverterContextMap.end()) {
+                nodeContext->unitConverterContext(unitConverterContext->second);
 
                 Log(Debug, "add UnitConverterContext")
                         .parameter("NodeName", nodePinConfig.nodeName_)
-                        .parameter("A", unitConversionConfig->second->a())
-                        .parameter("B", unitConversionConfig->second->b())
-                        .parameter("C", unitConversionConfig->second->c())
-                        .parameter("D", unitConversionConfig->second->d());
+                        .parameter("A", unitConverterContext->second->a())
+                        .parameter("B", unitConverterContext->second->b())
+                        .parameter("C", unitConverterContext->second->c())
+                        .parameter("D", unitConverterContext->second->d());
             }
     	}
 

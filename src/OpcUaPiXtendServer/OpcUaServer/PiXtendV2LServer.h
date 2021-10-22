@@ -19,8 +19,8 @@
 #ifndef __OpcUaPiXtendServer_PiXtendV2LServer_h__
 #define __OpcUaPiXtendServer_PiXtendV2LServer_h__
 
+#include "OpcUaPiXtendServer/PiXtend/PiXtendV2L.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendBaseServer.h"
-#include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
 
 namespace OpcUaPiXtendServer
 {

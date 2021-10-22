@@ -25,10 +25,11 @@
 namespace OpcUaPiXtendServer
 {
 
-    class     UnitConverterContext
+    class UnitConverterContext
     {
       public:
         using SPtr = boost::shared_ptr<UnitConverterContext>;
+        using Map = std::map<std::string, SPtr>;
 
         UnitConverterContext(double a, double b, double c, double d);
         virtual ~UnitConverterContext(void);
@@ -51,6 +52,11 @@ namespace OpcUaPiXtendServer
 
         bool input(OpcUaStackCore::OpcUaDataValue& dataValue);
         bool output(OpcUaStackCore::OpcUaDataValue& dataValue);
+
+        double a(void);
+        double b(void);
+        double c(void);
+        double d(void);
 
     private:
         double a_ {0.0};

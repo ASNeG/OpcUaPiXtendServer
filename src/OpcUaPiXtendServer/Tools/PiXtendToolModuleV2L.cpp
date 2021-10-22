@@ -16,6 +16,7 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
+#include "OpcUaPiXtendServer/Factory/PiXtendModulesFactory.h"
 #include "OpcUaPiXtendServer/Tools/PiXtendToolModuleV2L.h"
 #include "OpcUaStackCore/Base/Log.h"
 

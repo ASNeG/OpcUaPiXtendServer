@@ -21,7 +21,8 @@
 #include "OpcUaStackServer/ServiceSetApplication/CreateNodeInstance.h"
 
 #include "OpcUaPiXtendServer/Library/PiXtendServer.h"
-#include "OpcUaPiXtendServer/PiXtend/PiXtendModulesFactory.h"
+#include "OpcUaPiXtendServer/Factory/PiXtendModulesFactory.h"
+#include "OpcUaPiXtendServer/ModuleEIO/USBAccess.h"
 
 
 using namespace OpcUaStackCore;
@@ -64,7 +65,7 @@ namespace OpcUaPiXtendServer
         contextIndex_ = contextIndexSPtr;
 
 		// parse pixtend configuration
-        PiXtendServerControllerCfg controllerCfg;
+        PiXtendServerCfg controllerCfg;
         if (!controllerCfg.parse(&config))
         {
             Log(Error, "parse controller configuration error")
@@ -125,7 +126,7 @@ namespace OpcUaPiXtendServer
 	}
 
 	bool
-	PiXtendServer::startupPiXtend(PiXtendServerControllerCfg& cfg)
+	PiXtendServer::startupPiXtend(PiXtendServerCfg& cfg)
 	{
 	    for (auto module: cfg.configModules()) {
 	    	switch (module.moduleType()) {
@@ -147,7 +148,7 @@ namespace OpcUaPiXtendServer
 	    		}
 	    		case ServerModule::DO:
 	    		{
-	    			if (!startupPiXtendEIODO(module.moduleName(), module.moduleAddress())) {
+	    			if (!startupPiXtendEIODO(module)) {
 	    				Log(Error, "cannot create do pixtend module");
 	    				return false;
 	    			}
@@ -243,23 +244,36 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-	PiXtendServer::startupPiXtendEIODO(const std::string& name, uint32_t address)
+	PiXtendServer::startupPiXtendEIODO(PiXtendServerCfgModule& moduleCfg)
     {
-		auto piXtendEIODO = PiXtendModulesFactory::createPiXtendEIODO(name);
+    	DeviceAccess::SPtr deviceAccess;
+
+    	// usb communication is used
+    	if (moduleCfg.usbCfg()) {
+    		auto usbAccess = boost::make_shared<USBAccess>();
+    		usbAccess->device(moduleCfg.usbCfg()->device());
+			usbAccess->baud(moduleCfg.usbCfg()->baud());
+			usbAccess->parity(moduleCfg.usbCfg()->parity());
+			usbAccess->dataBit(moduleCfg.usbCfg()->dataBit());
+			usbAccess->stopBit(moduleCfg.usbCfg()->stopBit());
+			deviceAccess = usbAccess;
+    	}
+
+		auto piXtendEIODO = PiXtendModulesFactory::createPiXtendEIODO(moduleCfg.moduleName(), deviceAccess);
         if (piXtendEIODO == nullptr) {
             Log(Error, "cannot create module eIO DO")
-                .parameter("ModuleName", name);
+                .parameter("ModuleName", moduleCfg.moduleName());
             return false;
         }
 
 		piXtendEIODO->contextIndex(contextIndex_);
-		if (!piXtendEIODO->startup(address)) {
+		if (!piXtendEIODO->startup(moduleCfg.moduleAddress())) {
 			Log(Error, "startup pixtend EIODO error")
-                .parameter("ModuleName", name)
-                .parameter("ModuleAddress", address);
+                .parameter("ModuleName", moduleCfg.moduleName())
+                .parameter("ModuleAddress", moduleCfg.moduleAddress());
 			return false;
 		}
-		piXtendEIODOMap_.insert(std::make_pair(address, piXtendEIODO));
+		piXtendEIODOMap_.insert(std::make_pair(moduleCfg.moduleAddress(), piXtendEIODO));
 		return true;
     }
 
@@ -286,14 +300,28 @@ namespace OpcUaPiXtendServer
 
 
 	bool
-	PiXtendServer::startupServer(PiXtendServerControllerCfg& cfg)
+	PiXtendServer::startupServer(PiXtendServerCfg& cfg)
 	{
 	    for (auto module: cfg.configModules()) {
+
+	    	// create unit converter context map
+	    	UnitConverterContext::Map unitConverterContextMap;
+	    	for (auto unitConv : module.unitConversionConfigMap()) {
+	    		unitConverterContextMap.insert(std::make_pair(
+	    			unitConv.first,
+					boost::make_shared<UnitConverterContext>(
+						unitConv.second->a(),
+						unitConv.second->b(),
+						unitConv.second->c(),
+						unitConv.second->d()
+					)
+				));
+	    	}
+
 	    	switch (module.moduleType()) {
 	    		case ServerModule::V2S:
 	    		{
-                    if (!startupServerV2S(module.moduleName(),
-                                          module.unitConversionConfigMap())) {
+                    if (!startupServerV2S(module.moduleName(), unitConverterContextMap)) {
 	    				Log(Error, "cannot create v2s server module");
 	    				return false;
 	    			}
@@ -301,8 +329,7 @@ namespace OpcUaPiXtendServer
 	    		}
 	    		case ServerModule::V2L:
 	            {
-                    if (!startupServerV2L(module.moduleName(),
-                                          module.unitConversionConfigMap())) {
+                    if (!startupServerV2L(module.moduleName(), unitConverterContextMap)) {
 	                    Log(Error, "cannot create v2l server module");
 	                    return false;
 	                }
@@ -311,7 +338,7 @@ namespace OpcUaPiXtendServer
 	    		case ServerModule::AO:
 	            {
                     if (!startupServerEIOAO(module.moduleName(),
-                                            module.unitConversionConfigMap(),
+                    						unitConverterContextMap,
                                             module.moduleAddress())) {
 	                    Log(Error, "cannot create ao server module");
 	                    return false;
@@ -321,7 +348,7 @@ namespace OpcUaPiXtendServer
 	    		case ServerModule::DO:
 	            {
                     if (!startupServerEIODO(module.moduleName(),
-                                            module.unitConversionConfigMap(),
+                    						unitConverterContextMap,
                                             module.moduleAddress())) {
 	                    Log(Error, "cannot create do server module");
 	                    return false;
@@ -375,8 +402,10 @@ namespace OpcUaPiXtendServer
 	}
 
     bool
-    PiXtendServer::startupServerV2S(const std::string& name,
-                                    const UnitConversionConfig::Map& unitConversionConfigMap)
+    PiXtendServer::startupServerV2S(
+    	const std::string& name,
+    	const UnitConverterContext::Map& unitConverterContextMap
+	)
     {
         if (piXtendV2SServer_ != nullptr)
         {
@@ -393,13 +422,15 @@ namespace OpcUaPiXtendServer
             name,
             piXtendRootNodeId_,
             contextIndex_,
-            unitConversionConfigMap
+			unitConverterContextMap
         );
     }
 
     bool
-    PiXtendServer::startupServerV2L(const std::string& name,
-                                    const UnitConversionConfig::Map& unitConversionConfigMap)
+    PiXtendServer::startupServerV2L(
+    	const std::string& name,
+    	const UnitConverterContext::Map& unitConverterContextMap
+	)
     {
         if (piXtendV2LServer_ != nullptr)
         {
@@ -416,14 +447,15 @@ namespace OpcUaPiXtendServer
             name,
             piXtendRootNodeId_,
             contextIndex_,
-            unitConversionConfigMap
+			unitConverterContextMap
         );
     }
 
     bool
-    PiXtendServer::startupServerEIOAO(const std::string& name,
-                                      const UnitConversionConfig::Map& unitConversionConfigMap,
-                                      uint32_t address)
+    PiXtendServer::startupServerEIOAO(
+    	const std::string& name,
+    	const UnitConverterContext::Map& unitConverterContextMap,
+        uint32_t address)
     {
         if (piXtendEIOAOServerMap_.find(address) != piXtendEIOAOServerMap_.end())
         {
@@ -441,14 +473,16 @@ namespace OpcUaPiXtendServer
             name,
             piXtendRootNodeId_,
             contextIndex_,
-            unitConversionConfigMap
+			unitConverterContextMap
         );
     }
 
     bool
-    PiXtendServer::startupServerEIODO(const std::string& name,
-                                      const UnitConversionConfig::Map& unitConversionConfigMap,
-                                      uint32_t address)
+    PiXtendServer::startupServerEIODO(
+    	const std::string& name,
+    	const UnitConverterContext::Map& unitConverterContextMap,
+        uint32_t address
+	)
     {
         if (piXtendEIODOServerMap_.find(address) != piXtendEIODOServerMap_.end())
         {
@@ -466,7 +500,7 @@ namespace OpcUaPiXtendServer
             name,
             piXtendRootNodeId_,
             contextIndex_,
-            unitConversionConfigMap
+			unitConverterContextMap
         );
     }
 
