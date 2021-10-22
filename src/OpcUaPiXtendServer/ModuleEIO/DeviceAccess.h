@@ -23,6 +23,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <map>
+
 namespace OpcUaPiXtendServer
 {
 
@@ -35,11 +37,10 @@ namespace OpcUaPiXtendServer
     {
       public:
         using SPtr = boost::shared_ptr<DeviceAccess>;
+        using Map = std::map<std::string, SPtr>;
 
-        DeviceAccess(DeviceAccessType deviceAccessType) {
-        	deviceAccessType_ = deviceAccessType;
-        }
-        virtual ~DeviceAccess(void) {}
+        DeviceAccess(DeviceAccessType deviceAccessType);
+        virtual ~DeviceAccess(void);
 
         virtual bool open(void) = 0;
         virtual bool close(void) = 0;
@@ -50,12 +51,12 @@ namespace OpcUaPiXtendServer
         virtual bool readDigitalOut(uint8_t numberPins, bool* pins) = 0;
         virtual bool readDigitalIn(uint8_t numberPins, bool* pins) = 0;
 
-        DeviceAccessType deviceAccessType(void) {
-        	return deviceAccessType_;
-        }
+        DeviceAccessType deviceAccessType(void);
+        uint32_t& reference(void);
 
       private:
         DeviceAccessType deviceAccessType_;
+        uint32_t reference_;
     };
 
 }
