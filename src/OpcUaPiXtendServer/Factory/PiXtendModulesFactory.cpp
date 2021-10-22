@@ -94,7 +94,7 @@ namespace OpcUaPiXtendServer
     	if (deviceAccess) {
     		if (deviceAccess->deviceAccessType() == DeviceAccessType::USB) {
     			std::cout << "create usb device" << std::endl;
-    			return boost::make_shared<PiXtendEIODOUSBInst>(instanceName);
+    			return boost::make_shared<PiXtendEIODOUSBInst>(instanceName, deviceAccess);
     		}
     		else {
                	Log(Error, "PiXtendModulesFactory cannot create module - module is undefined!")

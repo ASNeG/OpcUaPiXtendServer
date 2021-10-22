@@ -46,7 +46,7 @@ namespace OpcUaPiXtendServer
 
         virtual bool setSlave(uint32_t deviceAddress) = 0;
 
-        virtual bool writeDititalOut(uint8_t numberPins, bool* pins) = 0;
+        virtual bool writeDigitalOut(uint8_t numberPins, bool* pins) = 0;
         virtual bool readDigitalOut(uint8_t numberPins, bool* pins) = 0;
         virtual bool readDigitalIn(uint8_t numberPins, bool* pins) = 0;
 

@@ -24,8 +24,12 @@ using namespace OpcUaStackCore;
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendEIODOUSBInst::PiXtendEIODOUSBInst(const std::string& instanceName)
+    PiXtendEIODOUSBInst::PiXtendEIODOUSBInst(
+    	const std::string& instanceName,
+		DeviceAccess::SPtr& deviceAccess
+	)
     : PiXtendEIODO(instanceName)
+    , deviceAccess_(deviceAccess)
     {
     }
 
@@ -41,32 +45,11 @@ namespace OpcUaPiXtendServer
     	int rc;
     	moduleAddress_ = moduleAddress;
 
-    	Log(Info, "open usb device")
-    		.parameter("Device", device_);
-
-    	// open usb device
-    	ctx_ = modbus_new_rtu(device_.c_str(), baud_, parity_, dataBit_, stopBit_);
-    	if (ctx_ == nullptr) {
-    		Log(Error, "cannot create usb modbus device")
-    			.parameter("Device", device_)
-				.parameter("Baud", baud_)
-				.parameter("Parity", parity_)
-				.parameter("DataBit", dataBit_)
-				.parameter("StopBit", stopBit_);
-    		return false;
-    	}
-
-    	// set debug mode
-    	//modbus_set_debug(ctx_, TRUE);
-
-    	rc = modbus_connect(ctx_);
-    	if (rc != 0) {
-    		Log(Error, "cannot open usb modbus device")
-    			.parameter("Device", device_)
-				.parameter("Baud", baud_)
-				.parameter("Parity", parity_)
-				.parameter("DataBit", dataBit_)
-				.parameter("StopBit", stopBit_);
+    	// open access device
+    	if (!deviceAccess_->open()) {
+    		Log(Error, "open device error")
+    			.parameter("Type", "EIODO")
+				.parameter("InstanceName", instanceName());
     		return false;
     	}
 
@@ -76,15 +59,10 @@ namespace OpcUaPiXtendServer
     bool
     PiXtendEIODOUSBInst::shutdown(void)
     {
-    	// close usb device
-    	if (ctx_ != nullptr) {
-    		modbus_close(ctx_);
-    	    modbus_free(ctx_);
-    	    ctx_ = NULL;
-    	}
+    	// close access device
+    	// open access device
+    	deviceAccess_->close();
 
-    	Log(Info, "close usb device")
-    		.parameter("Device", device_);
         return true;
     }
 
@@ -97,52 +75,39 @@ namespace OpcUaPiXtendServer
     	boost::this_thread::sleep(boost::posix_time::milliseconds(delayTime_));
 
     	// set slave id
-    	rc = modbus_set_slave(ctx_, moduleAddress_);
-    	if (rc != 0) {
-    		Log(Error, "set slave id error")
-    			.parameter("ModuleAddress", moduleAddress_)
-				.parameter("rc", rc);
+    	if (!deviceAccess_->setSlave(moduleAddress_)) {
+    		Log(Error, "set slave error")
+    			.parameter("Type", "EIODO")
+				.parameter("InstanceName", instanceName());
     		return;
     	}
 
     	// write digital output
-    	uint8_t bits[8] = {};
-    	for (auto idx = 0; idx < 8; idx++) {
-    		bits[idx] = outputDataDO_[idx] ? 0x01 : 0x00;
-    	}
-    	auto numBits = modbus_write_bits(ctx_, 0x00, 8, bits);
-    	if (numBits != 8) {
-    		Log(Error, "write output bits error")
-    			.parameter("ModuleAddress", moduleAddress_)
-				.parameter("NumBits", numBits);
-    		return;
+    	if (!deviceAccess_->writeDigitalOut(8, outputDataDO_)) {
+       		Log(Error, "write digital output error")
+        		.parameter("Type", "EIODO")
+    			.parameter("InstanceName", instanceName());
+        	return;
     	}
 
     	// read digital outputs
     	boost::this_thread::sleep(boost::posix_time::milliseconds(10));
-       	numBits = modbus_read_bits(ctx_, 0x00, 8, bits);
-        if (numBits != 8) {
-        	Log(Error, "read output bits error")
-        		.parameter("ModuleAddress", moduleAddress_)
-    			.parameter("NumBits", numBits);
-        	return;
+       	if (!deviceAccess_->readDigitalOut(8, inputDataDO_)) {
+           	Log(Error, "read digital output error")
+            	.parameter("Type", "EIODO")
+        		.parameter("InstanceName", instanceName());
+            return;
         }
-    	for (auto idx = 0; idx < 8; idx++) {
-    		inputDataDO_[idx] = bits[idx] == 0x01 ? true : false;
-    	}
 
     	// read digital inputs
     	boost::this_thread::sleep(boost::posix_time::milliseconds(10));
-       	numBits = modbus_read_input_bits(ctx_, 0x00, 8, bits);
-        if (numBits != 8) {
-        	Log(Error, "read input bits error")
-        		.parameter("ModuleAddress", moduleAddress_)
-    			.parameter("NumBits", numBits);
-        	return;
+       	if (!deviceAccess_->readDigitalIn(8, inputDataDI_)) {
+           	Log(Error, "read digital input error")
+            	.parameter("Type", "EIODO")
+        		.parameter("InstanceName", instanceName());
+            return;
         }
-    	for (auto idx = 0; idx < 8; idx++) {
-    		inputDataDI_[idx] = bits[idx] == 0x01 ? true : false;
-    	}
+
     }
 
     // Inputs Digital

@@ -134,7 +134,7 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-	USBAccess::writeDititalOut(uint8_t numberPins, bool* pins)
+	USBAccess::writeDigitalOut(uint8_t numberPins, bool* pins)
     {
        	// write digital output
         uint8_t bits[numberPins] = {};
@@ -168,7 +168,7 @@ namespace OpcUaPiXtendServer
     		pins[idx] = bits[idx] == 0x01 ? true : false;
     	}
 
-    	return false;
+    	return true;
     }
 
     bool
