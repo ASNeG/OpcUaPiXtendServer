@@ -42,6 +42,7 @@
             <Name>DIO-1</Name>
             <Type>DO</Type>
             <Address>0x01</Address>
+            <USB Device="/dev/ttyUSB0" Baud="19200" Parity="E" DataBit="8" StopBit="1"/>
         </Module>
         
         <Module Enable="0">

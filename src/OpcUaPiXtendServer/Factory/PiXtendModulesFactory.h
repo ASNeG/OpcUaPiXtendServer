@@ -23,6 +23,7 @@
 #include <string>
 #include <functional>
 
+#include "OpcUaPiXtendServer/ModuleEIO/DeviceAccess.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2S.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendV2L.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendEIODO.h"
@@ -43,8 +44,8 @@ namespace OpcUaPiXtendServer
         static PiXtendV2L::SPtr createPiXtendV2L(const std::string& instanceName);
         static PiXtendEIOAO::SPtr createPiXtendEIOAO(const std::string& instanceName);
         static PiXtendEIODO::SPtr createPiXtendEIODO(
-        	const std::string& type,
-			const std::string& instanceName
+        	const std::string& instanceName,
+			DeviceAccess::SPtr& deviceAccess
 		);
     };
 

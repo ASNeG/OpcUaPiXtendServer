@@ -25,6 +25,7 @@ namespace OpcUaPiXtendServer
 {
 
     USBAccess::USBAccess(void)
+    : DeviceAccess(DeviceAccessType::USB)
     {
     }
 

@@ -91,7 +91,7 @@ namespace OpcUaPiXtendServer
         bool startupPiXtendV2S(const std::string& name);
         bool startupPiXtendV2L(const std::string& name);
         bool startupPiXtendEIOAO(const std::string& name, uint32_t address);
-        bool startupPiXtendEIODO(const std::string& name, uint32_t address);
+        bool startupPiXtendEIODO(PiXtendServerCfgModule& moduleCfg);
 
 		bool createPiXtendRootObject(void);
 

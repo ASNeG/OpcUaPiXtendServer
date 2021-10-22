@@ -87,21 +87,26 @@ namespace OpcUaPiXtendServer
 
     PiXtendEIODO::SPtr
     PiXtendModulesFactory::createPiXtendEIODO(
-    	const std::string& type,
-		const std::string& instanceName
+    	const std::string& instanceName,
+		DeviceAccess::SPtr& deviceAccess
 	)
     {
-        if (type == "USB") {
-        	return boost::make_shared<PiXtendEIODOUSBInst>(instanceName);
-        }
-        else if (type == "DUMMY") {
-        	return boost::make_shared<PiXtendEIODODummy>(instanceName);
-        }
-        else {
-           	Log(Error, "PiXtendModulesFactory cannot create module - module is undefined!")
-            	.parameter("instanceName", instanceName);
-            return nullptr;
-        }
+    	if (deviceAccess) {
+    		if (deviceAccess->deviceAccessType() == DeviceAccessType::USB) {
+    			std::cout << "create usb device" << std::endl;
+    			return boost::make_shared<PiXtendEIODOUSBInst>(instanceName);
+    		}
+    		else {
+               	Log(Error, "PiXtendModulesFactory cannot create module - module is undefined!")
+                	.parameter("instanceName", instanceName);
+                return nullptr;
+    		}
+    	}
+    	else {
+    		return boost::make_shared<PiXtendEIODODummy>(instanceName);
+    	}
+
+    	return nullptr;
     }
 
 }

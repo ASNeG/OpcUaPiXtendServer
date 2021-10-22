@@ -22,6 +22,7 @@
 
 #include "OpcUaPiXtendServer/Library/PiXtendServer.h"
 #include "OpcUaPiXtendServer/Factory/PiXtendModulesFactory.h"
+#include "OpcUaPiXtendServer/ModuleEIO/USBAccess.h"
 
 
 using namespace OpcUaStackCore;
@@ -147,7 +148,7 @@ namespace OpcUaPiXtendServer
 	    		}
 	    		case ServerModule::DO:
 	    		{
-	    			if (!startupPiXtendEIODO(module.moduleName(), module.moduleAddress())) {
+	    			if (!startupPiXtendEIODO(module)) {
 	    				Log(Error, "cannot create do pixtend module");
 	    				return false;
 	    			}
@@ -243,23 +244,36 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-	PiXtendServer::startupPiXtendEIODO(const std::string& name, uint32_t address)
+	PiXtendServer::startupPiXtendEIODO(PiXtendServerCfgModule& moduleCfg)
     {
-		auto piXtendEIODO = PiXtendModulesFactory::createPiXtendEIODO("USB", name);
+    	DeviceAccess::SPtr deviceAccess;
+
+    	// usb communication is used
+    	if (moduleCfg.usbCfg()) {
+    		auto usbAccess = boost::make_shared<USBAccess>();
+    		usbAccess->device(moduleCfg.usbCfg()->device());
+			usbAccess->baud(moduleCfg.usbCfg()->baud());
+			usbAccess->parity(moduleCfg.usbCfg()->parity());
+			usbAccess->dataBit(moduleCfg.usbCfg()->dataBit());
+			usbAccess->stopBit(moduleCfg.usbCfg()->stopBit());
+			deviceAccess = usbAccess;
+    	}
+
+		auto piXtendEIODO = PiXtendModulesFactory::createPiXtendEIODO(moduleCfg.moduleName(), deviceAccess);
         if (piXtendEIODO == nullptr) {
             Log(Error, "cannot create module eIO DO")
-                .parameter("ModuleName", name);
+                .parameter("ModuleName", moduleCfg.moduleName());
             return false;
         }
 
 		piXtendEIODO->contextIndex(contextIndex_);
-		if (!piXtendEIODO->startup(address)) {
+		if (!piXtendEIODO->startup(moduleCfg.moduleAddress())) {
 			Log(Error, "startup pixtend EIODO error")
-                .parameter("ModuleName", name)
-                .parameter("ModuleAddress", address);
+                .parameter("ModuleName", moduleCfg.moduleName())
+                .parameter("ModuleAddress", moduleCfg.moduleAddress());
 			return false;
 		}
-		piXtendEIODOMap_.insert(std::make_pair(address, piXtendEIODO));
+		piXtendEIODOMap_.insert(std::make_pair(moduleCfg.moduleAddress(), piXtendEIODO));
 		return true;
     }
 

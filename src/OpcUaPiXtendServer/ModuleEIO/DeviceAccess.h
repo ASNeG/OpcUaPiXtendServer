@@ -26,12 +26,19 @@
 namespace OpcUaPiXtendServer
 {
 
+	enum class DeviceAccessType {
+		USB,
+		RS485
+	};
+
     class DeviceAccess
     {
       public:
         using SPtr = boost::shared_ptr<DeviceAccess>;
 
-        DeviceAccess(void) {}
+        DeviceAccess(DeviceAccessType deviceAccessType) {
+        	deviceAccessType_ = deviceAccessType;
+        }
         virtual ~DeviceAccess(void) {}
 
         virtual bool open(void) = 0;
@@ -42,6 +49,13 @@ namespace OpcUaPiXtendServer
         virtual bool writeDititalOut(uint8_t numberPins, bool* pins) = 0;
         virtual bool readDigitalOut(uint8_t numberPins, bool* pins) = 0;
         virtual bool readDigitalIn(uint8_t numberPins, bool* pins) = 0;
+
+        DeviceAccessType deviceAccessType(void) {
+        	return deviceAccessType_;
+        }
+
+      private:
+        DeviceAccessType deviceAccessType_;
     };
 
 }
