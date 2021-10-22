@@ -16,24 +16,27 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#ifndef __OpcUaPiXtendServer_PiXtendEIODOUSBInst_h__
-#define __OpcUaPiXtendServer_PiXtendEIODOUSBInst_h__
+#ifndef __OpcUaPiXtendServer_PiXtendEIODOInst_h__
+#define __OpcUaPiXtendServer_PiXtendEIODOInst_h__
 
 #include <boost/shared_ptr.hpp>
-#include "OpcUaPiXtendServer/ModuleEIO/USBAccess.h"
+#include "OpcUaPiXtendServer/ModuleEIO/DeviceAccess.h"
 #include "OpcUaPiXtendServer/PiXtend/PiXtendEIODO.h"
 
 namespace OpcUaPiXtendServer
 {
 
-    class PiXtendEIODOUSBInst
+    class PiXtendEIODOInst
     : public PiXtendEIODO
     {
       public:
-        using SPtr = boost::shared_ptr<PiXtendEIODOUSBInst>;
+        using SPtr = boost::shared_ptr<PiXtendEIODOInst>;
 
-        PiXtendEIODOUSBInst(const std::string& instanceName);
-        virtual ~PiXtendEIODOUSBInst(void);
+        PiXtendEIODOInst(
+        	const std::string& instanceName,
+			DeviceAccess::SPtr& deviceAccess
+		);
+        virtual ~PiXtendEIODOInst(void);
 
         // Configuration
 
@@ -72,6 +75,8 @@ namespace OpcUaPiXtendServer
         virtual bool do7(void) override;
 
       private:
+        DeviceAccess::SPtr deviceAccess_;
+
         std::string device_ = "/dev/ttyUSB0";
         int baud_ = 19200;
         char parity_ = 'E';
