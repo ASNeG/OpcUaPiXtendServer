@@ -89,6 +89,30 @@ namespace OpcUaPiXtendServer
         return true;
     }
 
+    double
+	UnitConverterContext::a(void)
+    {
+    	return a_;
+    }
+
+    double
+	UnitConverterContext::b(void)
+    {
+    	return b_;
+    }
+
+    double
+	UnitConverterContext::c(void)
+    {
+    	return c_;
+    }
+
+    double
+	UnitConverterContext::d(void)
+    {
+    	return d_;
+    }
+
     bool
     UnitConverterContext::output(double percent, double& nodeValue)
     {
