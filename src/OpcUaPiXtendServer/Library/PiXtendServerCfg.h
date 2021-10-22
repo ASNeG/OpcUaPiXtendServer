@@ -46,6 +46,8 @@ namespace OpcUaPiXtendServer
     {
       public:
     	using SPtr = boost::shared_ptr<USBCfg>;
+    	using Vec = std::vector<SPtr>;
+    	using Map = std::map<std::string, SPtr>;
 
     	USBCfg(void);
     	~USBCfg(void);
@@ -65,6 +67,22 @@ namespace OpcUaPiXtendServer
     	uint8_t dataBit_ = 0;
     	uint8_t stopBit_ = 0;
     };
+
+    class USBDeviceCfg
+    {
+       public:
+    	using SPtr = boost::shared_ptr<USBDeviceCfg>;
+
+     	USBDeviceCfg(void);
+     	~USBDeviceCfg(void);
+
+     	bool parse(OpcUaStackCore::Config* config);
+
+     	std::string device(void);
+
+       private:
+     	std::string device_ = "";
+     };
 
     class UnitConversionConfig
     {
@@ -96,6 +114,8 @@ namespace OpcUaPiXtendServer
     class PiXtendServerCfgModule
     {
       public:
+    	using Vec = std::vector<PiXtendServerCfgModule>;
+
         PiXtendServerCfgModule(void);
         ~PiXtendServerCfgModule(void);
 
@@ -105,10 +125,10 @@ namespace OpcUaPiXtendServer
         std::string moduleName(void);
         ServerModule moduleType(void);
         uint32_t moduleAddress(void);
-        USBCfg::SPtr usbCfg(void);
+        USBDeviceCfg::SPtr usbDeviceCfg(void);
 
         UnitConversionConfig::Map unitConversionConfigMap(void);
-        USBCfg::SPtr usbCfg_;
+        USBDeviceCfg::SPtr usbDeviceCfg_;
 
       private:
         bool enable_ {true};
@@ -130,10 +150,12 @@ namespace OpcUaPiXtendServer
 
         bool parse(OpcUaStackCore::Config* config);
 
-        std::vector<PiXtendServerCfgModule>& configModules(void);
+        PiXtendServerCfgModule::Vec& configModules(void);
+        USBCfg::Map& usbCfgMap(void);
 
       private:
-        std::vector<PiXtendServerCfgModule> configModules_;
+        PiXtendServerCfgModule::Vec configModules_;
+        USBCfg::Map usbCfgMap_;
     };
 
 }

@@ -55,6 +55,7 @@ namespace OpcUaPiXtendServer
 		bool shutdown(void);
 
 	  private:
+		PiXtendServerCfg cfg_;
 		OpcUaStackCore::IOThread::SPtr ioThread_ = nullptr;
 		boost::shared_ptr<boost::asio::io_service::strand> strand_ = nullptr;
 
@@ -79,14 +80,14 @@ namespace OpcUaPiXtendServer
 		uint32_t pixtendTimerInterval_ = 200;
 		OpcUaStackCore::SlotTimerElement::SPtr pixtendTimerElement_ = nullptr;
 
-		bool startupPiXtend(PiXtendServerCfg& cfg);
+		bool startupPiXtend(void);
 		bool shutdownPiXtend(void);
         bool startupServerV2S(const std::string& name, const UnitConverterContext::Map& unitConverterContextMap);
         bool startupServerV2L(const std::string& name, const UnitConverterContext::Map& unitConverterContextMap);
         bool startupServerEIOAO(const std::string& name, const UnitConverterContext::Map& unitConverterContextMap, uint32_t address);
         bool startupServerEIODO(const std::string& name, const UnitConverterContext::Map& unitConverterContextMap, uint32_t address);
 
-        bool startupServer(PiXtendServerCfg& cfg);
+        bool startupServer(void);
         bool shutdownServer(void);
         bool startupPiXtendV2S(const std::string& name);
         bool startupPiXtendV2L(const std::string& name);

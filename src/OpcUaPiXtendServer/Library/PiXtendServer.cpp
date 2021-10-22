@@ -65,8 +65,7 @@ namespace OpcUaPiXtendServer
         contextIndex_ = contextIndexSPtr;
 
 		// parse pixtend configuration
-        PiXtendServerCfg controllerCfg;
-        if (!controllerCfg.parse(&config))
+        if (!cfg_.parse(&config))
         {
             Log(Error, "parse controller configuration error")
                 .parameter("File", config.configFileName());
@@ -83,14 +82,14 @@ namespace OpcUaPiXtendServer
 
         // startup pixtend modules
         Log(Debug, "startup pixtend modules");
-        if (!startupPiXtend(controllerCfg)) {
+        if (!startupPiXtend()) {
         	Log(Error, "startup pixtend error");
         	return false;
         }
 
         // add configured opc ua server objects
         Log(Debug, "startup pixtend server");
-        if (!startupServer(controllerCfg)) {
+        if (!startupServer()) {
         	Log(Error, "startup server error");
         	return false;
         }
@@ -126,9 +125,9 @@ namespace OpcUaPiXtendServer
 	}
 
 	bool
-	PiXtendServer::startupPiXtend(PiXtendServerCfg& cfg)
+	PiXtendServer::startupPiXtend(void)
 	{
-	    for (auto module: cfg.configModules()) {
+	    for (auto module: cfg_.configModules()) {
 	    	switch (module.moduleType()) {
 	    		case ServerModule::V2S:
 	    		{
@@ -249,13 +248,23 @@ namespace OpcUaPiXtendServer
     	DeviceAccess::SPtr deviceAccess;
 
     	// usb communication is used
-    	if (moduleCfg.usbCfg()) {
+    	if (moduleCfg.usbDeviceCfg()) {
+
+    		// find assigned usb configuration element
+    		auto it = cfg_.usbCfgMap().find(moduleCfg.usbDeviceCfg()->device());
+    		if (it == cfg_.usbCfgMap().end()) {
+    			Log(Error, "USB device not found in configuration")
+    				.parameter("USBDevice", moduleCfg.usbDeviceCfg()->device());
+    			return false;
+    		}
+
+    		auto usbCfg = it->second;
     		auto usbAccess = boost::make_shared<USBAccess>();
-    		usbAccess->device(moduleCfg.usbCfg()->device());
-			usbAccess->baud(moduleCfg.usbCfg()->baud());
-			usbAccess->parity(moduleCfg.usbCfg()->parity());
-			usbAccess->dataBit(moduleCfg.usbCfg()->dataBit());
-			usbAccess->stopBit(moduleCfg.usbCfg()->stopBit());
+    		usbAccess->device(usbCfg->device());
+			usbAccess->baud(usbCfg->baud());
+			usbAccess->parity(usbCfg->parity());
+			usbAccess->dataBit(usbCfg->dataBit());
+			usbAccess->stopBit(usbCfg->stopBit());
 			deviceAccess = usbAccess;
     	}
 
@@ -300,9 +309,9 @@ namespace OpcUaPiXtendServer
 
 
 	bool
-	PiXtendServer::startupServer(PiXtendServerCfg& cfg)
+	PiXtendServer::startupServer(void)
 	{
-	    for (auto module: cfg.configModules()) {
+	    for (auto module: cfg_.configModules()) {
 
 	    	// create unit converter context map
 	    	UnitConverterContext::Map unitConverterContextMap;
