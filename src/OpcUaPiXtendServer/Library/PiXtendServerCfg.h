@@ -42,6 +42,30 @@ namespace OpcUaPiXtendServer
         { "do", ServerModule::DO }
     };
 
+    class USBCfg
+    {
+      public:
+    	using SPtr = boost::shared_ptr<USBCfg>;
+
+    	USBCfg(void);
+    	~USBCfg(void);
+
+    	bool parse(OpcUaStackCore::Config* config);
+
+    	std::string device(void);
+    	uint32_t baud(void);
+    	char parity(void);
+    	uint8_t dataBit();
+    	uint8_t stopBit(void);
+
+      private:
+    	std::string device_ = "";
+    	uint32_t baud_ = 0;
+    	char parity_ = 'X';
+    	uint8_t dataBit_ = 0;
+    	uint8_t stopBit_ = 0;
+    };
+
     class UnitConversionConfig
     {
       public:
@@ -81,8 +105,10 @@ namespace OpcUaPiXtendServer
         std::string moduleName(void);
         ServerModule moduleType(void);
         uint32_t moduleAddress(void);
+        USBCfg::SPtr usbCfg(void);
 
         UnitConversionConfig::Map unitConversionConfigMap(void);
+        USBCfg::SPtr usbCfg_;
 
       private:
         bool enable_ {true};
