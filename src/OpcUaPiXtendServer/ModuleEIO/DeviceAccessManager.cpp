@@ -75,6 +75,16 @@ namespace OpcUaPiXtendServer
     }
 
     void
+	DeviceAccessManager::deleteDeviceAccess(void)
+    {
+    	for (auto it : deviceAccessMap_) {
+    		auto deviceAccess = it.second;
+    		deviceAccess->close();
+    	}
+    	deviceAccessMap_.clear();
+    }
+
+    void
 	DeviceAccessManager::deleteDeviceAccess(
     	const std::string& device
     )

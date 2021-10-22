@@ -33,6 +33,7 @@
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2LServer.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendEIODOServer.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendEIOAOServer.h"
+#include "OpcUaPiXtendServer/ModuleEIO/DeviceAccessManager.h"
 
 namespace OpcUaPiXtendServer
 {
@@ -65,6 +66,7 @@ namespace OpcUaPiXtendServer
 		const OpcUaStackCore::OpcUaNodeId piXtendRootNodeId_ = OpcUaStackCore::OpcUaNodeId("PiXtend", 1);
 
         ContextIndex::SPtr contextIndex_ = nullptr;
+        DeviceAccessManager deviceAccessManager_;
 
         PiXtendV2S::SPtr piXtendV2S_ {nullptr};
         PiXtendV2L::SPtr piXtendV2L_ {nullptr};

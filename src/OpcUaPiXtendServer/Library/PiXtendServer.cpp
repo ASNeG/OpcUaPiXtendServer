@@ -201,6 +201,9 @@ namespace OpcUaPiXtendServer
 		}
 		piXtendEIODOMap_.clear();
 
+		// shutdown all device access
+		deviceAccessManager_.deleteDeviceAccess();
+
 		return true;
 	}
 
@@ -258,14 +261,20 @@ namespace OpcUaPiXtendServer
     			return false;
     		}
 
+    		// create usb device access
     		auto usbCfg = it->second;
-    		auto usbAccess = boost::make_shared<USBAccess>();
-    		usbAccess->device(usbCfg->device());
-			usbAccess->baud(usbCfg->baud());
-			usbAccess->parity(usbCfg->parity());
-			usbAccess->dataBit(usbCfg->dataBit());
-			usbAccess->stopBit(usbCfg->stopBit());
-			deviceAccess = usbAccess;
+			deviceAccess = deviceAccessManager_.createDeviceAccess(
+				usbCfg->device(),
+				usbCfg->baud(),
+				usbCfg->parity(),
+				usbCfg->dataBit(),
+				usbCfg->stopBit()
+			);
+			if (!deviceAccess) {
+				Log(Error, "create usb device access error")
+					.parameter("USBDevice", moduleCfg.usbDeviceCfg()->device());
+				return false;
+			}
     	}
 
 		auto piXtendEIODO = PiXtendModulesFactory::createPiXtendEIODO(moduleCfg.moduleName(), deviceAccess);

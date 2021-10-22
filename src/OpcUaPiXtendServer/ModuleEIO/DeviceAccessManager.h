@@ -40,6 +40,7 @@ namespace OpcUaPiXtendServer
         	uint8_t dataBit,
 			uint8_t stopBit
 		);
+        void deleteDeviceAccess(void);
         void deleteDeviceAccess(
         	const std::string& device
         );

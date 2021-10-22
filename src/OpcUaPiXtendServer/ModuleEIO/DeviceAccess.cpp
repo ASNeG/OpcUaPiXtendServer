@@ -33,6 +33,12 @@ namespace OpcUaPiXtendServer
     {
     }
 
+    std::string
+	DeviceAccess::device(void)
+    {
+    	return device_;
+    }
+
     DeviceAccessType
 	DeviceAccess::deviceAccessType(void)
     {

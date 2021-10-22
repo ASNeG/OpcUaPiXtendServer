@@ -51,10 +51,12 @@ namespace OpcUaPiXtendServer
         virtual bool readDigitalOut(uint8_t numberPins, bool* pins) = 0;
         virtual bool readDigitalIn(uint8_t numberPins, bool* pins) = 0;
 
+        std::string device(void);
         DeviceAccessType deviceAccessType(void);
         uint32_t& reference(void);
 
       private:
+        std::string device_;
         DeviceAccessType deviceAccessType_;
         uint32_t reference_;
     };

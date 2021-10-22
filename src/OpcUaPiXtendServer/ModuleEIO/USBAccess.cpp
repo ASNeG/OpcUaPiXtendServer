@@ -37,6 +37,7 @@ namespace OpcUaPiXtendServer
 	USBAccess::device(const std::string& device)
     {
     	device_ = device;
+    	device_ = device;
     }
 
     void
