@@ -16,7 +16,7 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#include "OpcUaPiXtendServer/ModuleEIO/PiXtendEIODOUSBInst.h"
+#include "OpcUaPiXtendServer/ModuleEIO/PiXtendEIODOInst.h"
 #include "OpcUaStackCore/Base/Log.h"
 
 using namespace OpcUaStackCore;
@@ -24,7 +24,7 @@ using namespace OpcUaStackCore;
 namespace OpcUaPiXtendServer
 {
 
-    PiXtendEIODOUSBInst::PiXtendEIODOUSBInst(
+    PiXtendEIODOInst::PiXtendEIODOInst(
     	const std::string& instanceName,
 		DeviceAccess::SPtr& deviceAccess
 	)
@@ -33,14 +33,14 @@ namespace OpcUaPiXtendServer
     {
     }
 
-    PiXtendEIODOUSBInst::~PiXtendEIODOUSBInst(void)
+    PiXtendEIODOInst::~PiXtendEIODOInst(void)
     {
     }
 
     // Configuration
 
     bool
-    PiXtendEIODOUSBInst::startup(uint32_t moduleAddress)
+    PiXtendEIODOInst::startup(uint32_t moduleAddress)
     {
     	int rc;
     	moduleAddress_ = moduleAddress;
@@ -57,7 +57,7 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-    PiXtendEIODOUSBInst::shutdown(void)
+    PiXtendEIODOInst::shutdown(void)
     {
     	// close access device
     	// open access device
@@ -67,7 +67,7 @@ namespace OpcUaPiXtendServer
     }
 
     void
- 	PiXtendEIODOUSBInst::handleHardwareAccess(void)
+ 	PiXtendEIODOInst::handleHardwareAccess(void)
     {
     	int rc;
 
@@ -113,49 +113,49 @@ namespace OpcUaPiXtendServer
     // Inputs Digital
 
     bool
-    PiXtendEIODOUSBInst::di0(void)
+    PiXtendEIODOInst::di0(void)
     {
     	return inputDataDI_[0];
     }
 
     bool
-    PiXtendEIODOUSBInst::di1(void)
+    PiXtendEIODOInst::di1(void)
     {
     	return inputDataDI_[1];
     }
 
     bool
-    PiXtendEIODOUSBInst::di2(void)
+    PiXtendEIODOInst::di2(void)
     {
     	return inputDataDI_[2];
     }
 
     bool
-    PiXtendEIODOUSBInst::di3(void)
+    PiXtendEIODOInst::di3(void)
     {
     	return inputDataDI_[3];
     }
 
     bool
-    PiXtendEIODOUSBInst::di4(void)
+    PiXtendEIODOInst::di4(void)
     {
     	return inputDataDI_[4];
     }
 
     bool
-    PiXtendEIODOUSBInst::di5(void)
+    PiXtendEIODOInst::di5(void)
     {
     	return inputDataDI_[5];
     }
 
     bool
-    PiXtendEIODOUSBInst::di6(void)
+    PiXtendEIODOInst::di6(void)
     {
     	return inputDataDI_[6];
     }
 
     bool
-    PiXtendEIODOUSBInst::di7(void)
+    PiXtendEIODOInst::di7(void)
     {
     	return inputDataDI_[7];
     }
@@ -163,97 +163,97 @@ namespace OpcUaPiXtendServer
     // Output Digital
 
     void
-    PiXtendEIODOUSBInst::do0(bool data)
+    PiXtendEIODOInst::do0(bool data)
     {
     	outputDataDO_[0] = data;
     }
 
     bool
-    PiXtendEIODOUSBInst::do0(void)
+    PiXtendEIODOInst::do0(void)
     {
         return inputDataDO_[0];
     }
 
     void
-    PiXtendEIODOUSBInst::do1(bool data)
+    PiXtendEIODOInst::do1(bool data)
     {
     	outputDataDO_[1] = data;
     }
 
     bool
-    PiXtendEIODOUSBInst::do1(void)
+    PiXtendEIODOInst::do1(void)
     {
         return inputDataDO_[1];
     }
 
     void
-    PiXtendEIODOUSBInst::do2(bool data)
+    PiXtendEIODOInst::do2(bool data)
     {
     	outputDataDO_[2] = data;
     }
 
     bool
-    PiXtendEIODOUSBInst::do2(void)
+    PiXtendEIODOInst::do2(void)
     {
     	return inputDataDO_[2];
     }
 
     void
-    PiXtendEIODOUSBInst::do3(bool data)
+    PiXtendEIODOInst::do3(bool data)
     {
     	outputDataDO_[3] = data;
     }
 
     bool
-    PiXtendEIODOUSBInst::do3(void)
+    PiXtendEIODOInst::do3(void)
     {
     	return inputDataDO_[3];
     }
 
     void
-    PiXtendEIODOUSBInst::do4(bool data)
+    PiXtendEIODOInst::do4(bool data)
     {
     	outputDataDO_[4] = data;
     }
 
     bool
-    PiXtendEIODOUSBInst::do4(void)
+    PiXtendEIODOInst::do4(void)
     {
     	return inputDataDO_[4];
     }
 
     void
-    PiXtendEIODOUSBInst::do5(bool data)
+    PiXtendEIODOInst::do5(bool data)
     {
     	outputDataDO_[5] = data;
     }
 
     bool
-    PiXtendEIODOUSBInst::do5(void)
+    PiXtendEIODOInst::do5(void)
     {
     	return inputDataDO_[5];
     }
 
     void
-    PiXtendEIODOUSBInst::do6(bool data)
+    PiXtendEIODOInst::do6(bool data)
     {
     	outputDataDO_[6] = data;
     }
 
     bool
-    PiXtendEIODOUSBInst::do6(void)
+    PiXtendEIODOInst::do6(void)
     {
     	return inputDataDO_[6];
     }
 
     void
-    PiXtendEIODOUSBInst::do7(bool data)
+    PiXtendEIODOInst::do7(bool data)
     {
     	outputDataDO_[7] = data;
     }
 
     bool
-    PiXtendEIODOUSBInst::do7(void)
+    PiXtendEIODOInst::do7(void)
     {
     	return inputDataDO_[7];
     }

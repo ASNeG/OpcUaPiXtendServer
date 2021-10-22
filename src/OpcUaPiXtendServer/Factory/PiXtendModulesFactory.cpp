@@ -17,8 +17,7 @@
  */
 
 #include <boost/make_shared.hpp>
-#include <OpcUaPiXtendServer/ModuleEIO/PiXtendEIODOUSBInst.h>
-
+#include <OpcUaPiXtendServer/ModuleEIO/PiXtendEIODOInst.h>
 #include "OpcUaPiXtendServer/Factory/PiXtendModulesFactory.h"
 #include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaPiXtendServer/ModuleDummy/PiXtendEIOAODummy.h"
@@ -93,8 +92,7 @@ namespace OpcUaPiXtendServer
     {
     	if (deviceAccess) {
     		if (deviceAccess->deviceAccessType() == DeviceAccessType::USB) {
-    			std::cout << "create usb device" << std::endl;
-    			return boost::make_shared<PiXtendEIODOUSBInst>(instanceName, deviceAccess);
+    			return boost::make_shared<PiXtendEIODOInst>(instanceName, deviceAccess);
     		}
     		else {
                	Log(Error, "PiXtendModulesFactory cannot create module - module is undefined!")

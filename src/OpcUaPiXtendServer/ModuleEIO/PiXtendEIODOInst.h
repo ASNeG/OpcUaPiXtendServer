@@ -16,8 +16,8 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
-#ifndef __OpcUaPiXtendServer_PiXtendEIODOUSBInst_h__
-#define __OpcUaPiXtendServer_PiXtendEIODOUSBInst_h__
+#ifndef __OpcUaPiXtendServer_PiXtendEIODOInst_h__
+#define __OpcUaPiXtendServer_PiXtendEIODOInst_h__
 
 #include <boost/shared_ptr.hpp>
 #include "OpcUaPiXtendServer/ModuleEIO/DeviceAccess.h"
@@ -26,17 +26,17 @@
 namespace OpcUaPiXtendServer
 {
 
-    class PiXtendEIODOUSBInst
+    class PiXtendEIODOInst
     : public PiXtendEIODO
     {
       public:
-        using SPtr = boost::shared_ptr<PiXtendEIODOUSBInst>;
+        using SPtr = boost::shared_ptr<PiXtendEIODOInst>;
 
-        PiXtendEIODOUSBInst(
+        PiXtendEIODOInst(
         	const std::string& instanceName,
 			DeviceAccess::SPtr& deviceAccess
 		);
-        virtual ~PiXtendEIODOUSBInst(void);
+        virtual ~PiXtendEIODOInst(void);
 
         // Configuration
 
