@@ -47,12 +47,12 @@
             <USBDevice Device="/dev/ttyUSB0"/>
         </Module>
         
-        <Module Enable="0">
-          <Name>AIO-1</Name>
-          <Type>AO</Type>
-          <Address>0x02</Address>
-          <USBDevice Device="/dev/ttyUSB0"/>
-	</Module>
+        <Module Enable="1">
+            <Name>AIO-1</Name>
+            <Type>AO</Type>
+            <Address>0x03</Address>
+            <USBDevice Device="/dev/ttyUSB0"/>
+	    </Module>
 	
     </Modules>
 

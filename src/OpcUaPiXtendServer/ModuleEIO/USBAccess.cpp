@@ -227,7 +227,7 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-	USBAccess::readAnalogDIn(uint8_t numberPins, uint16_t* pins)
+	USBAccess::readAnalogIn(uint8_t numberPins, uint16_t* pins)
     {
        	auto numBits = modbus_read_input_registers(ctx_, 0x00, numberPins, pins);
         if (numBits != numberPins) {

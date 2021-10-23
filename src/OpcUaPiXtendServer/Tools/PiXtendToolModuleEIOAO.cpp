@@ -16,6 +16,7 @@
           Samuel Huebl (Samuel@huebl-sgh.de)
  */
 
+#include "OpcUaPiXtendServer/ModuleEIO/DeviceAccess.h"
 #include "OpcUaPiXtendServer/Factory/PiXtendModulesFactory.h"
 #include "OpcUaPiXtendServer/Tools/PiXtendToolModuleEIOAO.h"
 
@@ -24,7 +25,8 @@ namespace OpcUaPiXtendServer
     PiXtendToolModuleEIOAO::PiXtendToolModuleEIOAO(const std::string& name, ModuleAddress moduleAddress)
     : PiXtendToolModule()
     {
-        pixtendSPtr_ = PiXtendModulesFactory::createPiXtendEIOAO(name);
+    	DeviceAccess::SPtr deviceAccess; // FIXME: use USB or RS485 device!!!
+        pixtendSPtr_ = PiXtendModulesFactory::createPiXtendEIOAO(name, deviceAccess);
 
         if (pixtendSPtr_ != nullptr && moduleAddress.first)
         {

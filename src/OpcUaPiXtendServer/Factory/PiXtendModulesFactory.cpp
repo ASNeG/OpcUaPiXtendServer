@@ -17,7 +17,8 @@
  */
 
 #include <boost/make_shared.hpp>
-#include <OpcUaPiXtendServer/ModuleEIO/PiXtendEIODOInst.h>
+#include "OpcUaPiXtendServer/ModuleEIO/PiXtendEIODOInst.h"
+#include "OpcUaPiXtendServer/ModuleEIO/PiXtendEIOAOInst.h"
 #include "OpcUaPiXtendServer/Factory/PiXtendModulesFactory.h"
 #include "OpcUaStackCore/Base/Log.h"
 #include "OpcUaPiXtendServer/ModuleDummy/PiXtendEIOAODummy.h"
@@ -73,15 +74,26 @@ namespace OpcUaPiXtendServer
     }
 
     PiXtendEIOAO::SPtr
-    PiXtendModulesFactory::createPiXtendEIOAO(const std::string& instanceName)
+    PiXtendModulesFactory::createPiXtendEIOAO(
+    	const std::string& instanceName,
+		DeviceAccess::SPtr& deviceAccess
+	)
     {
-#ifdef OPTION_OPCUAPIXTENDSERVER_SPI_DUMMY
-        return boost::make_shared<PiXtendEIOAODummy>(instanceName);
-#else
-        Log(Error, "PiXtendModulesFactory cannot create module - module is undefined!")
-                .parameter("instanceName", instanceName);
-        return nullptr;
-#endif
+    	if (deviceAccess) {
+    		if (deviceAccess->deviceAccessType() == DeviceAccessType::USB) {
+    			return boost::make_shared<PiXtendEIOAOInst>(instanceName, deviceAccess);
+    		}
+    		else {
+               	Log(Error, "PiXtendModulesFactory cannot create module - module is undefined!")
+                	.parameter("instanceName", instanceName);
+                return nullptr;
+    		}
+    	}
+    	else {
+    		return boost::make_shared<PiXtendEIOAODummy>(instanceName);
+    	}
+
+    	return nullptr;
     }
 
     PiXtendEIODO::SPtr

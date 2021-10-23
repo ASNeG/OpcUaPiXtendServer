@@ -155,9 +155,9 @@ namespace OpcUaPiXtendServer
 	    		}
 	    		case ServerModule::AO:
 	    		{
-	                if (!startupPiXtendEIOAO(module.moduleName(), module.moduleAddress()))
+	                if (!startupPiXtendEIOAO(module))
 	                {
-	                    Log(Error, "cannot create do pixtend module");
+	                    Log(Error, "cannot create ao pixtend module");
 	                    return false;
 	                }
 	                break;
@@ -296,23 +296,52 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-	PiXtendServer::startupPiXtendEIOAO(const std::string& name, uint32_t address)
+	PiXtendServer::startupPiXtendEIOAO(PiXtendServerCfgModule& moduleCfg)
     {
-		auto piXtendEIOAO = PiXtendModulesFactory::createPiXtendEIOAO(name);
+    	DeviceAccess::SPtr deviceAccess;
+
+    	// usb communication is used
+    	if (moduleCfg.usbDeviceCfg()) {
+
+    		// find assigned usb configuration element
+    		auto it = cfg_.usbCfgMap().find(moduleCfg.usbDeviceCfg()->device());
+    		if (it == cfg_.usbCfgMap().end()) {
+    			Log(Error, "USB device not found in configuration")
+    				.parameter("USBDevice", moduleCfg.usbDeviceCfg()->device());
+    			return false;
+    		}
+
+    		// create usb device access
+    		auto usbCfg = it->second;
+			deviceAccess = deviceAccessManager_.createDeviceAccess(
+				usbCfg->device(),
+				usbCfg->baud(),
+				usbCfg->parity(),
+				usbCfg->dataBit(),
+				usbCfg->stopBit()
+			);
+			if (!deviceAccess) {
+				Log(Error, "create usb device access error")
+					.parameter("USBDevice", moduleCfg.usbDeviceCfg()->device());
+				return false;
+			}
+    	}
+
+		auto piXtendEIOAO = PiXtendModulesFactory::createPiXtendEIOAO(moduleCfg.moduleName(), deviceAccess);
         if (piXtendEIOAO == nullptr) {
             Log(Error, "cannot create module eIO AO")
-                .parameter("ModuleName", name)
-                .parameter("ModuleAddress", address);
+                .parameter("ModuleName", moduleCfg.moduleName());
             return false;
         }
 
 		piXtendEIOAO->contextIndex(contextIndex_);
-		if (!piXtendEIOAO->startup(address)) {
+		if (!piXtendEIOAO->startup(moduleCfg.moduleAddress())) {
 			Log(Error, "startup pixtend EIOAO error")
-			    .parameter("ModuleName", name);
+                .parameter("ModuleName", moduleCfg.moduleName())
+                .parameter("ModuleAddress", moduleCfg.moduleAddress());
 			return false;
 		}
-		piXtendEIOAOMap_.insert(std::make_pair(address, piXtendEIOAO));
+		piXtendEIOAOMap_.insert(std::make_pair(moduleCfg.moduleAddress(), piXtendEIOAO));
 		return true;
     }
 
