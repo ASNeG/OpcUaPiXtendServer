@@ -40,14 +40,14 @@
         
         <USB Device="/dev/ttyUSB0" Baud="19200" Parity="E" DataBit="8" StopBit="1"/>
         
-        <Module Enable="1">
+        <Module Enable="0">
             <Name>DIO-1</Name>
             <Type>DO</Type>
             <Address>0x01</Address>
             <USBDevice Device="/dev/ttyUSB0"/>
         </Module>
         
-        <Module Enable="1">
+        <Module Enable="0">
             <Name>AIO-1</Name>
             <Type>AO</Type>
             <Address>0x03</Address>
