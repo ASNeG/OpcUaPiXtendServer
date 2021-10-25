@@ -42,7 +42,10 @@ namespace OpcUaPiXtendServer
 
         static PiXtendV2S::SPtr createPiXtendV2S(const std::string& instanceName);
         static PiXtendV2L::SPtr createPiXtendV2L(const std::string& instanceName);
-        static PiXtendEIOAO::SPtr createPiXtendEIOAO(const std::string& instanceName);
+        static PiXtendEIOAO::SPtr createPiXtendEIOAO(
+        	const std::string& instanceName,
+			DeviceAccess::SPtr& deviceAccess
+		);
         static PiXtendEIODO::SPtr createPiXtendEIODO(
         	const std::string& instanceName,
 			DeviceAccess::SPtr& deviceAccess

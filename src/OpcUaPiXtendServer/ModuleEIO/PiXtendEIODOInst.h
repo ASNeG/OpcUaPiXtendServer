@@ -74,17 +74,11 @@ namespace OpcUaPiXtendServer
         virtual void do7(bool data) override;
         virtual bool do7(void) override;
 
-      private:
+      protected:
         DeviceAccess::SPtr deviceAccess_;
 
-        std::string device_ = "/dev/ttyUSB0";
-        int baud_ = 19200;
-        char parity_ = 'E';
-        int dataBit_ = 8;
-        int stopBit_ = 1;
-        modbus_t *ctx_ = nullptr;
+      private:
         uint32_t moduleAddress_ = 0;
-
         uint32_t delayTime_ = 100;
 
         bool inputDataDI_[8] = { true, true, true, true, true, true, true, true };

@@ -33,6 +33,7 @@
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendV2LServer.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendEIODOServer.h"
 #include "OpcUaPiXtendServer/OpcUaServer/PiXtendEIOAOServer.h"
+#include "OpcUaPiXtendServer/ModuleEIO/DeviceAccessManager.h"
 
 namespace OpcUaPiXtendServer
 {
@@ -55,6 +56,7 @@ namespace OpcUaPiXtendServer
 		bool shutdown(void);
 
 	  private:
+		PiXtendServerCfg cfg_;
 		OpcUaStackCore::IOThread::SPtr ioThread_ = nullptr;
 		boost::shared_ptr<boost::asio::io_service::strand> strand_ = nullptr;
 
@@ -64,6 +66,7 @@ namespace OpcUaPiXtendServer
 		const OpcUaStackCore::OpcUaNodeId piXtendRootNodeId_ = OpcUaStackCore::OpcUaNodeId("PiXtend", 1);
 
         ContextIndex::SPtr contextIndex_ = nullptr;
+        DeviceAccessManager deviceAccessManager_;
 
         PiXtendV2S::SPtr piXtendV2S_ {nullptr};
         PiXtendV2L::SPtr piXtendV2L_ {nullptr};
@@ -79,18 +82,18 @@ namespace OpcUaPiXtendServer
 		uint32_t pixtendTimerInterval_ = 200;
 		OpcUaStackCore::SlotTimerElement::SPtr pixtendTimerElement_ = nullptr;
 
-		bool startupPiXtend(PiXtendServerCfg& cfg);
+		bool startupPiXtend(void);
 		bool shutdownPiXtend(void);
         bool startupServerV2S(const std::string& name, const UnitConverterContext::Map& unitConverterContextMap);
         bool startupServerV2L(const std::string& name, const UnitConverterContext::Map& unitConverterContextMap);
         bool startupServerEIOAO(const std::string& name, const UnitConverterContext::Map& unitConverterContextMap, uint32_t address);
         bool startupServerEIODO(const std::string& name, const UnitConverterContext::Map& unitConverterContextMap, uint32_t address);
 
-        bool startupServer(PiXtendServerCfg& cfg);
+        bool startupServer(void);
         bool shutdownServer(void);
         bool startupPiXtendV2S(const std::string& name);
         bool startupPiXtendV2L(const std::string& name);
-        bool startupPiXtendEIOAO(const std::string& name, uint32_t address);
+        bool startupPiXtendEIOAO(PiXtendServerCfgModule& moduleCfg);
         bool startupPiXtendEIODO(PiXtendServerCfgModule& moduleCfg);
 
 		bool createPiXtendRootObject(void);

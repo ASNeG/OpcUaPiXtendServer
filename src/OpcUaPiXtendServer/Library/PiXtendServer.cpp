@@ -65,8 +65,7 @@ namespace OpcUaPiXtendServer
         contextIndex_ = contextIndexSPtr;
 
 		// parse pixtend configuration
-        PiXtendServerCfg controllerCfg;
-        if (!controllerCfg.parse(&config))
+        if (!cfg_.parse(&config))
         {
             Log(Error, "parse controller configuration error")
                 .parameter("File", config.configFileName());
@@ -83,14 +82,14 @@ namespace OpcUaPiXtendServer
 
         // startup pixtend modules
         Log(Debug, "startup pixtend modules");
-        if (!startupPiXtend(controllerCfg)) {
+        if (!startupPiXtend()) {
         	Log(Error, "startup pixtend error");
         	return false;
         }
 
         // add configured opc ua server objects
         Log(Debug, "startup pixtend server");
-        if (!startupServer(controllerCfg)) {
+        if (!startupServer()) {
         	Log(Error, "startup server error");
         	return false;
         }
@@ -126,9 +125,9 @@ namespace OpcUaPiXtendServer
 	}
 
 	bool
-	PiXtendServer::startupPiXtend(PiXtendServerCfg& cfg)
+	PiXtendServer::startupPiXtend(void)
 	{
-	    for (auto module: cfg.configModules()) {
+	    for (auto module: cfg_.configModules()) {
 	    	switch (module.moduleType()) {
 	    		case ServerModule::V2S:
 	    		{
@@ -156,9 +155,9 @@ namespace OpcUaPiXtendServer
 	    		}
 	    		case ServerModule::AO:
 	    		{
-	                if (!startupPiXtendEIOAO(module.moduleName(), module.moduleAddress()))
+	                if (!startupPiXtendEIOAO(module))
 	                {
-	                    Log(Error, "cannot create do pixtend module");
+	                    Log(Error, "cannot create ao pixtend module");
 	                    return false;
 	                }
 	                break;
@@ -201,6 +200,9 @@ namespace OpcUaPiXtendServer
 			pixtendEIODO.second->shutdown();
 		}
 		piXtendEIODOMap_.clear();
+
+		// shutdown all device access
+		deviceAccessManager_.deleteDeviceAccess();
 
 		return true;
 	}
@@ -249,14 +251,30 @@ namespace OpcUaPiXtendServer
     	DeviceAccess::SPtr deviceAccess;
 
     	// usb communication is used
-    	if (moduleCfg.usbCfg()) {
-    		auto usbAccess = boost::make_shared<USBAccess>();
-    		usbAccess->device(moduleCfg.usbCfg()->device());
-			usbAccess->baud(moduleCfg.usbCfg()->baud());
-			usbAccess->parity(moduleCfg.usbCfg()->parity());
-			usbAccess->dataBit(moduleCfg.usbCfg()->dataBit());
-			usbAccess->stopBit(moduleCfg.usbCfg()->stopBit());
-			deviceAccess = usbAccess;
+    	if (moduleCfg.usbDeviceCfg()) {
+
+    		// find assigned usb configuration element
+    		auto it = cfg_.usbCfgMap().find(moduleCfg.usbDeviceCfg()->device());
+    		if (it == cfg_.usbCfgMap().end()) {
+    			Log(Error, "USB device not found in configuration")
+    				.parameter("USBDevice", moduleCfg.usbDeviceCfg()->device());
+    			return false;
+    		}
+
+    		// create usb device access
+    		auto usbCfg = it->second;
+			deviceAccess = deviceAccessManager_.createDeviceAccess(
+				usbCfg->device(),
+				usbCfg->baud(),
+				usbCfg->parity(),
+				usbCfg->dataBit(),
+				usbCfg->stopBit()
+			);
+			if (!deviceAccess) {
+				Log(Error, "create usb device access error")
+					.parameter("USBDevice", moduleCfg.usbDeviceCfg()->device());
+				return false;
+			}
     	}
 
 		auto piXtendEIODO = PiXtendModulesFactory::createPiXtendEIODO(moduleCfg.moduleName(), deviceAccess);
@@ -278,31 +296,60 @@ namespace OpcUaPiXtendServer
     }
 
     bool
-	PiXtendServer::startupPiXtendEIOAO(const std::string& name, uint32_t address)
+	PiXtendServer::startupPiXtendEIOAO(PiXtendServerCfgModule& moduleCfg)
     {
-		auto piXtendEIOAO = PiXtendModulesFactory::createPiXtendEIOAO(name);
+    	DeviceAccess::SPtr deviceAccess;
+
+    	// usb communication is used
+    	if (moduleCfg.usbDeviceCfg()) {
+
+    		// find assigned usb configuration element
+    		auto it = cfg_.usbCfgMap().find(moduleCfg.usbDeviceCfg()->device());
+    		if (it == cfg_.usbCfgMap().end()) {
+    			Log(Error, "USB device not found in configuration")
+    				.parameter("USBDevice", moduleCfg.usbDeviceCfg()->device());
+    			return false;
+    		}
+
+    		// create usb device access
+    		auto usbCfg = it->second;
+			deviceAccess = deviceAccessManager_.createDeviceAccess(
+				usbCfg->device(),
+				usbCfg->baud(),
+				usbCfg->parity(),
+				usbCfg->dataBit(),
+				usbCfg->stopBit()
+			);
+			if (!deviceAccess) {
+				Log(Error, "create usb device access error")
+					.parameter("USBDevice", moduleCfg.usbDeviceCfg()->device());
+				return false;
+			}
+    	}
+
+		auto piXtendEIOAO = PiXtendModulesFactory::createPiXtendEIOAO(moduleCfg.moduleName(), deviceAccess);
         if (piXtendEIOAO == nullptr) {
             Log(Error, "cannot create module eIO AO")
-                .parameter("ModuleName", name)
-                .parameter("ModuleAddress", address);
+                .parameter("ModuleName", moduleCfg.moduleName());
             return false;
         }
 
 		piXtendEIOAO->contextIndex(contextIndex_);
-		if (!piXtendEIOAO->startup(address)) {
+		if (!piXtendEIOAO->startup(moduleCfg.moduleAddress())) {
 			Log(Error, "startup pixtend EIOAO error")
-			    .parameter("ModuleName", name);
+                .parameter("ModuleName", moduleCfg.moduleName())
+                .parameter("ModuleAddress", moduleCfg.moduleAddress());
 			return false;
 		}
-		piXtendEIOAOMap_.insert(std::make_pair(address, piXtendEIOAO));
+		piXtendEIOAOMap_.insert(std::make_pair(moduleCfg.moduleAddress(), piXtendEIOAO));
 		return true;
     }
 
 
 	bool
-	PiXtendServer::startupServer(PiXtendServerCfg& cfg)
+	PiXtendServer::startupServer(void)
 	{
-	    for (auto module: cfg.configModules()) {
+	    for (auto module: cfg_.configModules()) {
 
 	    	// create unit converter context map
 	    	UnitConverterContext::Map unitConverterContextMap;

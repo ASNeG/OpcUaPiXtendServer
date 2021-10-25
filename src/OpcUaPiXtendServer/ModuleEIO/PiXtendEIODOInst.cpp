@@ -44,25 +44,12 @@ namespace OpcUaPiXtendServer
     {
     	int rc;
     	moduleAddress_ = moduleAddress;
-
-    	// open access device
-    	if (!deviceAccess_->open()) {
-    		Log(Error, "open device error")
-    			.parameter("Type", "EIODO")
-				.parameter("InstanceName", instanceName());
-    		return false;
-    	}
-
         return true;
     }
 
     bool
     PiXtendEIODOInst::shutdown(void)
     {
-    	// close access device
-    	// open access device
-    	deviceAccess_->close();
-
         return true;
     }
 

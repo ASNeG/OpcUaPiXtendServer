@@ -37,6 +37,7 @@ namespace OpcUaPiXtendServer
 	USBAccess::device(const std::string& device)
     {
     	device_ = device;
+    	device_ = device;
     }
 
     void
@@ -125,6 +126,7 @@ namespace OpcUaPiXtendServer
     	rc = modbus_set_slave(ctx_, deviceAddress_);
     	if (rc != 0) {
     		Log(Error, "set slave id error")
+				.parameter("Device", device_)
     			.parameter("DeviceAddress", deviceAddress_)
 				.parameter("rc", rc);
     		return false;
@@ -144,6 +146,7 @@ namespace OpcUaPiXtendServer
         auto numBits = modbus_write_bits(ctx_, 0x00, numberPins, bits);
         if (numBits != numberPins) {
         	Log(Error, "write output bits error")
+				.parameter("Device", device_)
         		.parameter("DeviceAddress", deviceAddress_)
     			.parameter("NumBits", numberPins);
         	return false;
@@ -160,6 +163,7 @@ namespace OpcUaPiXtendServer
        	auto numBits = modbus_read_bits(ctx_, 0x00, numberPins, bits);
         if (numBits != numberPins) {
         	Log(Error, "read output bits error")
+				.parameter("Device", device_)
         		.parameter("DeviceAddress", deviceAddress_)
     			.parameter("NumBits", numberPins);
         	return false;
@@ -179,6 +183,7 @@ namespace OpcUaPiXtendServer
        	auto numBits = modbus_read_input_bits(ctx_, 0x00, numberPins, bits);
         if (numBits != numberPins) {
         	Log(Error, "read input bits error")
+				.parameter("Device", device_)
         		.parameter("DeviceAddress", deviceAddress_)
     			.parameter("NumBits", numberPins);
         	return false;
@@ -186,6 +191,52 @@ namespace OpcUaPiXtendServer
     	for (auto idx = 0; idx < 8; idx++) {
     		pins[idx] = bits[idx] == 0x01 ? true : false;
     	}
+
+    	return true;
+    }
+
+    bool
+	USBAccess::writeAnalogOut(uint8_t numberPins, uint16_t* pins)
+    {
+       	// write analog output
+        auto numBits = modbus_write_registers(ctx_, 0x00, numberPins, pins);
+        if (numBits != numberPins) {
+        	Log(Error, "write output registers error")
+				.parameter("Device", device_)
+        		.parameter("DeviceAddress", deviceAddress_)
+    			.parameter("NumBits", numberPins);
+        	return false;
+        }
+
+    	return true;
+    }
+
+    bool
+	USBAccess::readAnalogOut(uint8_t numberPins, uint16_t* pins)
+    {
+        auto numBits = modbus_read_registers(ctx_, 0x00, numberPins, pins);
+        if (numBits != numberPins) {
+            Log(Error, "read output registers error")
+    			.parameter("Device", device_)
+            	.parameter("DeviceAddress", deviceAddress_)
+        		.parameter("NumBits", numberPins);
+            return false;
+        }
+
+        return true;
+    }
+
+    bool
+	USBAccess::readAnalogIn(uint8_t numberPins, uint16_t* pins)
+    {
+       	auto numBits = modbus_read_input_registers(ctx_, 0x00, numberPins, pins);
+        if (numBits != numberPins) {
+        	Log(Error, "read input registers error")
+				.parameter("Device", device_)
+        		.parameter("DeviceAddress", deviceAddress_)
+    			.parameter("NumBits", numberPins);
+        	return false;
+        }
 
     	return true;
     }

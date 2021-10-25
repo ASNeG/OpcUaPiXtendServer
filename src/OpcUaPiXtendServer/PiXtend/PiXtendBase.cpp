@@ -105,4 +105,23 @@ namespace OpcUaPiXtendServer
     	return true;
     }
 
+    double
+	PiXtendBase::analog2Percent(uint16_t value, uint8_t base)
+    {
+    	uint32_t baseValue = pow(2,base);
+
+    	if (value > baseValue) value = baseValue;
+
+    	return (double)value / (double)baseValue;
+    }
+
+    uint16_t
+	PiXtendBase::percent2Analog(double value, uint8_t base)
+    {
+    	if (value < 0.0) value = 0.0;
+    	if (value > 1.0) value = 1.0;
+
+    	return static_cast<uint16_t>(value * (double)pow(2,base));
+    }
+
 }

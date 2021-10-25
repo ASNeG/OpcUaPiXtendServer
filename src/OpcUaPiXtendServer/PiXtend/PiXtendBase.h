@@ -83,6 +83,9 @@ namespace OpcUaPiXtendServer
         virtual void handleHardwareAccess(void) {}
         virtual void handleRegisterContext(void) = 0;
 
+        double analog2Percent(uint16_t value, uint8_t base = 10);
+        uint16_t percent2Analog(double value, uint8_t base = 10);
+
       private:
         ContextIndex::SPtr contextIndex_ {nullptr};
         std::string instanceName_ = "";
