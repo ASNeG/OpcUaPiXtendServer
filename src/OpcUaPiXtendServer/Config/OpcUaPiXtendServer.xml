@@ -53,7 +53,15 @@
             <Address>0x03</Address>
             <USBDevice Device="/dev/ttyUSB0"/>
 	    </Module>
-	
     </Modules>
+
+    <Objects>
+        <Object Name="TestObject" Namespace="dummy_test_namespace" Type="0000" Enable="0">
+          <FolderObject>Object</FolderObject>
+          <NodeMap><Node>Test_V2L_DI1</Node><Pin>PiXtendV2L.DI1</Pin></NodeMap>
+          <NodeMap><Node>Test_V2L_DI1</Node><Pin>PiXtendV2L.DI2</Pin></NodeMap>
+        </Object>
+    </Objects>
+
 
 </OpcUaPiXtendServer>

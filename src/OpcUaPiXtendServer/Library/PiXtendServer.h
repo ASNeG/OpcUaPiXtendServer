@@ -38,12 +38,12 @@
 namespace OpcUaPiXtendServer
 {
 
-	class PiXtendServer
-	{
-	  public:
+    class PiXtendServer
+    {
+      public:
 
-		PiXtendServer(void);
-		virtual ~PiXtendServer(void);
+        PiXtendServer(void);
+        virtual ~PiXtendServer(void);
 
 		bool startup(
 			OpcUaStackCore::IOThread::SPtr& ioThread,
@@ -60,10 +60,10 @@ namespace OpcUaPiXtendServer
 		OpcUaStackCore::IOThread::SPtr ioThread_ = nullptr;
 		boost::shared_ptr<boost::asio::io_service::strand> strand_ = nullptr;
 
-		OpcUaStackServer::ApplicationServiceIf* applicationServiceIf_ = nullptr;
-		OpcUaStackServer::ApplicationInfo* applicationInfo_ = nullptr;
+        OpcUaStackServer::ApplicationServiceIf* applicationServiceIf_ = nullptr;
+        OpcUaStackServer::ApplicationInfo* applicationInfo_ = nullptr;
 
-		const OpcUaStackCore::OpcUaNodeId piXtendRootNodeId_ = OpcUaStackCore::OpcUaNodeId("PiXtend", 1);
+        const OpcUaStackCore::OpcUaNodeId piXtendRootNodeId_ = OpcUaStackCore::OpcUaNodeId("PiXtend", 1);
 
         ContextIndex::SPtr contextIndex_ = nullptr;
         DeviceAccessManager deviceAccessManager_;
@@ -78,9 +78,9 @@ namespace OpcUaPiXtendServer
         std::unordered_map<uint32_t /*address*/, PiXtendEIOAOServer::SPtr> piXtendEIOAOServerMap_;
         std::unordered_map<uint32_t /*address*/, PiXtendEIODOServer::SPtr> piXtendEIODOServerMap_;
 
-		boost::shared_ptr<boost::asio::io_service::strand> pixtendLoopstrand_ = nullptr;
-		uint32_t pixtendTimerInterval_ = 200;
-		OpcUaStackCore::SlotTimerElement::SPtr pixtendTimerElement_ = nullptr;
+        boost::shared_ptr<boost::asio::io_service::strand> pixtendLoopstrand_ = nullptr;
+        uint32_t pixtendTimerInterval_ = 200;
+        OpcUaStackCore::SlotTimerElement::SPtr pixtendTimerElement_ = nullptr;
 
 		bool startupPiXtend(void);
 		bool shutdownPiXtend(void);
@@ -96,12 +96,12 @@ namespace OpcUaPiXtendServer
         bool startupPiXtendEIOAO(PiXtendServerCfgModule& moduleCfg);
         bool startupPiXtendEIODO(PiXtendServerCfgModule& moduleCfg);
 
-		bool createPiXtendRootObject(void);
+        bool createPiXtendRootObject(void);
 
-		bool startupPiXtendLoop(void);
-		bool shutdownPiXtendLoop(void);
-		void piXtendLoop(void);
-	};
+        bool startupPiXtendLoop(void);
+        bool shutdownPiXtendLoop(void);
+        void piXtendLoop(void);
+    };
 
 }
 
