@@ -281,8 +281,9 @@ namespace OpcUaPiXtendServer
     {
         boost::optional<Config> objectsCfg = config->getChild("Objects");
         if (!objectsCfg) {
-            Log(Error, "parameter Objects missing in controller configuration");
-            return false;
+            // Objects parameter are optional
+            Log(Info, "optional parameter 'Objects' missing in controller configuration");
+            return true;
         }
 
         std::vector<Config> configVec;

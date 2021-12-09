@@ -56,10 +56,12 @@
     </Modules>
 
     <Objects>
-        <Object Name="TestObject" Namespace="dummy_test_namespace" Type="0000" Enable="0">
-          <FolderObject>Object</FolderObject>
-          <NodeMap><Node>Test_V2L_DI1</Node><Pin>PiXtendV2L.DI1</Pin></NodeMap>
-          <NodeMap><Node>Test_V2L_DI1</Node><Pin>PiXtendV2L.DI2</Pin></NodeMap>
+        <Object Name="ObjectExample" Namespace="http://ASNeG.de/ObjectExample/" Type="1002" Enable="1">
+
+            <FolderObject>TestObject</FolderObject>
+
+            <NodeMap><Node>Data_Val1</Node><Pin>PiXtendV2L.DO0</Pin></NodeMap>
+            <NodeMap><Node>Data_Val2</Node><Pin>PiXtendV2L.DO1</Pin></NodeMap>
         </Object>
     </Objects>
 

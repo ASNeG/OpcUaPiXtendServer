@@ -158,6 +158,7 @@
     <NodeSetFile>@CONF_DIR@/Opc.Ua.NodeSet2.xml</NodeSetFile>
     <NodeSetFile>@CONF_DIR@/Opc.Ua.NodeSet.ASNeGServer.xml</NodeSetFile>
     <NodeSetFile>@CONF_DIR@/Opc.Ua.NodeSet.PiXtend.xml</NodeSetFile>
+    <NodeSetFile>@CONF_DIR@/Opc.Ua.NodeSet.Object.xml</NodeSetFile>
   </InformationModel>
 
 </OpcUaServer>
