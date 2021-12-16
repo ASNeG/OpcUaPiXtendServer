@@ -84,6 +84,20 @@ namespace OpcUaPiXtendServer
 			return false;
 		}
 
+        // startup object application
+        result = objectApp_.startup(
+            messageBusThread,
+            messageBusStrand,
+            &service(),
+            applicationInfo(),
+            *piXtendServerConfig,
+            contextIndexSPtr
+        );
+        if (!result) {
+            Log(Error, "init object app error");
+            return false;
+        }
+
 		return true;
 	}
 
@@ -92,8 +106,15 @@ namespace OpcUaPiXtendServer
 	{
 		Log(Debug, "Library::shutdown");
 
+        // shutdown piXtend application
+        auto result = objectApp_.shutdown();
+        if (!result) {
+            Log(Error, "shutdown object app error");
+            return false;
+        }
+
 		// shutdown piXtend application
-		auto result = piXtendServer_.shutdown();
+        result = piXtendServer_.shutdown();
 		if (!result) {
 			Log(Error, "shutdown pixtend server error");
 			return false;

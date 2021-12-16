@@ -101,6 +101,7 @@ file(
     ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/Library/*.cpp
     ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/OpcUaServer/*.cpp
     ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/ModuleUSB/*.cpp
+    ${PROJECT_SOURCE_DIR}/OpcUaPiXtendServer/ObjectServer/*.cpp
 )
 
 add_library(

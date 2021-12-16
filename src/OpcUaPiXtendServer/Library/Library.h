@@ -20,6 +20,7 @@
 
 #include "OpcUaStackServer/Application/ApplicationIf.h"
 #include "OpcUaPiXtendServer/Library/PiXtendServer.h"
+#include "OpcUaPiXtendServer/ObjectServer/ObjectApp.h"
 
 namespace OpcUaPiXtendServer
 {
@@ -41,6 +42,7 @@ namespace OpcUaPiXtendServer
 
 	  private:
 		PiXtendServer piXtendServer_;
+        ObjectApp objectApp_;
 	};
 
 }

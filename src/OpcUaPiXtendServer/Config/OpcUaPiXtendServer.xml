@@ -53,7 +53,17 @@
             <Address>0x03</Address>
             <USBDevice Device="/dev/ttyUSB0"/>
 	    </Module>
-	
     </Modules>
+
+    <Objects>
+        <Object Name="ObjectExample" Namespace="http://ASNeG.de/ObjectExample/" Type="1002" Enable="1">
+
+            <FolderObject>TestObject</FolderObject>
+
+            <NodeMap><Node>Data_Val1</Node><Pin>PiXtendV2L.DO0</Pin></NodeMap>
+            <NodeMap><Node>Data_Val2</Node><Pin>PiXtendV2L.DO1</Pin></NodeMap>
+        </Object>
+    </Objects>
+
 
 </OpcUaPiXtendServer>
