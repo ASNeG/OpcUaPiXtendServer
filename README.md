@@ -50,6 +50,12 @@ $ sh build.sh -t local
 The OPC UA Server has now installed in the directory ${HOME}/.ASNeG/
 
 
+**Install modbus library:**
+The OpcUaPiXtendServer requires the modbus library. Use the following command for the installation:
+```
+$ sudo apt-get install libmodbus-dev
+```
+
 **Install OpcUaPiXtendServer:**
 1. Clone OpcUaPiXtendServer repository
 ```
@@ -67,10 +73,6 @@ The PiXtend Server Library has now installed in the directory ${HOME}/.ASNeG/
 You can test the OpcUaPiXtendServer on the PC. In this case the SPI interface (for PiXtend V2S and PiXtend V2L access) is not available and the hardware access is replaced by a dummy server. Use the following command.
 ```
 $ sh build.sh -t local -s ~/.ASNeG -a SPI_DUMMY
-```
-On the PC the modbus library is required. Use the following command for the installation:
-```
-$ sudo apt-get install libmodbus-dev
 ```
 
 Hardware Configuration
