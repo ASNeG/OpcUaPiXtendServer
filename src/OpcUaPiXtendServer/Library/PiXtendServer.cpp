@@ -1,5 +1,5 @@
 /*
-   Copyright 2021 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2021-2022 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -254,10 +254,10 @@ namespace OpcUaPiXtendServer
     	if (moduleCfg.usbDeviceCfg()) {
 
     		// find assigned usb configuration element
-    		auto it = cfg_.usbCfgMap().find(moduleCfg.usbDeviceCfg()->device());
+    		auto it = cfg_.usbCfgMap().find(moduleCfg.usbDeviceCfg()->deviceName());
     		if (it == cfg_.usbCfgMap().end()) {
-    			Log(Error, "USB device not found in configuration")
-    				.parameter("USBDevice", moduleCfg.usbDeviceCfg()->device());
+    			Log(Error, "USB device name not found in configuration")
+    				.parameter("USBDevice", moduleCfg.usbDeviceCfg()->deviceName());
     			return false;
     		}
 
@@ -272,7 +272,7 @@ namespace OpcUaPiXtendServer
 			);
 			if (!deviceAccess) {
 				Log(Error, "create usb device access error")
-					.parameter("USBDevice", moduleCfg.usbDeviceCfg()->device());
+					.parameter("USBDevice", moduleCfg.usbDeviceCfg()->deviceName());
 				return false;
 			}
     	}
@@ -305,10 +305,10 @@ namespace OpcUaPiXtendServer
     	if (moduleCfg.usbDeviceCfg()) {
 
     		// find assigned usb configuration element
-    		auto it = cfg_.usbCfgMap().find(moduleCfg.usbDeviceCfg()->device());
+    		auto it = cfg_.usbCfgMap().find(moduleCfg.usbDeviceCfg()->deviceName());
     		if (it == cfg_.usbCfgMap().end()) {
     			Log(Error, "USB device not found in configuration")
-    				.parameter("USBDevice", moduleCfg.usbDeviceCfg()->device());
+    				.parameter("USBDevice", moduleCfg.usbDeviceCfg()->deviceName());
     			return false;
     		}
 
@@ -323,7 +323,7 @@ namespace OpcUaPiXtendServer
 			);
 			if (!deviceAccess) {
 				Log(Error, "create usb device access error")
-					.parameter("USBDevice", moduleCfg.usbDeviceCfg()->device());
+					.parameter("USBDevice", moduleCfg.usbDeviceCfg()->deviceName());
 				return false;
 			}
     	}
