@@ -1,5 +1,5 @@
 /*
-   Copyright 2021 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2021-2022 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -60,6 +60,15 @@ namespace OpcUaPiXtendServer
         }
         device_ = *deviceElement;
 
+        // parse device name element
+        auto deviceNameElement = config->getValue("<xmlattr>.DeviceName");
+        if (!deviceNameElement) {
+            deviceName_ = device_;
+        }
+        else {
+        	deviceName_ = *deviceNameElement;
+        }
+
         // parse baud element
         if (!config->getConfigParameter("<xmlattr>.Baud", baud_)) {
             Log(Error, "Baud attribute not exist in USB element");
@@ -107,6 +116,12 @@ namespace OpcUaPiXtendServer
 	USBCfg::device(void)
 	{
 		return device_;
+	}
+
+	std::string
+	USBCfg::deviceName(void)
+	{
+		return deviceName_;
 	}
 
 	uint32_t
@@ -165,21 +180,21 @@ namespace OpcUaPiXtendServer
         }
 
         // parse device element
-        auto deviceElement = usbChild->getValue("<xmlattr>.Device");
+        auto deviceElement = usbChild->getValue("<xmlattr>.DeviceName");
         if (!deviceElement) {
-            Log(Error, "Device attribute not exist in USBDevice element");
+            Log(Error, "DeviceName attribute not exist in USBDevice element");
             return false;
         }
-        device_ = *deviceElement;
+        deviceName_ = *deviceElement;
 
 		return true;
 	}
 
 
 	std::string
-	USBDeviceCfg::device(void)
+	USBDeviceCfg::deviceName(void)
 	{
-		return device_;
+		return deviceName_;
 	}
 
 
@@ -350,7 +365,7 @@ namespace OpcUaPiXtendServer
 				.parameter("ModuleName", moduleName_);
             return false;
         }
-        if (!usbDeviceCfg->device().empty()) {
+        if (!usbDeviceCfg->deviceName().empty()) {
         	usbDeviceCfg_ = usbDeviceCfg;
         }
 
@@ -435,7 +450,7 @@ namespace OpcUaPiXtendServer
                 return false;
             }
             if (!usbCfg->device().empty()) {
-            	usbCfgMap_.insert(std::make_pair(usbCfg->device(), usbCfg));
+            	usbCfgMap_.insert(std::make_pair(usbCfg->deviceName(), usbCfg));
             }
         }
 

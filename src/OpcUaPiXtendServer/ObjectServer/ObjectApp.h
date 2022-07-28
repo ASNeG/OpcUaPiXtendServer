@@ -68,7 +68,10 @@ namespace OpcUaPiXtendServer
         bool shutdownServerLoop(void);
         void serverLoop(void);
 
-        bool createFolderObject(std::string& folderObject, OpcUaNodeId& folderObjectNodeId);
+        bool createFolderObject(
+        	std::string& folderObject,
+			OpcUaStackCore::OpcUaNodeId& folderObjectNodeId
+		);
 
         std::vector<ObjectServer::SPtr> objectServers_;
         std::unordered_map<std::string /*folderObject*/, OpcUaStackCore::OpcUaNodeId> folderObjects_;

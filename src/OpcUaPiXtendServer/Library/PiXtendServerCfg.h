@@ -1,5 +1,5 @@
 /*
-   Copyright 2021 Kai Huebl (kai@huebl-sgh.de)
+   Copyright 2021-2022 Kai Huebl (kai@huebl-sgh.de)
 
    Lizenziert gemäß Apache Licence Version 2.0 (die „Lizenz“); Nutzung dieser
    Datei nur in Übereinstimmung mit der Lizenz erlaubt.
@@ -54,6 +54,7 @@ namespace OpcUaPiXtendServer
 
     	bool parse(OpcUaStackCore::Config* config);
 
+    	std::string deviceName(void);
     	std::string device(void);
     	uint32_t baud(void);
     	char parity(void);
@@ -61,6 +62,7 @@ namespace OpcUaPiXtendServer
     	uint8_t stopBit(void);
 
       private:
+    	std::string deviceName_ = "";
     	std::string device_ = "";
     	uint32_t baud_ = 0;
     	char parity_ = 'X';
@@ -78,10 +80,10 @@ namespace OpcUaPiXtendServer
 
      	bool parse(OpcUaStackCore::Config* config);
 
-     	std::string device(void);
+     	std::string deviceName(void);
 
        private:
-     	std::string device_ = "";
+     	std::string deviceName_ = "";
      };
 
     class UnitConversionConfig
